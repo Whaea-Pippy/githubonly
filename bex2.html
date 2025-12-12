@@ -184,6 +184,19 @@
       "One day at a time — you’re doing it."
     ];
 
+    const wellbeingQuotes = [
+      "You cared for your future self today — that’s an act of real self-compassion.",
+      "The way you showed up today shows strength in your heart, not just your mind.",
+      "You listened to your wellbeing and still made progress. That balance is beautiful.",
+      "Even on busy days, choosing one small action is an act of hope. You chose hope today.",
+      "Your effort today wasn’t just productivity — it was kindness toward yourself.",
+      "Be proud of the way you honoured your energy and still moved forward.",
+      "You made space for growth today. That’s healing as much as it is progress.",
+      "What you did today matters — your wellbeing and your goals both deserve this care.",
+      "You showed gentle discipline today, and it’s building something steady inside you.",
+      "Your pace is perfect. The way you kept going today shows courage and self-trust."
+    ];
+
     // Load saved state
     boxes.forEach(box => {
       const id = box.dataset.id;
@@ -234,7 +247,8 @@
           });
           html += '</ul>';
         } else {
-          html += '<div>All items completed</div>';
+          const quote = wellbeingQuotes[Math.floor(Math.random() * wellbeingQuotes.length)];
+          html += `<p>${quote}</p>`;
         }
 
         div.innerHTML = html;
