@@ -203,7 +203,7 @@
       });
     });
 
-    // Load history list
+    // Load history list (supports legacy string entries and new object entries)
     function loadHistory() {
       historyList.innerHTML = "";
       const entries = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
@@ -211,7 +211,33 @@
       entries.forEach(e => {
         const div = document.createElement("div");
         div.className = "history-item";
-        div.textContent = e;
+
+        // Legacy string entry
+        if (typeof e === 'string') {
+          div.textContent = e;
+          historyList.appendChild(div);
+          return;
+        }
+
+        // New object entry: { date, completed, total, stars, unchecked }
+        const dateText = e.date || "(unknown date)";
+        const completed = typeof e.completed === 'number' ? e.completed : 0;
+        const total = typeof e.total === 'number' ? e.total : 0;
+        const stars = typeof e.stars === 'number' ? e.stars : 0;
+
+        let html = `<strong>${dateText}</strong> — Completed: ${completed}/${total} (${stars}★)`;
+
+        if (Array.isArray(e.unchecked) && e.unchecked.length > 0) {
+          html += '<p><strong>Often missed / Working on:</strong></p><ul>';
+          e.unchecked.forEach(item => {
+            html += `<li>${item}</li>`;
+          });
+          html += '</ul>';
+        } else {
+          html += '<div>All items completed</div>';
+        }
+
+        div.innerHTML = html;
         historyList.appendChild(div);
       });
     }
@@ -260,10 +286,16 @@
       reportContainer.innerHTML = reportHTML;
       reportContainer.style.display = "block";
 
-      // Save one-line history with exact completed count
-      const line = `${today} – Completed: ${completed}/${total} (${starsCount}★)`;
+      // Save detailed history entry (date, counts, stars, and unchecked items)
+      const entry = {
+        date: today,
+        completed: completed,
+        total: total,
+        stars: starsCount,
+        unchecked: unchecked
+      };
       const history = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
-      history.unshift(line);
+      history.unshift(entry);
       localStorage.setItem("dailyHistory", JSON.stringify(history));
 
       loadHistory();
