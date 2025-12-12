@@ -254,8 +254,9 @@
           });
           html += '</ul>';
         } else {
-          const quote = wellbeingQuotes[Math.floor(Math.random() * wellbeingQuotes.length)];
-          html += `<p class="inspo">${quote}</p>`;
+          // Use saved message if present, otherwise fallback to a fixed success text
+          const msg = e.message || 'Awesome work 100%';
+          html += `<p class="inspo">${msg}</p>`;
         }
 
         div.innerHTML = html;
@@ -279,13 +280,21 @@
       const quote = quotes[Math.floor(Math.random() * quotes.length)];
       const today = new Date().toLocaleDateString();
 
+      // If everything completed, pick and persist a wellbeing quote for this entry
+      let savedMessage = null;
+      if (completed === total) {
+        savedMessage = wellbeingQuotes[Math.floor(Math.random() * wellbeingQuotes.length)] || 'Awesome work 100%';
+      }
+
       // Calculate star rating (0-5) proportional to progress
       const starsCount = total > 0 ? Math.round((completed / total) * 5) : 0;
       const filled = "★".repeat(starsCount);
       const empty = "☆".repeat(5 - starsCount);
 
+      const reportMessage = savedMessage || quote;
+
       let reportHTML = `<h2>Daily Report – ${today}</h2>`;
-      reportHTML += `<p class="inspo">${quote}</p>`;
+      reportHTML += `<p class="inspo">${reportMessage}</p>`;
 
       reportHTML += `
         <div class="award-box">
@@ -307,13 +316,14 @@
       reportContainer.innerHTML = reportHTML;
       reportContainer.style.display = "block";
 
-      // Save detailed history entry (date, counts, stars, and unchecked items)
+      // Save detailed history entry (date, counts, stars, unchecked items, and optional message)
       const entry = {
         date: today,
         completed: completed,
         total: total,
         stars: starsCount,
-        unchecked: unchecked
+        unchecked: unchecked,
+        message: savedMessage // may be null for partial days
       };
       const history = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
       history.unshift(entry);
