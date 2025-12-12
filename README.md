@@ -1,2 +1,2 @@
 # githubonly
-Code not anywhere else, (no in firebase).
+Code not anywhere else, (not in firebase).
