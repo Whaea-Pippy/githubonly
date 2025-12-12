@@ -227,21 +227,32 @@
         }
       });
 
+      const total = boxes.length;
+      const completed = total - unchecked.length;
       const quote = quotes[Math.floor(Math.random() * quotes.length)];
       const today = new Date().toLocaleDateString();
+
+      // Calculate star rating (0-5) proportional to progress
+      const starsCount = total > 0 ? Math.round((completed / total) * 5) : 0;
+      const filled = "★".repeat(starsCount);
+      const empty = "☆".repeat(5 - starsCount);
 
       let reportHTML = `<h2>Daily Report – ${today}</h2>`;
       reportHTML += `<p><strong>Inspirational message:</strong><br>${quote}</p>`;
 
       reportHTML += `
         <div class="award-box">
-          <div class="stars">⭐ ⭐ ⭐ ⭐ ⭐</div>
-          Great job completing your day!
+          <div class="stars">${filled} ${empty}</div>
+          <div>Progress: ${completed}/${total} — ${starsCount} of 5 stars</div>
         </div>
       `;
 
       if (unchecked.length > 0) {
-        reportHTML += `<p><strong>Focus on these tomorrow:</strong><br>${unchecked.join(", ")}</p>`;
+        reportHTML += `<p><strong>Working on:</strong></p><ul>`;
+        unchecked.forEach(item => {
+          reportHTML += `<li>${item}</li>`;
+        });
+        reportHTML += `</ul>`;
       } else {
         reportHTML += `<p>Everything ticked! Incredible work!</p>`;
       }
@@ -249,8 +260,8 @@
       reportContainer.innerHTML = reportHTML;
       reportContainer.style.display = "block";
 
-      // Save one-line history
-      const line = `${today} – Completed: ${unchecked.length === 0 ? "ALL ✔️" : "Some items"}`;
+      // Save one-line history with exact completed count
+      const line = `${today} – Completed: ${completed}/${total} (${starsCount}★)`;
       const history = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
       history.unshift(line);
       localStorage.setItem("dailyHistory", JSON.stringify(history));
