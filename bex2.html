@@ -109,6 +109,13 @@
       border-bottom: 1px solid #ccc;
     }
 
+    .inspo {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0b6623;
+      margin: 0.5rem 0;
+    }
+
   </style>
 </head>
 <body>
@@ -248,7 +255,7 @@
           html += '</ul>';
         } else {
           const quote = wellbeingQuotes[Math.floor(Math.random() * wellbeingQuotes.length)];
-          html += `<p>${quote}</p>`;
+          html += `<p class="inspo">${quote}</p>`;
         }
 
         div.innerHTML = html;
@@ -278,7 +285,7 @@
       const empty = "☆".repeat(5 - starsCount);
 
       let reportHTML = `<h2>Daily Report – ${today}</h2>`;
-      reportHTML += `<p><strong>Inspirational message:</strong><br>${quote}</p>`;
+      reportHTML += `<p class="inspo">${quote}</p>`;
 
       reportHTML += `
         <div class="award-box">
