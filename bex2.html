@@ -228,7 +228,7 @@
         let html = `<strong>${dateText}</strong> — Completed: ${completed}/${total} (${stars}★)`;
 
         if (Array.isArray(e.unchecked) && e.unchecked.length > 0) {
-          html += '<p><strong>Often missed / Working on:</strong></p><ul>';
+          html += '<p><strong>Remember — focus on these tomorrow:</strong></p><ul>';
           e.unchecked.forEach(item => {
             html += `<li>${item}</li>`;
           });
