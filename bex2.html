@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Healthy Living Checklist</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f0f6ff;
+      padding: 20px;
+      max-width: 650px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-top: 25px;
+      color: #333;
+    }
+
+    .item {
+      background: white;
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    label {
+      font-size: 16px;
+      flex: 1;
+      padding-right: 10px;
+    }
+
+    input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #7c9cff;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #5c80ff;
+    }
+
+    #report-container {
+      margin-top: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      display: none;
+    }
+
+    .award-box {
+      border: 3px dashed #ffbf00;
+      background: #fff6d6;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 14px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .stars {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #ffa600;
+    }
+
+    #history {
+      margin-top: 35px;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+
+    #history h2 {
+      margin-bottom: 10px;
+    }
+
+    .history-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Healthy Living Checklist</h1>
+
+  <div id="checklist">
+
+    <!-- Healthy Eating -->
+    <div class="section-title">🥗 Healthy Eating</div>
+    <div class="item"><label>Eat 5+ fruit and veg</label><input type="checkbox" data-id="eat_fruit"></div>
+    <div class="item"><label>Drink enough water</label><input type="checkbox" data-id="water"></div>
+    <div class="item"><label>Have a balanced breakfast</label><input type="checkbox" data-id="breakfast"></div>
+    <div class="item"><label>Avoid sugary snacks</label><input type="checkbox" data-id="sugar"></div>
+
+    <!-- Exercise -->
+    <div class="section-title">💪 Exercise</div>
+    <div class="item"><label>30 mins walking / movement</label><input type="checkbox" data-id="walk"></div>
+    <div class="item"><label>Stretching session</label><input type="checkbox" data-id="stretch"></div>
+    <div class="item"><label>Strength exercise</label><input type="checkbox" data-id="strength"></div>
+    <div class="item"><label>Outdoor time</label><input type="checkbox" data-id="outdoor"></div>
+
+    <!-- Mindfulness -->
+    <div class="section-title">🧘 Mindfulness</div>
+    <div class="item"><label>5 min breathing</label><input type="checkbox" data-id="breathing"></div>
+    <div class="item"><label>Gratitude moment</label><input type="checkbox" data-id="gratitude"></div>
+    <div class="item"><label>Quiet time / reflection</label><input type="checkbox" data-id="reflection"></div>
+    <div class="item"><label>Limit screen time</label><input type="checkbox" data-id="screens"></div>
+
+    <!-- Drinks -->
+    <div class="section-title">🥤 Drinks</div>
+    <div class="item"><label>Drink 1L+ water</label><input type="checkbox" data-id="water1l"></div>
+    <div class="item"><label>Coffee — 1 or less</label><input type="checkbox" data-id="coffee_limit"></div>
+    <div class="item"><label>No fizzy drinks today</label><input type="checkbox" data-id="no_fizzy"></div>
+    <div class="item"><label>Herbal tea / hydration</label><input type="checkbox" data-id="herbal_tea"></div>
+
+    <!-- Medication -->
+    <div class="section-title">💊 Medication</div>
+    <div class="item"><label>Take medication</label><input type="checkbox" data-id="medication"></div>
+    <div class="item"><label>Taken on time</label><input type="checkbox" data-id="med_on_time"></div>
+
+  </div>
+
+  <button id="done">Done for Today</button>
+  <button id="reset">Reset All</button>
+
+  <!-- Report -->
+  <div id="report-container"></div>
+
+  <!-- History -->
+  <div id="history">
+    <h2>Past Entries</h2>
+    <div id="history-list"></div>
+  </div>
+
+  <script>
+    const boxes = document.querySelectorAll("input[type='checkbox']");
+    const resetBtn = document.getElementById("reset");
+    const doneBtn = document.getElementById("done");
+    const reportContainer = document.getElementById("report-container");
+    const historyList = document.getElementById("history-list");
+
+    const quotes = [
+      "You showed up today — that’s huge.",
+      "Small steps grow into big changes.",
+      "You are moving forward — keep going.",
+      "Your effort today matters.",
+      "Be proud of any progress today.",
+      "You are stronger than you think.",
+      "Tomorrow is another chance.",
+      "Believe in quiet consistency.",
+      "You cared for yourself today — well done.",
+      "One day at a time — you’re doing it."
+    ];
+
+    // Load saved state
+    boxes.forEach(box => {
+      const id = box.dataset.id;
+      const saved = localStorage.getItem(id);
+      if (saved === "true") box.checked = true;
+
+      box.addEventListener("change", () => {
+        localStorage.setItem(id, box.checked);
+      });
+    });
+
+    // Reset
+    resetBtn.addEventListener("click", () => {
+      boxes.forEach(box => {
+        box.checked = false;
+        localStorage.removeItem(box.dataset.id);
+      });
+    });
+
+    // Load history list
+    function loadHistory() {
+      historyList.innerHTML = "";
+      const entries = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
+
+      entries.forEach(e => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+        div.textContent = e;
+        historyList.appendChild(div);
+      });
+    }
+    loadHistory();
+
+    // Done for Today
+    doneBtn.addEventListener("click", () => {
+      const unchecked = [];
+      boxes.forEach(box => {
+        if (!box.checked) {
+          const label = box.parentElement.querySelector("label").textContent;
+          unchecked.push(label);
+        }
+      });
+
+      const quote = quotes[Math.floor(Math.random() * quotes.length)];
+      const today = new Date().toLocaleDateString();
+
+      let reportHTML = `<h2>Daily Report – ${today}</h2>`;
+      reportHTML += `<p><strong>Inspirational message:</strong><br>${quote}</p>`;
+
+      reportHTML += `
+        <div class="award-box">
+          <div class="stars">⭐ ⭐ ⭐ ⭐ ⭐</div>
+          Great job completing your day!
+        </div>
+      `;
+
+      if (unchecked.length > 0) {
+        reportHTML += `<p><strong>Focus on these tomorrow:</strong><br>${unchecked.join(", ")}</p>`;
+      } else {
+        reportHTML += `<p>Everything ticked! Incredible work!</p>`;
+      }
+
+      reportContainer.innerHTML = reportHTML;
+      reportContainer.style.display = "block";
+
+      // Save one-line history
+      const line = `${today} – Completed: ${unchecked.length === 0 ? "ALL ✔️" : "Some items"}`;
+      const history = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
+      history.unshift(line);
+      localStorage.setItem("dailyHistory", JSON.stringify(history));
+
+      loadHistory();
+    });
+  </script>
+
+</body>
+</html>
