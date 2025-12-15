@@ -10,14 +10,14 @@
       font-family: "Poppins", sans-serif;
       background: #f0f6ff;
       padding: 20px;
-      max-width: 600px;
+      max-width: 650px;
       margin: auto;
     }
 
     h1 {
       text-align: center;
       color: #333;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     .section-title {
@@ -51,7 +51,7 @@
     }
 
     button {
-      margin-top: 30px;
+      margin-top: 25px;
       width: 100%;
       padding: 14px;
       border: none;
@@ -65,8 +65,58 @@
     button:hover {
       background: #5c80ff;
     }
-  </style>
 
+    #report-container {
+      margin-top: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      display: none;
+    }
+
+    .award-box {
+      border: 3px dashed #ffbf00;
+      background: #fff6d6;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 14px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .stars {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #ffa600;
+    }
+
+    #history {
+      margin-top: 35px;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+
+    #history h2 {
+      margin-bottom: 10px;
+    }
+
+    .history-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .inspo {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0b6623;
+      margin: 0.5rem 0;
+    }
+
+  </style>
 </head>
 <body>
 
@@ -109,11 +159,50 @@
 
   </div>
 
+  <button id="done">Done for Today</button>
   <button id="reset">Reset All</button>
+
+  <!-- Report -->
+  <div id="report-container"></div>
+
+  <!-- History -->
+  <div id="history">
+    <h2>Past Entries</h2>
+    <div id="history-list"></div>
+  </div>
 
   <script>
     const boxes = document.querySelectorAll("input[type='checkbox']");
     const resetBtn = document.getElementById("reset");
+    const doneBtn = document.getElementById("done");
+    const reportContainer = document.getElementById("report-container");
+    const historyList = document.getElementById("history-list");
+
+    const quotes = [
+      "You showed up today — that’s huge.",
+      "Small steps grow into big changes.",
+      "You are moving forward — keep going.",
+      "Your effort today matters.",
+      "Be proud of any progress today.",
+      "You are stronger than you think.",
+      "Tomorrow is another chance.",
+      "Believe in quiet consistency.",
+      "You cared for yourself today — well done.",
+      "One day at a time — you’re doing it."
+    ];
+
+    const wellbeingQuotes = [
+      "You cared for your future self today — that’s an act of real self-compassion.",
+      "The way you showed up today shows strength in your heart, not just your mind.",
+      "You listened to your wellbeing and still made progress. That balance is beautiful.",
+      "Even on busy days, choosing one small action is an act of hope. You chose hope today.",
+      "Your effort today wasn’t just productivity — it was kindness toward yourself.",
+      "Be proud of the way you honoured your energy and still moved forward.",
+      "You made space for growth today. That’s healing as much as it is progress.",
+      "What you did today matters — your wellbeing and your goals both deserve this care.",
+      "You showed gentle discipline today, and it’s building something steady inside you.",
+      "Your pace is perfect. The way you kept going today shows courage and self-trust."
+    ];
 
     // Load saved state
     boxes.forEach(box => {
@@ -126,12 +215,121 @@
       });
     });
 
-    // Reset all
+    // Reset
     resetBtn.addEventListener("click", () => {
       boxes.forEach(box => {
         box.checked = false;
         localStorage.removeItem(box.dataset.id);
       });
+    });
+
+    // Load history list (supports legacy string entries and new object entries)
+    function loadHistory() {
+      historyList.innerHTML = "";
+      const entries = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
+
+      entries.forEach(e => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+
+        // Legacy string entry
+        if (typeof e === 'string') {
+          div.textContent = e;
+          historyList.appendChild(div);
+          return;
+        }
+
+        // New object entry: { date, completed, total, stars, unchecked }
+        const dateText = e.date || "(unknown date)";
+        const completed = typeof e.completed === 'number' ? e.completed : 0;
+        const total = typeof e.total === 'number' ? e.total : 0;
+        const stars = typeof e.stars === 'number' ? e.stars : 0;
+
+        let html = `<strong>${dateText}</strong> — Completed: ${completed}/${total} (${stars}★)`;
+
+        if (Array.isArray(e.unchecked) && e.unchecked.length > 0) {
+          html += '<p><strong>Remember — focus on these tomorrow:</strong></p><ul>';
+          e.unchecked.forEach(item => {
+            html += `<li>${item}</li>`;
+          });
+          html += '</ul>';
+        } else {
+          // Use saved message if present, otherwise fallback to a fixed success text
+          const msg = e.message || 'Awesome work 100%';
+          html += `<p class="inspo">${msg}</p>`;
+        }
+
+        div.innerHTML = html;
+        historyList.appendChild(div);
+      });
+    }
+    loadHistory();
+
+    // Done for Today
+    doneBtn.addEventListener("click", () => {
+      const unchecked = [];
+      boxes.forEach(box => {
+        if (!box.checked) {
+          const label = box.parentElement.querySelector("label").textContent;
+          unchecked.push(label);
+        }
+      });
+
+      const total = boxes.length;
+      const completed = total - unchecked.length;
+      const quote = quotes[Math.floor(Math.random() * quotes.length)];
+      const today = new Date().toLocaleDateString();
+
+      // If everything completed, pick and persist a wellbeing quote for this entry
+      let savedMessage = null;
+      if (completed === total) {
+        savedMessage = wellbeingQuotes[Math.floor(Math.random() * wellbeingQuotes.length)] || 'Awesome work 100%';
+      }
+
+      // Calculate star rating (0-5) proportional to progress
+      const starsCount = total > 0 ? Math.round((completed / total) * 5) : 0;
+      const filled = "★".repeat(starsCount);
+      const empty = "☆".repeat(5 - starsCount);
+
+      const reportMessage = savedMessage || quote;
+
+      let reportHTML = `<h2>Daily Report – ${today}</h2>`;
+      reportHTML += `<p class="inspo">${reportMessage}</p>`;
+
+      reportHTML += `
+        <div class="award-box">
+          <div class="stars">${filled} ${empty}</div>
+          <div>Progress: ${completed}/${total} — ${starsCount} of 5 stars</div>
+        </div>
+      `;
+
+      if (unchecked.length > 0) {
+        reportHTML += `<p><strong>Working on:</strong></p><ul>`;
+        unchecked.forEach(item => {
+          reportHTML += `<li>${item}</li>`;
+        });
+        reportHTML += `</ul>`;
+      } else {
+        reportHTML += `<p>Everything ticked! Incredible work!</p>`;
+      }
+
+      reportContainer.innerHTML = reportHTML;
+      reportContainer.style.display = "block";
+
+      // Save detailed history entry (date, counts, stars, unchecked items, and optional message)
+      const entry = {
+        date: today,
+        completed: completed,
+        total: total,
+        stars: starsCount,
+        unchecked: unchecked,
+        message: savedMessage // may be null for partial days
+      };
+      const history = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
+      history.unshift(entry);
+      localStorage.setItem("dailyHistory", JSON.stringify(history));
+
+      loadHistory();
     });
   </script>
 
