@@ -6,39 +6,51 @@
     <title>Fun Menu</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
     <style>
-      /* Define Fun Color Palette */
+      /* Fun Color Palette */
       :root {
         --color-bg: #E0F7FA; /* Light Teal Background */
         --color-text: #37474F; /* Dark Slate Text */
       }
+
       body {
-        font-family: 'Fredoka', sans-serif; /* Fun, rounded font */
+        font-family: 'Fredoka', sans-serif;
         background-color: var(--color-bg);
         display: flex;
-        height: 100vh;
+        flex-direction: column; /* stack rows vertically */
         align-items: center;
         justify-content: center;
+        min-height: 100vh;
         margin: 0;
-        gap: 20px; /* Space between buttons */
+        gap: 25px; /* space between rows */
       }
+
+      .row {
+        display: flex;       /* buttons side by side */
+        gap: 20px;           /* space between buttons in a row */
+        flex-wrap: wrap;     /* wrap if screen is narrow */
+        justify-content: center;
+      }
+
       .btn {
-        font-size: 1.5rem; /* Larger font for fun */
+        font-size: 1.5rem;
         font-weight: 700;
         padding: 1.2rem 2.5rem;
         cursor: pointer;
         color: white;
-        border: 8px solid; /* Pretty border defined by color set below */
-        border-radius: 30px; /* Rounded corners */
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Soft shadow */
+        border: 8px solid;
+        border-radius: 30px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         transition: all 0.2s ease-in-out;
         text-transform: uppercase;
         letter-spacing: 1px;
       }
+
       .btn:hover {
-        transform: translateY(-5px) scale(1.05); /* Fun jump effect */
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
       }
-      /* 1. Red Button (Check List) */
+
+      /* Button Colors */
       .btn-red {
         background-color: #FF5252;
         border-color: #FF8A80;
@@ -47,7 +59,7 @@
         background-color: #F44336;
         border-color: white;
       }
-      /* 2. Green Button (Harry Potter) */
+
       .btn-green {
         background-color: #4CAF50;
         border-color: #A5D6A7;
@@ -56,26 +68,40 @@
         background-color: #43A047;
         border-color: white;
       }
-      /* 3. Blue Button (Sentence Builder) */
+
       .btn-blue {
-        background-color: #03A9F4; /* Blue */
-        border-color: #81D4FA; /* Light Blue */
+        background-color: #03A9F4;
+        border-color: #81D4FA;
       }
       .btn-blue:hover {
-        background-color: #0288D1; /* Darker Blue */
+        background-color: #0288D1;
         border-color: white;
+      }
+
+      @media (max-width: 500px) {
+        .btn {
+          font-size: 1.2rem;
+          padding: 1rem 2rem;
+        }
       }
     </style>
   </head>
   <body>
-<div><button class="btn btn-red" onclick="location.href='bex1.html'">Check List</button></div>
-<div>
-  <button class="btn btn-green" onclick="location.href='hp1.html'">Harry Potter 1</button>
-  <button class="btn btn-green" onclick="location.href='hp2.html'">Harry Potter 2</button>
-</div>
-<div>
-  <button class="btn btn-blue" onclick="location.href='vibecode1.html'">Vibe Code 1</button>
-  <button class="btn btn-blue" onclick="location.href='vibecode2.html'">Vibe Code 2</button>
-</div>
+    <!-- Single Button Row -->
+    <div class="row">
+      <button class="btn btn-red" onclick="location.href='bex1.html'">Check List</button>
+    </div>
+
+    <!-- Harry Potter Buttons Row -->
+    <div class="row">
+      <button class="btn btn-green" onclick="location.href='hp1.html'">Harry Potter 1</button>
+      <button class="btn btn-green" onclick="location.href='hp2.html'">Harry Potter 2</button>
+    </div>
+
+    <!-- Vibe Code Buttons Row -->
+    <div class="row">
+      <button class="btn btn-blue" onclick="location.href='vibecode1.html'">Vibe Code 1</button>
+      <button class="btn btn-blue" onclick="location.href='vibecode2.html'">Vibe Code 2</button>
+    </div>
   </body>
 </html>
