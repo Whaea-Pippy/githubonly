@@ -1,81 +1,75 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Fun Menu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
-    <style>
-      /* Define Fun Color Palette */
-      :root {
-        --color-bg: #E0F7FA; /* Light Teal Background */
-        --color-text: #37474F; /* Dark Slate Text */
-      }
-
-      body {
-        font-family: 'Fredoka', sans-serif; /* Fun, rounded font */
-        background-color: var(--color-bg);
-        display: flex;
-        height: 100vh;
-        align-items: center;
-        justify-content: center;
-        margin: 0;
-        gap: 20px; /* Space between buttons */
-      }
-
-      .btn {
-        font-size: 1.5rem; /* Larger font for fun */
-        font-weight: 700;
-        padding: 1.2rem 2.5rem;
-        cursor: pointer;
-        color: white;
-        border: 8px solid; /* Pretty border defined by color set below */
-        border-radius: 30px; /* Rounded corners */
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Soft shadow */
-        transition: all 0.2s ease-in-out;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-
-      .btn:hover {
-        transform: translateY(-5px) scale(1.05); /* Fun jump effect */
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
-      }
-
-      /* 1. Red Button (Check List) */
-      .btn-red {
-        background-color: #FF5252;
-        border-color: #FF8A80;
-      }
-      .btn-red:hover {
-        background-color: #F44336;
-        border-color: white;
-      }
-
-      /* 2. Green Button (Harry Potter) */
-      .btn-green {
-        background-color: #4CAF50;
-        border-color: #A5D6A7;
-      }
-      .btn-green:hover {
-        background-color: #43A047;
-        border-color: white;
-      }
-
-      /* 3. Blue Button (Sentence Builder) - NEW */
-      .btn-blue {
-        background-color: #03A9F4; /* Blue */
-        border-color: #81D4FA; /* Light Blue */
-      }
-      .btn-blue:hover {
-        background-color: #0288D1; /* Darker Blue */
-        border-color: white;
-      }
-
-    </style>
-  </head>
-  <body>
-    <button class="btn" onclick="location.href='bex1.html'">Check List</button>
-    <button class="btn" onclick="location.href='hp.html'">Harry Potter</button>
-  </body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fun Menu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+      /* Define Fun Color Palette */
+      :root {
+        --color-bg: #E0F7FA; /* Light Teal Background */
+        --color-text: #37474F; /* Dark Slate Text */
+      }
+      body {
+        font-family: 'Fredoka', sans-serif; /* Fun, rounded font */
+        background-color: var(--color-bg);
+        display: flex;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        gap: 20px; /* Space between buttons */
+      }
+      .btn {
+        font-size: 1.5rem; /* Larger font for fun */
+        font-weight: 700;
+        padding: 1.2rem 2.5rem;
+        cursor: pointer;
+        color: white;
+        border: 8px solid; /* Pretty border defined by color set below */
+        border-radius: 30px; /* Rounded corners */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Soft shadow */
+        transition: all 0.2s ease-in-out;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .btn:hover {
+        transform: translateY(-5px) scale(1.05); /* Fun jump effect */
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
+      }
+      /* 1. Red Button (Check List) */
+      .btn-red {
+        background-color: #FF5252;
+        border-color: #FF8A80;
+      }
+      .btn-red:hover {
+        background-color: #F44336;
+        border-color: white;
+      }
+      /* 2. Green Button (Harry Potter) */
+      .btn-green {
+        background-color: #4CAF50;
+        border-color: #A5D6A7;
+      }
+      .btn-green:hover {
+        background-color: #43A047;
+        border-color: white;
+      }
+      /* 3. Blue Button (Sentence Builder) */
+      .btn-blue {
+        background-color: #03A9F4; /* Blue */
+        border-color: #81D4FA; /* Light Blue */
+      }
+      .btn-blue:hover {
+        background-color: #0288D1; /* Darker Blue */
+        border-color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="btn btn-red" onclick="location.href='bex1.html'">Check List</button>
+    <button class="btn btn-green" onclick="location.href='hp.html'">Harry Potter</button>
+    <button class="btn btn-blue" onclick="location.href='vibecode.html'">Vibe Code</button>
+  </body>
 </html>
