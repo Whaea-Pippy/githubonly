@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="mi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hare Pota - Ngā Kupu Hou</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Color Palette based on Hare Pota (Night/Magic Theme) */
+  :root{
+    --o:#9E2A89; /* Primary: Deep Purple */
+    --lo:#C75CBB; /* Light Purple */
+    --r:#5C2A99; /* Accent: Dark Blue-Violet */
+    --e:#2A0A4B; /* Darkest: Near Black/Darkest Violet */
+    --c:#EBE6FF; /* Background: Pale Lavender */
+    --p:#DED7FF; /* Card Background: Lighter Lavender */
+    --k:#C1B6E6; /* Card Border: Medium Lilac */
+    --t:#2A0A4B; /* Text: Darkest Violet */
+  }
+  body{font-family:'Poppins',sans-serif;background:var(--c);color:var(--t);margin:0;padding:20px 10px;line-height:1.6}
+  .header{text-align:center;background:linear-gradient(135deg,var(--o),var(--r));color:white;padding:30px 15px;border-radius:18px;margin-bottom:30px;box-shadow:0 10px 25px rgba(0,0,0,.3)}
+  .header h1{margin:0;font-size:2.7rem}.authors{font-size:1.5rem;margin:8px 0}
+  .page-number{font-size:1.9rem;background:rgba(255,255,255,.3);padding:10px 35px;border-radius:50px;display:inline-block;margin-top:8px}
+  .section-buttons{display:flex;justify-content:center;gap:18px;margin:35px auto;flex-wrap:nowrap;overflow-x:auto;padding:10px 0}
+  .section-btn{flex:1;max-width:280px;padding:18px 8px;font-size:1.45rem;font-weight:600;color:white;background:var(--r);border:none;border-radius:14px;cursor:pointer;box-shadow:0 6px 15px rgba(0,0,0,.3);transition:all .3s;opacity:.7}
+  .section-btn:hover{opacity:.9;transform:translateY(-5px)}
+  .section-btn.active{opacity:1;background:#7D46CC !important;transform:scale(1.12);box-shadow:0 0 25px #C75CBB, 0 10px 20px rgba(0,0,0,0,.4) !important;font-weight:900;}
+  h3{color:var(--r);border-bottom:5px solid var(--o);padding-bottom:8px;margin:50px 0 25px;font-size:1.8rem}
+  #flashcards-section{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:30px 0}
+  .card{background:var(--k);height:135px;border:5px solid var(--e);border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:600;font-size:1.5rem;cursor:pointer;transition:.5s;box-shadow:0 5px 12px rgba(0,0,0,.25)}
+  .card.flipped{background:var(--o);color:white}
+  .quiz-options{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+  .quiz-options button{padding:15px;font-size:1.2rem;background:white;border:4px solid var(--e);border-radius:12px;cursor:pointer;font-weight:600;transition:transform 0.1s}
+  .quiz-options button:active{transform:scale(0.98);}
+  .matching-container{display:flex;gap:25px;margin-top:25px;flex-wrap:wrap}
+  .matching-box{flex:1;min-width:300px;background:white;border:4px dashed var(--e);border-radius:14px;padding:20px;min-height:340px}
+  .drag-item{background:var(--p);border:3px solid var(--e);margin:10px 0;padding:15px;border-radius:12px;text-align:center;font-weight:600;cursor:pointer;transition:background 0.3s}
+  .pair{background:var(--k);padding:12px;margin:8px;border-radius:10px;text-align:center;font-weight:bold;border-left:8px solid var(--o)}
+  #sentence-builder{background:white;padding:30px;border-radius:18px;border:6px solid var(--o);margin:50px 0;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+  .builder-sentence{background:#EBE6FF;padding:22px;border-radius:14px;margin-bottom:28px;border:2px solid #C1B6E6}
+  .english-prompt{font-size:1.5rem;font-weight:bold;color:var(--r);margin-bottom:16px}
+  .answer-area,.word-bank{min-height:80px;padding:16px;border:3px dashed var(--e);border-radius:12px;background:#FAFAFA;display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+  .word{background:#BE9FDC;color:var(--t);padding:11px 22px;border-radius:11px;cursor:grab;font-weight:600;user-select:none;transition:background 0.2s}
+  .word:hover{background:#A089D2}.word.in-answer{background:var(--r);color:white}
+  .builder-sentence.correct{background:#E6FFE6;border-left:12px solid #00AA00}
+  .footer{text-align:center;margin:70px 0 40px;font-size:1.2rem;color:#555}
+  @media(max-width:899px){#flashcards-section,.quiz-options{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:480px){.section-buttons{flex-direction:column;align-items:center}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Hare Pota</h1>
+  <div class="authors">Te Wāhanga Tuatahi – J.K. Rowling</div>
+  <div class="page-number">Whārangi <span id="page-num">9–10</span> – Ngā Kupu Hou</div>
+</div>
+
+<div class="section-buttons">
+  <button class="section-btn active" id="btn1" onclick="loadSection('s1')">1. Kupu Taketake</button>
+  <button class="section-btn" id="btn2" onclick="loadSection('s2')">2. Kākahu/Tū</button>
+  <button class="section-btn" id="btn3" onclick="loadSection('s3')">3. Mahi</button>
+  <button class="section-btn" id="btn4" onclick="loadSection('s4')">4. Rerenga Kōrero</button>
+</div>
+
+<h3>Ngā Kaari Kupu | Flashcards</h3><div id="flashcards-section"></div>
+<h3>Ngā Pātai | Quiz (Choose correct te reo)</h3><div id="quiz-section"></div>
+<h3>Tōpū Kupu | Matching Pairs</h3><div id="matched-pairs"></div><div id="matching-section"></div>
+<h3>Hanga Rerenga Kōrero | Sentence Builder</h3><div id="sentence-builder"><div id="sentences-container"></div></div>
+
+<div class="footer">Coded by your helpful AI assistant.</div>
+
+<script>
+// ─────── ONLY CHANGE THESE 4 BLOCKS FOR EVERY NEW PAGE ───────
+
+// 1. Page number & topic
+document.getElementById('page-num').textContent = "9–10";
+// The topic is already integrated into the header.
+
+// 2. Button names
+document.getElementById("btn1").textContent = "1. Kupu Taketake (Core)";
+document.getElementById("btn2").textContent = "2. Kākahu/Tū (App./Behav)";
+document.getElementById("btn3").textContent = "3. Mahi (Actions/Events)";
+document.getElementById("btn4").textContent = "4. Rerenga (Phrases)";
+
+
+// 3. 32 vocab pairs — numbered so quiz works perfectly
+const vocab = {
+  s1: [
+    ["tokorua","pair/couple"],["kāinga tuawhā","fourth home"],["pukapuka","book"],["pakihi hāngu hōrete","small, humble business"],
+    ["tēne nui","big tent / canvas"],["ruarangi","stage / platform"],["urukehu","fair-haired, light-skinned person"],["kiritata","close proximity"]
+  ],
+  s2: [
+    ["korokē","strange / odd"],["momo hāngu rorirori","simple, silly type"],["kākahu rerekē","different/strange clothes"],["tūpuni kānanapanapa","brightly shining cloak"],
+    ["haki hoki o te taiohi","strength/energy of youth"],["tū pāpata mai","to stand close/crowded together"],["e nganui mai ana","calling out / beckoning"],["toea poke parāoa","covered in flour dust/dirt"]
+  ],
+  s3: [
+    ["pītoitī","to perform a spectacle"],["tūhuraina","to explore / investigate"],["whakateka ai","to tell a lie / deceive"],["kore take","uselessness / lack of purpose"],
+    ["whakatōhae","to be jealous / envy"],["hikohihi pūtea ana","flashing/displaying their money"],["ka koke ngā waka","the vehicles are moving"],["hei hōkari","to entertain / amuse"]
+  ],
+  s4: [
+    ["i te wāwaia nei","just in time / at the moment"],["kore he uru ki te tokomaha","no entrance to the multitude"],["kia matimati ki te urungi","to cling closely to the helm"],["kāhui korokē e torohū ana","group of odd people lurking"],
+    ["te tauaro o te Tūhiritanga","the quarrel/dispute of the Tūhiritanga"],["wāeatanga hirahira","an important phone call"],["i te pō rānei","even at night"],["e muri noa iho ana","just following after"]
+  ]
+};
+
+// 4. 16 sentences — numbered so sentence builder works
+const sentences = {
+  s1: [
+    {en:"...he tokorua, he pakihi hāngu hōrete i te wā pea tēnei.",te:"he tokorua he pakihi hāngu hōrete i te wā pea tēnei"},
+    {en:"He hiamo ana tā rātou kōhimu.",te:"He hiamo ana tā rātou kōhimu"},
+    {en:"Ko Tētere rāua tāua tama ririki.",te:"Ko Tētere rāua tāua tama ririki"},
+    {en:"I tae atu ki te atata i te wāwaia nei.",te:"I tae atu ki te atata i te wāwaia nei"}
+  ],
+  s2: [
+    {en:"Ko Rirua hoki tētahi tokorua tino kore nei e uru ki ngā āhuatanga.",te:"Ko Rirua hoki tētahi tokorua tino kore nei e uru ki ngā āhuatanga"},
+    {en:"Momo hāngu rorirori ō te wā pea tēnei.",te:"Momo hāngu rorirori ō te wā pea tēnei"},
+    {en:"Ka pātōtō ōna matimati ki te urungi.",te:"Ka pātōtō ōna matimati ki te urungi"},
+    {en:"Tē nāku kite i tētahi ruru ahakoa i te pō rānei.",te:"Tē nāku kite i tētahi ruru ahakoa i te pō rānei"}
+  ],
+  s3: [
+    {en:"Ko Tētere rāua tama ririki, ā, ki tō rāua whakaaro, kāore he tama paruhi kē atu i a ia.",te:"Ko Tētere rāua tama ririki ā ki tō rāua whakaaro kāore he tama paruhi kē atu i a ia"},
+    {en:"Ngā wāeatanga hirahira i oti i a ia, ā, i hīparangi anō ia.",te:"Ngā wāeatanga hirahira i oti i a ia ā i hīparangi anō ia"},
+    {en:"Ka uaua ake pea tana arotahi ahakoa ki teā e ngā tāngata i raro.",te:"Ka uaua ake pea tana arotahi ahakoa ki teā e ngā tāngata i raro"},
+    {en:"E kore, e koikoi kē, e kore he pakeke noa ake tērā tāne i a ia.",te:"E kore e koikoi kē e kore he pakeke noa ake tērā tāne i a ia"}
+  ],
+  s4: [
+    {en:"He riri tonu tā Mita Tūhiri hōno tuarā atu ki te matapihi i tōna tari.",te:"He riri tonu tā Mita Tūhiri hōno tuarā atu ki te matapihi i tōna tari"},
+    {en:"Tōna hia pai hoki, engari nā te māramatanga.",te:"Tōna hia pai hoki engari nā te māramatanga"},
+    {en:"Mēnā kāore ia i pērā, ka uaua ake pea tana arotahi atu ki ngā tūwiri i taua ata.",te:"Mēnā kāore ia i pērā ka uaua ake pea tana arotahi atu ki ngā tūwiri i taua ata"},
+    {en:"Ko Mita Tūhiri tana kitenga ake kāore i te pērā rawa te taiohi o tētahi tokorua.",te:"Ko Mita Tūhiri tana kitenga ake kāore i te pērā rawa te taiohi o tētahi tokorua"}
+  ]
+};
+
+// ——————— DO NOT TOUCH BELOW ———————
+let currentWords = [], currentSentences = [];
+// Updated colors for a magical theme
+const colors = ['#8A2BE2','#4B0082','#9400D3','#C71585','#FF69B4','#DA70D6','#BA55D3','#9370DB'];
+
+function shuffle(a){return a.slice().sort(()=>Math.random()-0.5)}
+
+function loadSection(sec){
+  currentWords = shuffle([...vocab[sec]]);
+  currentSentences = sentences[sec];
+  document.querySelectorAll('.section-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn'+sec[1]).classList.add('active');
+  document.getElementById('matched-pairs').innerHTML='';
+  showFlashcards(); showQuiz(); showMatching(); showSentences();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showFlashcards(){
+  const c=document.getElementById('flashcards-section'); c.innerHTML='';
+  currentWords.forEach(p=>{
+    const d=document.createElement('div'); d.className='card'; d.textContent=p[0];
+    d.onclick=()=>{d.classList.toggle('flipped'); d.textContent=d.classList.contains('flipped')?p[1]:p[0]};
+    c.appendChild(d);
+  });
+}
+
+function showQuiz(){
+  const c=document.getElementById('quiz-section'); c.innerHTML='';
+  currentWords.forEach(p=>{
+    const q=document.createElement('div'); q.innerHTML=`<b>${p[1]}</b>`;
+    const o=document.createElement('div'); o.className='quiz-options';
+    const allTeReo=Object.values(vocab).flat().map(x=>x[0]);
+    const wrong=allTeReo.filter(x=>x!==p[0]);
+    shuffle([p[0],...wrong.slice(0,3)]).forEach(ans=>{
+      const b=document.createElement('button'); b.textContent=ans;
+      b.onclick=()=>{b.style.background=ans===p[0]?'#C8E6C9':'#FFCDD2'; o.querySelectorAll('button').forEach(x=>x.disabled=true)};
+      o.appendChild(b);
+    });
+    q.appendChild(o); c.appendChild(q);
+  });
+}
+
+function showMatching(){
+  const s=document.getElementById('matching-section'), m=document.getElementById('matched-pairs');
+  s.innerHTML=''; m.innerHTML='';
+  const w=document.createElement('div'); w.className='matching-container';
+  const l=document.createElement('div'); l.className='matching-box';
+  const r=document.createElement('div'); r.className='matching-box';
+  w.append(l,r); s.appendChild(w);
+  const left=currentWords.map(p=>p[0]), right=shuffle(currentWords.map(p=>p[1]));
+  let first=null;
+  [...left,...right].forEach((word,i)=>{
+    const b=document.createElement('div'); b.className='drag-item'; b.textContent=word; b.dataset.word=word;
+    (i<8?l:r).appendChild(b);
+    b.onclick=function(){
+      if(this.style.backgroundColor)return;
+      if(!first){first=this; this.style.border='6px solid var(--o)'}else{
+        const L=first.parentElement===l?first.dataset.word:this.dataset.word;
+        const R=first.parentElement===r?first.dataset.word:this.dataset.word;
+        const ok=currentWords.some(p=>p[0]===L && p[1]===R);
+        if(ok){
+          const col=colors[m.children.length%8];
+          [first,this].forEach(e=>{e.style.backgroundColor=col;e.style.border='none';e.onclick=null});
+          const p=document.createElement('div'); p.className='pair'; p.style.backgroundColor=col; p.style.borderLeftColor=col;
+          p.innerHTML=`${L} to ${R}`; m.appendChild(p);
+        }else{
+          [first,this].forEach(e=>e.style.border='6px solid red');
+          setTimeout(()=>{[first,this].forEach(e=>e.style.border='3px solid var(--e)');},800);
+        }
+        first=null;
+      }
+    };
+  });
+}
+
+function showSentences(){
+  const c=document.getElementById('sentences-container'); c.innerHTML='';
+  currentSentences.forEach(i=>{
+    const d=document.createElement('div'); d.className='builder-sentence';
+    d.innerHTML=`<div class="english-prompt">${i.en}</div><div class="answer-area"></div><div class="word-bank"></div>`;
+    c.appendChild(d);
+    const words=i.te.trim().split(/\s+/);
+    const bank=d.querySelector('.word-bank');
+    shuffle(words).forEach(w=>{
+      const s=document.createElement('span'); s.className='word'; s.textContent=w;
+      s.onclick=()=>{
+        if(s.parentElement===bank){
+          d.querySelector('.answer-area').appendChild(s); s.classList.add('in-answer');
+        }else{
+          bank.appendChild(s); s.classList.remove('in-answer');
+        }
+        const ans=Array.from(d.querySelectorAll('.answer-area .word')).map(x=>x.textContent);
+        d.classList.toggle('correct',ans.length===words.length && ans.every((v,j)=>v===words[j]));
+      };
+      bank.appendChild(s);
+    });
+  });
+}
+
+loadSection('s1');
+</script>
+<div style="text-align:center; margin:40px 0;">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/eXb1V4oO72U?si=2vE8Yf0fW8c22i9O" title="Māori Pronunciation Guide" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+<div style="text-align:center; margin-top:20px;">
+  <a href="https://github.com/Whaea-Pippy/GAME-DEVELOPMENT/blob/main/KumiKupu_code/mah_template.html" target="_blank" style="display: inline-block; background-color: #9E2A89; color: white; padding: 15px 30px; text-decoration: none; font-size: 1.5rem; border-radius: 10px; font-family: 'Poppins', sans-serif;">Link to Code Template</a>
+</div>
+</body>
+</html>
