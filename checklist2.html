@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AI Learning Checklist for Teachers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f0f6ff;
+      padding: 20px;
+      max-width: 650px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-top: 25px;
+      color: #333;
+    }
+
+    .item {
+      background: white;
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    label {
+      font-size: 16px;
+      flex: 1;
+      padding-right: 10px;
+    }
+
+    input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #7c9cff;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #5c80ff;
+    }
+
+    #report-container {
+      margin-top: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      display: none;
+    }
+
+    .award-box {
+      border: 3px dashed #ffbf00;
+      background: #fff6d6;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 14px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .stars {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #ffa600;
+    }
+
+    #history {
+      margin-top: 35px;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+
+    #history h2 {
+      margin-bottom: 10px;
+    }
+
+    .history-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .inspo {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0b6623;
+      margin: 0.5rem 0;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>AI Learning Checklist for Teachers</h1>
+
+  <div id="checklist">
+
+    <!-- Discover -->
+    <div class="section-title">🔍 Discover</div>
+    <div class="item"><label>Read about AI in education</label><input type="checkbox" data-id="read_ai_edu"></div>
+    <div class="item"><label>Explore AI tools like ChatGPT & Co.</label><input type="checkbox" data-id="explore_tools"></div>
+    <div class="item"><label>Watch tutorial videos on AI basics</label><input type="checkbox" data-id="watch_videos"></div>
+    <div class="item"><label>Understand AI ethics & privacy</label><input type="checkbox" data-id="ai_ethics"></div>
+
+    <!-- Try -->
+    <div class="section-title">🧪 Try</div>
+    <div class="item"><label>Create a sample lesson using AI prompts</label><input type="checkbox" data-id="sample_lesson"></div>
+    <div class="item"><label>Experiment with AI quiz generation</label><input type="checkbox" data-id="ai_quiz"></div>
+    <div class="item"><label>Test AI text-to-image tools</label><input type="checkbox" data-id="ai_image"></div>
+    <div class="item"><label>Deploy a small AI demo on GitHub</label><input type="checkbox" data-id="github_deploy"></div>
+
+    <!-- Terms to Know -->
+    <div class="section-title">📚 Terms to Know</div>
+    <div class="item"><label>GitHub</label><input type="checkbox" data-id="term_github"></div>
+    <div class="item"><label>Prompt Engineering</label><input type="checkbox" data-id="term_prompt"></div>
+    <div class="item"><label>LLM (Large Language Model)</label><input type="checkbox" data-id="term_llm"></div>
+    <div class="item"><label>API & Integration</label><input type="checkbox" data-id="term_api"></div>
+
+    <!-- Reflection -->
+    <div class="section-title">💡 Reflection</div>
+    <div class="item"><label>Write notes on what worked</label><input type="checkbox" data-id="notes_worked"></div>
+    <div class="item"><label>Identify challenges</label><input type="checkbox" data-id="notes_challenges"></div>
+    <div class="item"><label>Plan next steps</label><input type="checkbox" data-id="notes_next"></div>
+
+  </div>
+
+  <button id="done">Done for Today</button>
+  <button id="reset">Reset All</button>
+
+  <div id="report-container"></div>
+
+  <div id="history">
+    <h2>Past Entries</h2>
+    <div id="history-list"></div>
+  </div>
+
+  <script>
+    const boxes = document.querySelectorAll("input[type='checkbox']");
+    const resetBtn = document.getElementById("reset");
+    const doneBtn = document.getElementById("done");
+    const reportContainer = document.getElementById("report-container");
+    const historyList = document.getElementById("history-list");
+
+    const quotes = [
+      "You explored AI today — that’s awesome!",
+      "Small steps in AI grow big understanding.",
+      "Every experiment helps you learn more.",
+      "Your effort today matters.",
+      "Keep curiosity alive!",
+      "You are stronger in digital skills than you think.",
+      "Tomorrow is another chance to explore.",
+      "Learning AI is a journey — well done today!",
+      "Your curiosity today is powering tomorrow.",
+      "One step at a time — great progress!"
+    ];
+
+    const wellbeingQuotes = [
+      "You mastered today’s AI tasks — fantastic work!",
+      "Your experimentation today shows courage and creativity.",
+      "You made space for AI learning and reflection today.",
+      "Exploring AI today was an act of professional growth.",
+      "You showed initiative and curiosity in AI learning.",
+      "Today you invested in your future skills — well done!",
+      "AI learning today contributes to your teaching excellence.",
+      "Your progress with AI today is real and meaningful.",
+      "Every tick shows your commitment to learning.",
+      "Your pace is perfect — keep exploring!"
+    ];
+
+    // Load saved state
+    boxes.forEach(box => {
+      const id = box.dataset.id;
+      const saved = localStorage.getItem(id);
+      if (saved === "true") box.checked = true;
+
+      box.addEventListener("change", () => {
+        localStorage.setItem(id, box.checked);
+      });
+    });
+
+    // Reset
+    resetBtn.addEventListener("click", () => {
+      boxes.forEach(box => {
+        box.checked = false;
+        localStorage.removeItem(box.dataset.id);
+      });
+    });
+
+    function loadHistory() {
+      historyList.innerHTML = "";
+      const entries = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
+
+      entries.forEach(e => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+
+        const dateText = e.date || "(unknown date)";
+        const completed = typeof e.completed === 'number' ? e.completed : 0;
+        const total = typeof e.total === 'number' ? e.total : 0;
+        const stars = typeof e.stars === 'number' ? e.stars : 0;
+
+        let html = `<strong>${dateText}</strong> — Completed: ${completed}/${total} (${stars}★)`;
+
+        if (Array.isArray(e.unchecked) && e.unchecked.length > 0) {
+          html += '<p><strong>Focus on these next:</strong></p><ul>';
+          e.unchecked.forEach(item => {
+            html += `<li>${item}</li>`;
+          });
+          html += '</ul>';
+        } else {
+          const msg = e.message || 'Awesome work 100%';
+          html += `<p class="inspo">${msg}</p>`;
+        }
+
+        div.innerHTML = html;
+        historyList.appendChild(div);
+      });
+    }
+    loadHistory();
+
+    // Done for Today
+    doneBtn.addEventListener("click", () => {
+      const unchecked = [];
+      boxes.forEach(box => {
+        if (!box.checked) {
+          const label = box.parentElement.querySelector("label").textContent;
+          unchecked.push(label);
+        }
+      });
+
+      const total = boxes.length;
+      const completed = total - unchecked.length;
+      const quote = quotes[Math.floor(Math.random() * quotes.length)];
+      const today = new Date().toLocaleDateString();
+
+      let savedMessage = null;
+      if (completed === total) {
+        savedMessage = wellbeingQuotes[Math.floor(Math.random() * wellbeingQuotes.length)] || 'Excellent work!';
+      }
+
+      const starsCount = total > 0 ? Math.round((completed / total) * 5) : 0;
+      const filled = "★".repeat(starsCount);
+      const empty = "☆".repeat(5 - starsCount);
+
+      const reportMessage = savedMessage || quote;
+
+      let reportHTML = `<h2>Daily Report – ${today}</h2>`;
+      reportHTML += `<p class="inspo">${reportMessage}</p>`;
+
+      reportHTML += `
+        <div class="award-box">
+          <div class="stars">${filled} ${empty}</div>
+          <div>Progress: ${completed}/${total} — ${starsCount} of 5 stars</div>
+        </div>
+      `;
+
+      if (unchecked.length > 0) {
+        reportHTML += `<p><strong>Next focus:</strong></p><ul>`;
+        unchecked.forEach(item => {
+          reportHTML += `<li>${item}</li>`;
+        });
+        reportHTML += `</ul>`;
+      } else {
+        reportHTML += `<p>All tasks completed! Fantastic work!</p>`;
+      }
+
+      reportContainer.innerHTML = reportHTML;
+      reportContainer.style.display = "block";
+
+      const entry = {
+        date: today,
+        completed: completed,
+        total: total,
+        stars: starsCount,
+        unchecked: unchecked,
+        message: savedMessage
+      };
+      const history = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
+      history.unshift(entry);
+      localStorage.setItem("dailyHistory", JSON.stringify(history));
+
+      loadHistory();
+    });
+  </script>
+
+</body>
+</html>
