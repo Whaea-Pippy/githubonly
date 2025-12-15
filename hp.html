@@ -111,49 +111,50 @@ document.getElementById("btn3").textContent = "3. Mahi (Actions/Events)";
 document.getElementById("btn4").textContent = "4. Rerenga (Phrases)";
 // 3. 32 vocab pairs — numbered so quiz works perfectly
 const vocab = {
-  s1: [
-    ["tokorua","pair/couple"],["kāinga tuawhā","fourth home"],["pukapuka","book"],["pakihi hāngu hōrete","small, humble business"],
-    ["tēne nui","big tent / canvas"],["ruarangi","stage / platform"],["urukehu","fair-haired, light-skinned person"],["kiritata","close proximity"]
-  ],
-  s2: [
-    ["korokē","strange / odd"],["momo hāngu rorirori","simple, silly type"],["kākahu rerekē","different/strange clothes"],["tūpuni kānanapanapa","brightly shining cloak"],
-    ["haki hoki o te taiohi","strength/energy of youth"],["tū pāpata mai","to stand close/crowded together"],["e nganui mai ana","calling out / beckoning"],["toea poke parāoa","covered in flour dust/dirt"]
-  ],
-  s3: [
-    ["pītoitī","to perform a spectacle"],["tūhuraina","to explore / investigate"],["whakateka ai","to tell a lie / deceive"],["kore take","uselessness / lack of purpose"],
-    ["whakatōhae","to be jealous / envy"],["hikohihi pūtea ana","flashing/displaying their money"],["ka koke ngā waka","the vehicles are moving"],["hei hōkari","to entertain / amuse"]
-  ],
-  s4: [
-    ["i te wāwaia nei","just in time / at the moment"],["kore he uru ki te tokomaha","no entrance to the multitude"],["kia matimati ki te urungi","to cling closely to the helm"],["kāhui korokē e torohū ana","group of odd people lurking"],
-    ["te tauaro o te Tūhiritanga","the quarrel/dispute of the Tūhiritanga"],["wāeatanga hirahira","an important phone call"],["i te pō rānei","even at night"],["e muri noa iho ana","just following after"]
-  ]
+  s1: [
+    ["tokorua","pair/couple"],["kāinga tuawhā","fourth home"],["pukapuka","book"],["pakihi hāngu hōrete","small, humble business"],
+    ["tēne nui","big tent / canvas"],["ruarangi","stage / platform"],["urukehu","fair-haired, light-skinned person"],["kiritata","close proximity"]
+  ],
+  s2: [
+    ["kākahu rerekē","different/strange clothes"],["tūpuni kānanapanapa","brightly shining cloak"],["haki hoki o te taiohi","strength/energy of youth"],["momo hāngu rorirori","simple, silly type"],
+    ["hīparangi","to be elated / joyful"],["pītoitī","to perform a spectacle"],["toea poke parāoa","covered in flour dust/dirt"],["whakateka ai","to tell a lie / deceive"]
+  ],
+  s3: [
+    ["tūhuraina","to explore / investigate"],["kore take","uselessness / lack of purpose"],["whakatōhae","to be jealous / envy"],["hikohihi pūtea ana","flashing/displaying their money"],
+    ["ka koke ngā waka","the vehicles are moving"],["i te wāwaia nei","just in time / at the moment"],["koikoi","to be sharp / worth it"],["hei hōkari","to entertain / amuse"]
+  ],
+  s4: [
+    ["kore he uru ki te tokomaha","no entrance to the multitude"],["kia matimati ki te urungi","to cling closely to the helm"],["kāhui korokē e torohū ana","group of odd people lurking"],["tauaro","quarrel/dispute"],
+    ["wāeatanga hirahira","an important phone call"],["i te pō rānei","even at night"],["e muri noa iho ana","just following after"],["atata","door / threshold"]
+  ]
 };
-// 4. 16 sentences
+// 4. 16 sentences — Corrected from Source Pages 9 & 10
 const sentences = {
-  s1: [
-    {en:"...a couple, a small, humble business, perhaps at this time.",te:"he tokorua he pakihi hāngu hōrete i te wā pea tēnei"},
-    {en:"Their whispering was exciting/thrilling.",te:"He hiamo ana tā rātou kōhimu"},
-    {en:"Ko Tētere and his small children.",te:"Ko Tētere rāua tāua tama ririki"},
-    {en:"They arrived at the door just in time.",te:"I tae atu ki te atata i te wāwaia nei"}
-  ],
-  s2: [
-    {en:"Rirua was also a couple who were not involved in the circumstances.",te:"Ko Rirua hoki tētahi tokorua tino kore nei e uru ki ngā āhuatanga"},
-    {en:"A simple, silly type at this time perhaps.",te:"Momo hāngu rorirori ō te wā pea tēnei"},
-    {en:"His fingers knocked/tapped on the steering wheel.",te:"Ka pātōtō ōna matimati ki te urungi"},
-    {en:"It was not my seeing a shake/collapse, even if it was at night.",te:"Tē nāku kite i tētahi ruru ahakoa i te pō rānei"}
-  ],
-  s3: [
-    {en:"Ko Tētere and his small children, and in their opinion, there was no other child as worthless as he was.",te:"Ko Tētere rāua tāua tama ririki ā ki tō rāua whakaaro kāore he tama paruhi kē atu i a ia"},
-    {en:"The important phone calls were completed by him, and he was happy/elated.",te:"Ngā wāeatanga hirahira i oti i a ia ā i hīparangi anō ia"},
-    {en:"His focus will become more difficult perhaps despite the people below.",te:"Ka uaua ake pea tana arotahi ahakoa ki teā e ngā tāngata i raro"},
-    {en:"No, it is not worth it, he is not older than that man.",te:"E kore e koikoi kē e kore he pakeke noa ake tērā tāne i a ia"}
-  ],
-  s4: [
-    {en:"Mita Tūhiri was still angry with his back to the window in his office.",te:"He riri tonu tā Mita Tūhiri hōno tuarā atu ki te matapihi i tōna tari"},
-    {en:"His excitement/thrill, but because of understanding.",te:"Tōna hia pai hoki engari nā te māramatanga"},
-    {en:"If he wasn't like that, his focus on the turnstiles would be more difficult that morning.",te:"Mēnā kāore ia i pērā ka uaua ake pea tana arotahi atu ki ngā tūwiri i taua ata"},
-    {en:"Mita Tūhiri's seeing it was not as much as the youth of a certain couple.",te:"Ko Mita Tūhiri tana kitenga ake kāore i te pērā rawa te taiohi o tētahi tokorua"}
-  ]
+  s1: [
+    {en:"He arrived from the fourth home.",te:"I tae mai ia i te kāinga tuawhā"},
+    {en:"The fair-haired person arrived at the stage.",te:"I tae mai te urukehu ki te ruarangi"},
+    {en:"They were a couple who were not involved in the circumstances.",te:"Ko rāua hoki tētahi tokorua kore nei e uru ki ngā āhuatanga"},
+    {en:"Their whispering was exciting/thrilling.",te:"He hiamo ana tā rātou kōhimu"}
+  ],
+  s2: [
+    {en:"They stood close to the canvas.",te:"I tū rātou pāpata mai ki te tēne nui"},
+    {en:"They were a group of odd people lurking.",te:"He kāhui korokē rātou e torohū ana"},
+    {en:"The simple, silly type was at this time perhaps.",te:"He momo hāngu rorirori ō te wā pea tēnei"},
+    {en:"They performed a spectacle to entertain.",te:"I pītoitī rātou hei hōkari"}
+  ],
+  s3: [
+    {en:"The vehicles are moving in the morning.",te:"Ka koke ngā waka i taua ata"},
+    {en:"He will inform everyone about the quarrel/dispute.",te:"Ka whakamōhio ia ki te katoa mō te tauaro"},
+    {en:"The important phone calls were completed by him.",te:"Ngā wāeatanga hirahira i oti i a ia"},
+    {en:"He will be elated because of the money.",te:"Ka hīparangi ia nā te pūtea"}
+  ],
+  s4: [
+    {en:"There was no other child as worthless as he was.",te:"Kāore he tama paruhi kē atu i a ia"},
+    {en:"The clothes were strange, not a shining cloak.",te:"He kākahu rerekē tē tūpuni kānanapanapa"},
+    {en:"He was covered in flour dust/dirt.",te:"I toea ia poke parāoa"},
+    {en:"He arrived at the door just in time.",te:"I tae atu ia ki te atata i te wāwaia nei"}
+  ]
+};
 };
 // ——————— DO NOT TOUCH BELOW ———————
 let currentWords = [], currentSentences = [];
