@@ -1,16 +1,66 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Index</title>
-    <style>
-      body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; display:flex; height:100vh; align-items:center; justify-content:center; margin:0; }
-      .btn { font-size:1rem; padding:0.75rem 1.25rem; cursor:pointer; }
-    </style>
-  </head>
-  <body>
-    <button class="btn" onclick="location.href='bex1.html'">Open bex1.html</button>
-    <button class="btn" onclick="location.href='bex2.html'">Open bex2.html</button>
-  </body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fun Menu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+      /* Define Fun Color Palette */
+      :root {
+        --color-bg: #E0F7FA; /* Light Teal Background */
+        --color-btn: #FF5252; /* Primary Red Button */
+        --color-text: #37474F; /* Dark Slate Text */
+        --color-border: #FF8A80; /* Light Red Border */
+        --color-hover: #F44336; /* Darker Red Hover */
+        --color-shadow: rgba(244, 67, 54, 0.4);
+      }
+
+      body {
+        font-family: 'Fredoka', sans-serif; /* Fun, rounded font */
+        background-color: var(--color-bg);
+        display: flex;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        gap: 20px; /* Space between buttons */
+      }
+
+      .btn {
+        font-size: 1.5rem; /* Larger font for fun */
+        font-weight: 700;
+        padding: 1.2rem 2.5rem;
+        cursor: pointer;
+        color: white;
+        background-color: var(--color-btn);
+        border: 8px solid var(--color-border); /* Pretty border */
+        border-radius: 30px; /* Rounded corners */
+        box-shadow: 0 10px 20px var(--color-shadow); /* Soft shadow */
+        transition: all 0.2s ease-in-out;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .btn:hover {
+        background-color: var(--color-hover);
+        border-color: white; /* Border changes color on hover */
+        transform: translateY(-5px) scale(1.05); /* Fun jump effect */
+        box-shadow: 0 15px 30px var(--color-shadow); /* Deeper shadow on hover */
+      }
+
+      /* Specific style for the second button to add variety */
+      .btn:nth-child(2) {
+        --color-btn: #4CAF50; /* Green Button */
+        --color-border: #A5D6A7; /* Light Green Border */
+        --color-hover: #43A047; /* Darker Green Hover */
+        --color-shadow: rgba(76, 175, 80, 0.4);
+      }
+
+    </style>
+  </head>
+  <body>
+    <button class="btn" onclick="location.href='bex1.html'">Check List</button>
+    <button class="btn" onclick="location.href='hp.html'">Harry Potter</button>
+  </body>
 </html>
