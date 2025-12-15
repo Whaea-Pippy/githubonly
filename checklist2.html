@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>AI Learning Checklist for Teachers</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
     body {
       font-family: "Poppins", sans-serif;
@@ -12,157 +11,168 @@
       padding: 20px;
       max-width: 650px;
       margin: auto;
+      line-height: 1.5;
     }
-
     h1 {
       text-align: center;
       color: #333;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      font-size: 24px;
     }
-
     .section-title {
       font-size: 20px;
       font-weight: 600;
-      margin-top: 25px;
+      margin: 35px 0 15px;
       color: #333;
     }
-
     .item {
       background: white;
-      padding: 12px 15px;
-      margin: 10px 0;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      position: relative;
+      padding: 15px;
+      margin: 12px 0;
+      border-radius: 14px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      transition: all 0.2s ease;
     }
-
+    .item:hover {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+    }
     .label-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      width: 100%;
     }
-
     label {
       font-size: 16px;
       flex: 1;
-      cursor: default;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
     }
-
+    .has-info label::after {
+      content: " ⓘ";
+      margin-left: 8px;
+      font-size: 14px;
+      color: #666;
+      opacity: 0.7;
+    }
     input[type="checkbox"] {
       width: 22px;
       height: 22px;
       cursor: pointer;
-      margin-left: 10px;
+      margin-left: 12px;
+      accent-color: #7c9cff;
     }
-
-    .info-btn {
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      font-size: 18px;
-      width: 36px;
-      height: 36px;
-      cursor: pointer;
-      margin-left: 10px;
-    }
-
     .info-text {
       display: none;
-      font-size: 1rem;
-      color: #333;
-      background: #e8f5e9;
-      padding: 10px;
-      margin-top: 8px;
+      font-size: 0.95rem;
+      color: #444;
+      background: #f5faff;
+      padding: 12px;
+      margin-top: 12px;
       border-radius: 10px;
+      border-left: 4px solid #7c9cff;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
     }
-
+    .info-text.show {
+      display: block;
+      opacity: 1;
+      max-height: 200px;
+      padding: 12px;
+    }
     textarea {
       width: 100%;
-      padding: 10px;
-      margin-top: 12px;
+      padding: 14px;
+      margin-top: 15px;
       border-radius: 12px;
-      border: 1px solid #ccc;
+      border: 1px solid #ddd;
       font-size: 16px;
       resize: vertical;
+      font-family: inherit;
     }
-
+    .buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+    }
     button {
-      margin-top: 25px;
-      width: 100%;
+      flex: 1;
       padding: 14px;
       border: none;
       border-radius: 12px;
       font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #done {
       background: #7c9cff;
       color: white;
-      cursor: pointer;
     }
-
-    button:hover {
+    #done:hover {
       background: #5c80ff;
     }
-
+    #reset {
+      background: #e0e0e0;
+      color: #333;
+    }
+    #reset:hover {
+      background: #c7c7c7;
+    }
     #report-container {
       margin-top: 30px;
       background: white;
       padding: 20px;
       border-radius: 16px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
       display: none;
     }
-
     .award-box {
       border: 3px dashed #ffbf00;
-      background: #fff6d6;
-      padding: 15px;
+      background: #fffbe6;
+      padding: 18px;
       margin-top: 15px;
       border-radius: 14px;
       text-align: center;
       font-weight: 600;
       font-size: 18px;
     }
-
     .stars {
-      font-size: 24px;
+      font-size: 28px;
       margin-bottom: 8px;
       color: #ffa600;
     }
-
     #history {
-      margin-top: 35px;
+      margin-top: 40px;
       background: #ffffff;
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
-
     #history h2 {
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      font-size: 18px;
     }
-
     .history-item {
-      padding: 8px 0;
-      border-bottom: 1px solid #ccc;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
     }
-
+    .history-item:last-child {
+      border-bottom: none;
+    }
     .inspo {
       font-size: 1.15rem;
       font-weight: 700;
       color: #0b6623;
-      margin: 0.5rem 0;
+      margin: 0.8rem 0;
     }
   </style>
 </head>
 <body>
-
 <h1>AI Learning Checklist for Teachers</h1>
-
 <div id="checklist">
-
   <!-- Discover Section -->
   <div class="section-title">🔍 Discover</div>
   <div class="item">
@@ -207,38 +217,30 @@
 
   <!-- Terms to Know Section -->
   <div class="section-title">📚 Terms to Know</div>
-
-  <div class="item">
+  <div class="item has-info">
     <div class="label-row">
-      <label>GitHub</label>
-      <button class="info-btn" onclick="toggleInfo(this)">ℹ️</button>
+      <label onclick="toggleInfo(this)">GitHub</label>
       <input type="checkbox" data-id="term_github">
     </div>
     <div class="info-text">A platform to store, share, and collaborate on code. Useful for deploying AI projects and tracking versions.</div>
   </div>
-
-  <div class="item">
+  <div class="item has-info">
     <div class="label-row">
-      <label>Prompt Engineering</label>
-      <button class="info-btn" onclick="toggleInfo(this)">ℹ️</button>
+      <label onclick="toggleInfo(this)">Prompt Engineering</label>
       <input type="checkbox" data-id="term_prompt">
     </div>
     <div class="info-text">Crafting effective instructions (prompts) for AI tools like ChatGPT to get the desired outputs.</div>
   </div>
-
-  <div class="item">
+  <div class="item has-info">
     <div class="label-row">
-      <label>LLM (Large Language Model)</label>
-      <button class="info-btn" onclick="toggleInfo(this)">ℹ️</button>
+      <label onclick="toggleInfo(this)">LLM (Large Language Model)</label>
       <input type="checkbox" data-id="term_llm">
     </div>
     <div class="info-text">AI models trained on huge amounts of text to understand and generate human-like language.</div>
   </div>
-
-  <div class="item">
+  <div class="item has-info">
     <div class="label-row">
-      <label>API & Integration</label>
-      <button class="info-btn" onclick="toggleInfo(this)">ℹ️</button>
+      <label onclick="toggleInfo(this)">API & Integration</label>
       <input type="checkbox" data-id="term_api">
     </div>
     <div class="info-text">Tools to connect AI services into apps, websites, or lessons programmatically.</div>
@@ -247,11 +249,12 @@
   <!-- Goal / Next Steps -->
   <div class="section-title">🎯 Goal / Next Steps</div>
   <textarea id="user-goal" placeholder="Write your goal or next steps for today..."></textarea>
-
 </div>
 
-<button id="done">Done for Today</button>
-<button id="reset">Reset All</button>
+<div class="buttons">
+  <button id="done">Done for Today</button>
+  <button id="reset">Reset All</button>
+</div>
 
 <div id="report-container"></div>
 
@@ -261,18 +264,19 @@
 </div>
 
 <script>
+  function toggleInfo(label) {
+    const item = label.closest('.item');
+    const infoDiv = item.querySelector('.info-text');
+    if (!infoDiv) return;
+    infoDiv.classList.toggle('show');
+  }
+
   const boxes = document.querySelectorAll("input[type='checkbox']");
   const resetBtn = document.getElementById("reset");
   const doneBtn = document.getElementById("done");
   const reportContainer = document.getElementById("report-container");
   const historyList = document.getElementById("history-list");
   const userGoal = document.getElementById("user-goal");
-
-  function toggleInfo(el) {
-    const infoDiv = el.parentElement.nextElementSibling;
-    if (!infoDiv) return;
-    infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
-  }
 
   // Load saved checkboxes
   boxes.forEach(box => {
@@ -292,12 +296,15 @@
 
   // Reset
   resetBtn.addEventListener("click", () => {
-    boxes.forEach(box => {
-      box.checked = false;
-      localStorage.removeItem(box.dataset.id);
-    });
-    userGoal.value = '';
-    localStorage.removeItem('userGoal');
+    if (confirm("Reset all progress?")) {
+      boxes.forEach(box => {
+        box.checked = false;
+        localStorage.removeItem(box.dataset.id);
+      });
+      userGoal.value = '';
+      localStorage.removeItem('userGoal');
+      document.querySelectorAll('.info-text').forEach(el => el.classList.remove('show'));
+    }
   });
 
   function loadHistory() {
@@ -333,7 +340,7 @@
     const unchecked = [];
     boxes.forEach(box => {
       if (!box.checked) {
-        const label = box.closest('.item').querySelector('label').textContent;
+        const label = box.closest('.item').querySelector('label').textContent.trim();
         unchecked.push(label);
       }
     });
@@ -343,13 +350,13 @@
     const filled = "★".repeat(starsCount);
     const empty = "☆".repeat(5 - starsCount);
     const today = new Date().toLocaleDateString();
-    const reportMessage = completed === total ? "All tasks completed! Excellent work!" : "Keep progressing!";
-
+    const reportMessage = completed === total ? "All tasks completed! Excellent work!" : "Great effort—keep progressing!";
+    
     let reportHTML = `<h2>Daily Report – ${today}</h2>`;
     reportHTML += `<p class="inspo">${reportMessage}</p>`;
     reportHTML += `
       <div class="award-box">
-        <div class="stars">${filled} ${empty}</div>
+        <div class="stars">${filled}${empty}</div>
         <div>Progress: ${completed}/${total} — ${starsCount} of 5 stars</div>
       </div>
     `;
@@ -371,16 +378,14 @@
       total: total,
       stars: starsCount,
       unchecked: unchecked,
-      goal: userGoal.value,
+      goal: userGoal.value.trim(),
       message: completed === total ? "Fantastic progress today!" : null
     };
     const history = JSON.parse(localStorage.getItem("aiChecklistHistory") || "[]");
     history.unshift(entry);
     localStorage.setItem("aiChecklistHistory", JSON.stringify(history));
-
     loadHistory();
   });
 </script>
-
 </body>
 </html>
