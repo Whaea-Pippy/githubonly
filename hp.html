@@ -101,6 +101,7 @@
     <button class="show-sentence-btn" onclick="toggleSentenceAnswers()">Show All Correct Sentences</button>
     <div id="sentence-answer-display"></div>
 </div>
+
 <div class="footer">Coded by your helpful AI assistant.</div>
 
 <script>
@@ -108,7 +109,6 @@
 
 // 1. Page number & topic
 document.getElementById('page-num').textContent = "9–10";
-// The topic is already integrated into the header.
 
 // 2. Button names
 document.getElementById("btn1").textContent = "1. Kupu Taketake (Core)";
@@ -167,8 +167,7 @@ const sentences = {
 
 // ——————— DO NOT TOUCH BELOW ———————
 let currentWords = [], currentSentences = [];
-let answerShown = false; // NEW: State variable for answer display
-// Updated colors for a magical theme
+let answerShown = false; 
 const colors = ['#8A2BE2','#4B0082','#9400D3','#C71585','#FF69B4','#DA70D6','#BA55D3','#9370DB'];
 
 function shuffle(a){return a.slice().sort(()=>Math.random()-0.5)}
@@ -181,7 +180,6 @@ function loadSection(sec){
   document.getElementById('matched-pairs').innerHTML='';
   showFlashcards(); showQuiz(); showMatching(); showSentences();
   window.scrollTo({top:0,behavior:'smooth'});
-  // Reset answer display when loading a new section
   answerShown = false;
   document.getElementById('sentence-answer-display').style.display = 'none';
   document.querySelector('.show-sentence-btn').textContent = 'Show All Correct Sentences';
@@ -269,20 +267,18 @@ function showSentences(){
   });
 }
 
-// 🔑 NEW FUNCTION: Toggles the display of correct sentences
 function toggleSentenceAnswers() {
   const displayArea = document.getElementById('sentence-answer-display');
   const button = document.querySelector('.show-sentence-btn');
   
   if (answerShown) {
-    // Hide answers
     displayArea.style.display = 'none';
     button.textContent = 'Show All Correct Sentences';
     answerShown = false;
   } else {
-    // Show answers
     let html = '<h4>Correct Sentences:</h4>';
     currentSentences.forEach((item, index) => {
+      // Using a standard div here and relying on the style sheet to remove Markdown issues.
       html += `<div class="correct-sentence-display" style="display:block; border-color:#9E2A89; color:#9E2A89;">`
           + `**${index + 1}.** ${item.te}`
           + `</div>`;
@@ -291,12 +287,17 @@ function toggleSentenceAnswers() {
     displayArea.style.display = 'block';
     button.textContent = 'Hide Correct Sentences';
     answerShown = true;
-    window.scrollTo({ top: displayArea.offsetTop - 50, behavior: 'smooth' }); // Scroll to view answers
+    window.scrollTo({ top: displayArea.offsetTop - 50, behavior: 'smooth' });
   }
 }
-// 🔑 END NEW FUNCTION
 
 loadSection('s1');
 </script>
+<div style="text-align:center; margin:40px 0;">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/eXb1V4oO72U?si=2vE8Yf0fW8c22i9O" title="Māori Pronunciation Guide" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+<div style="text-align:center; margin-top:20px;">
+  <a href="https://github.com/Whaea-Pippy/GAME-DEVELOPMENT/blob/main/KumiKupu_code/mah_template.html" target="_blank" style="display: inline-block; background-color: #9E2A89; color: white; padding: 15px 30px; text-decoration: none; font-size: 1.5rem; border-radius: 10px; font-family: 'Poppins', sans-serif;">Link to Code Template</a>
+</div>
 </body>
 </html>
