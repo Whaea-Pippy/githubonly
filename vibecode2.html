@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vibe Coding for Teachers – A Simple Guide</title>
+<title>Vibe Coding for Teachers – Simple Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -26,47 +26,83 @@ h1, h2 {
 
 .card {
   background: white;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 24px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-.step {
-  margin-bottom: 12px;
-}
-
-.checklist label {
-  display: block;
-  margin: 8px 0;
-  cursor: pointer;
-}
-
-input[type="checkbox"] {
-  margin-right: 8px;
-  transform: scale(1.2);
-}
-
-.flashcard {
-  background: #ede9fe;
-  border-radius: 16px;
-  padding: 30px;
-  text-align: center;
-  font-size: 1.2em;
-  cursor: pointer;
-  min-height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.flashcard:hover {
-  background: #ddd6fe;
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 26px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
 }
 
 .small {
   font-size: 0.9em;
   color: #555;
+}
+
+/* FLASHCARDS */
+
+.flashcard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.flashcard {
+  height: 180px;
+  position: relative;
+  cursor: pointer;
+  perspective: 1000px;
+}
+
+.flashcard-inner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 22px;
+  border-radius: 20px;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
+/* Card colours */
+.purple { background: #ede9fe; }
+.orange { background: #ffedd5; }
+.blue { background: #e0f2fe; }
+.green { background: #dcfce7; }
+
+/* CHECKLIST */
+
+.checklist label {
+  display: block;
+  margin: 10px 0;
+  cursor: pointer;
+  font-size: 1.05rem;
+}
+
+.checklist input {
+  margin-right: 10px;
+  transform: scale(1.2);
 }
 </style>
 </head>
@@ -75,73 +111,102 @@ input[type="checkbox"] {
 <div class="container">
 
 <h1>🎧 Vibe Coding for Teachers</h1>
-<p><strong>No coding background required.</strong>  
-This is about <em>ideas, curiosity, and creativity</em> — not syntax.</p>
+<p><strong>No coding background required.</strong><br>
+This is about ideas, curiosity, and creativity — not syntax.</p>
 
 <div class="card">
 <h2>What is Vibe Coding?</h2>
-<p>
-Vibe coding means:
-</p>
 <ul>
   <li>✨ You describe what you want</li>
-  <li>🤖 AI generates the code</li>
-  <li>🎨 You tweak the look, words, and learning focus</li>
+  <li>🤖 AI builds the code</li>
+  <li>🎨 You adjust words, colours, and learning focus</li>
 </ul>
-<p class="small">
-If you can explain a lesson idea, you can vibe code.
-</p>
 </div>
 
 <div class="card">
 <h2>Step-by-Step: How Teachers Vibe Code</h2>
-
-<div class="step">① Start with a teaching goal (not code)</div>
-<div class="step">② Describe the activity in normal teacher language</div>
-<div class="step">③ Ask AI to create the page or tool</div>
-<div class="step">④ Test it like a student would</div>
-<div class="step">⑤ Adjust wording, colours, or difficulty</div>
-<div class="step">⑥ Share or reuse next time</div>
-
+<ol>
+  <li>Start with a learning goal</li>
+  <li>Describe the activity in normal teacher language</li>
+  <li>Ask AI to create the page or tool</li>
+  <li>Test it like a student</li>
+  <li>Tweak wording, colours, or difficulty</li>
+  <li>Reuse and share</li>
+</ol>
 </div>
 
 <div class="card">
 <h2>What Do Teachers Create?</h2>
 <ul>
   <li>📚 Interactive flashcards</li>
-  <li>✅ Checklists for habits or routines</li>
-  <li>🧠 Quizzes and self-marking tasks</li>
-  <li>🎯 Revision tools for assessments</li>
+  <li>✅ Checklists and routines</li>
+  <li>🧠 Quizzes and revision tools</li>
   <li>🌈 Wellbeing and reflection pages</li>
-  <li>📱 Student-friendly learning websites</li>
+  <li>📱 Simple student-friendly websites</li>
 </ul>
 </div>
 
 <div class="card">
 <h2>Flashcards: Vibe Coding Concepts</h2>
-<p class="small">Click the card to flip it</p>
+<p class="small">Click any card to flip it</p>
 
-<div class="flashcard" id="flashcard">What is vibe coding?</div>
+<div class="flashcard-grid">
 
+  <div class="flashcard" onclick="flip(this)">
+    <div class="flashcard-inner">
+      <div class="flashcard-face purple">What is vibe coding?</div>
+      <div class="flashcard-face flashcard-back purple">
+        Explaining what you want and letting AI build it
+      </div>
+    </div>
+  </div>
+
+  <div class="flashcard" onclick="flip(this)">
+    <div class="flashcard-inner">
+      <div class="flashcard-face orange">Do I need to learn coding?</div>
+      <div class="flashcard-face flashcard-back orange">
+        No — focus on learning goals, not syntax
+      </div>
+    </div>
+  </div>
+
+  <div class="flashcard" onclick="flip(this)">
+    <div class="flashcard-inner">
+      <div class="flashcard-face blue">Who is this for?</div>
+      <div class="flashcard-face flashcard-back blue">
+        Teachers, students, and curious humans
+      </div>
+    </div>
+  </div>
+
+  <div class="flashcard" onclick="flip(this)">
+    <div class="flashcard-inner">
+      <div class="flashcard-face green">What matters most?</div>
+      <div class="flashcard-face flashcard-back green">
+        The student experience and clarity
+      </div>
+    </div>
+  </div>
+
+</div>
 </div>
 
 <div class="card">
 <h2>Teacher Vibe Coding Checklist</h2>
 
 <div class="checklist">
-<label><input type="checkbox"> I have a clear learning intention</label>
-<label><input type="checkbox"> I described my idea in plain language</label>
-<label><input type="checkbox"> I tested it as a student</label>
-<label><input type="checkbox"> I adjusted wording or difficulty</label>
-<label><input type="checkbox"> I reused or shared the tool</label>
+  <label><input type="checkbox"> I have a clear learning intention</label>
+  <label><input type="checkbox"> I described my idea in plain language</label>
+  <label><input type="checkbox"> I tested it as a student</label>
+  <label><input type="checkbox"> I adjusted wording or difficulty</label>
+  <label><input type="checkbox"> I reused or shared the tool</label>
 </div>
-
 </div>
 
 <div class="card">
-<h2>Try This Prompt (Copy & Paste)</h2>
+<h2>Try This Prompt</h2>
 <p class="small">
-“Create a simple, colourful webpage for my students with flashcards and a checklist about <em>[topic]</em>.  
+“Create a simple, colourful webpage with flashcards and a checklist about <strong>[topic]</strong>.
 Make it friendly, student-safe, and easy to use.”
 </p>
 </div>
@@ -149,24 +214,9 @@ Make it friendly, student-safe, and easy to use.”
 </div>
 
 <script>
-const cards = [
-  ["What is vibe coding?", "Explaining what you want and letting AI build it"],
-  ["Do I need to learn coding?", "No — focus on learning, not syntax"],
-  ["Who is this for?", "Teachers, students, and curious humans"],
-  ["What matters most?", "The learning goal and student experience"]
-];
-
-let cardIndex = 0;
-let flipped = false;
-const flashcard = document.getElementById("flashcard");
-
-flashcard.addEventListener("click", () => {
-  flipped = !flipped;
-  flashcard.textContent = flipped ? cards[cardIndex][1] : cards[cardIndex][0];
-  if (!flipped) {
-    cardIndex = (cardIndex + 1) % cards.length;
-  }
-});
+function flip(card) {
+  card.classList.toggle("flipped");
+}
 </script>
 
 </body>
