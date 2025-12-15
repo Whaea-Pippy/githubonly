@@ -9,11 +9,7 @@
       /* Define Fun Color Palette */
       :root {
         --color-bg: #E0F7FA; /* Light Teal Background */
-        --color-btn: #FF5252; /* Primary Red Button */
         --color-text: #37474F; /* Dark Slate Text */
-        --color-border: #FF8A80; /* Light Red Border */
-        --color-hover: #F44336; /* Darker Red Hover */
-        --color-shadow: rgba(244, 67, 54, 0.4);
       }
 
       body {
@@ -33,28 +29,47 @@
         padding: 1.2rem 2.5rem;
         cursor: pointer;
         color: white;
-        background-color: var(--color-btn);
-        border: 8px solid var(--color-border); /* Pretty border */
+        border: 8px solid; /* Pretty border defined by color set below */
         border-radius: 30px; /* Rounded corners */
-        box-shadow: 0 10px 20px var(--color-shadow); /* Soft shadow */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Soft shadow */
         transition: all 0.2s ease-in-out;
         text-transform: uppercase;
         letter-spacing: 1px;
       }
 
       .btn:hover {
-        background-color: var(--color-hover);
-        border-color: white; /* Border changes color on hover */
         transform: translateY(-5px) scale(1.05); /* Fun jump effect */
-        box-shadow: 0 15px 30px var(--color-shadow); /* Deeper shadow on hover */
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
       }
 
-      /* Specific style for the second button to add variety */
-      .btn:nth-child(2) {
-        --color-btn: #4CAF50; /* Green Button */
-        --color-border: #A5D6A7; /* Light Green Border */
-        --color-hover: #43A047; /* Darker Green Hover */
-        --color-shadow: rgba(76, 175, 80, 0.4);
+      /* 1. Red Button (Check List) */
+      .btn-red {
+        background-color: #FF5252;
+        border-color: #FF8A80;
+      }
+      .btn-red:hover {
+        background-color: #F44336;
+        border-color: white;
+      }
+
+      /* 2. Green Button (Harry Potter) */
+      .btn-green {
+        background-color: #4CAF50;
+        border-color: #A5D6A7;
+      }
+      .btn-green:hover {
+        background-color: #43A047;
+        border-color: white;
+      }
+
+      /* 3. Blue Button (Sentence Builder) - NEW */
+      .btn-blue {
+        background-color: #03A9F4; /* Blue */
+        border-color: #81D4FA; /* Light Blue */
+      }
+      .btn-blue:hover {
+        background-color: #0288D1; /* Darker Blue */
+        border-color: white;
       }
 
     </style>
