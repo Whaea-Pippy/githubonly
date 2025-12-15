@@ -57,10 +57,10 @@
 </div>
 
 <div class="section-buttons">
-  <button class="section-btn active" id="btn1" onclick="loadSection('s1')">1. Kupu Taketake</button>
-  <button class="section-btn" id="btn2" onclick="loadSection('s2')">2. Kākahu/Tū</button>
-  <button class="section-btn" id="btn3" onclick="loadSection('s3')">3. Mahi</button>
-  <button class="section-btn" id="btn4" onclick="loadSection('s4')">4. Rerenga Kōrero</button>
+  <button class="section-btn active" id="btn1" onclick="loadSection('s1')">1. Kupu Taketake (Core)</button>
+  <button class="section-btn" id="btn2" onclick="loadSection('s2')">2. Kākahu/Tū (App./Behav)</button>
+  <button class="section-btn" id="btn3" onclick="loadSection('s3')">3. Mahi (Actions/Events)</button>
+  <button class="section-btn" id="btn4" onclick="loadSection('s4')">4. Rerenga (Phrases)</button>
 </div>
 
 <h3>Ngā Kaari Kupu | Flashcards</h3><div id="flashcards-section"></div>
@@ -104,31 +104,31 @@ const vocab = {
   ]
 };
 
-// 4. 16 sentences — numbered so sentence builder works
+// 4. 16 sentences — numbered so sentence builder works (CORRECTED TRANSLATIONS)
 const sentences = {
   s1: [
-    {en:"...he tokorua, he pakihi hāngu hōrete i te wā pea tēnei.",te:"he tokorua he pakihi hāngu hōrete i te wā pea tēnei"},
-    {en:"He hiamo ana tā rātou kōhimu.",te:"He hiamo ana tā rātou kōhimu"},
-    {en:"Ko Tētere rāua tāua tama ririki.",te:"Ko Tētere rāua tāua tama ririki"},
-    {en:"I tae atu ki te atata i te wāwaia nei.",te:"I tae atu ki te atata i te wāwaia nei"}
+    {en:"...a couple, a small, humble business, perhaps at this time.",te:"he tokorua he pakihi hāngu hōrete i te wā pea tēnei"},
+    {en:"Their whispering was exciting/thrilling.",te:"He hiamo ana tā rātou kōhimu"},
+    {en:"Ko Tētere and his small children.",te:"Ko Tētere rāua tāua tama ririki"},
+    {en:"They arrived at the door just in time.",te:"I tae atu ki te atata i te wāwaia nei"}
   ],
   s2: [
-    {en:"Ko Rirua hoki tētahi tokorua tino kore nei e uru ki ngā āhuatanga.",te:"Ko Rirua hoki tētahi tokorua tino kore nei e uru ki ngā āhuatanga"},
-    {en:"Momo hāngu rorirori ō te wā pea tēnei.",te:"Momo hāngu rorirori ō te wā pea tēnei"},
-    {en:"Ka pātōtō ōna matimati ki te urungi.",te:"Ka pātōtō ōna matimati ki te urungi"},
-    {en:"Tē nāku kite i tētahi ruru ahakoa i te pō rānei.",te:"Tē nāku kite i tētahi ruru ahakoa i te pō rānei"}
+    {en:"Rirua was also a couple who were not involved in the circumstances.",te:"Ko Rirua hoki tētahi tokorua tino kore nei e uru ki ngā āhuatanga"},
+    {en:"A simple, silly type at this time perhaps.",te:"Momo hāngu rorirori ō te wā pea tēnei"},
+    {en:"His fingers knocked/tapped on the steering wheel.",te:"Ka pātōtō ōna matimati ki te urungi"},
+    {en:"It was not my seeing a shake/collapse, even if it was at night.",te:"Tē nāku kite i tētahi ruru ahakoa i te pō rānei"}
   ],
   s3: [
-    {en:"Ko Tētere rāua tama ririki, ā, ki tō rāua whakaaro, kāore he tama paruhi kē atu i a ia.",te:"Ko Tētere rāua tama ririki ā ki tō rāua whakaaro kāore he tama paruhi kē atu i a ia"},
-    {en:"Ngā wāeatanga hirahira i oti i a ia, ā, i hīparangi anō ia.",te:"Ngā wāeatanga hirahira i oti i a ia ā i hīparangi anō ia"},
-    {en:"Ka uaua ake pea tana arotahi ahakoa ki teā e ngā tāngata i raro.",te:"Ka uaua ake pea tana arotahi ahakoa ki teā e ngā tāngata i raro"},
-    {en:"E kore, e koikoi kē, e kore he pakeke noa ake tērā tāne i a ia.",te:"E kore e koikoi kē e kore he pakeke noa ake tērā tāne i a ia"}
+    {en:"Ko Tētere and his small children, and in their opinion, there was no other child as worthless as he was.",te:"Ko Tētere rāua tāua tama ririki ā ki tō rāua whakaaro kāore he tama paruhi kē atu i a ia"},
+    {en:"The important phone calls were completed by him, and he was happy/elated.",te:"Ngā wāeatanga hirahira i oti i a ia ā i hīparangi anō ia"},
+    {en:"His focus will become more difficult perhaps despite the people below.",te:"Ka uaua ake pea tana arotahi ahakoa ki teā e ngā tāngata i raro"},
+    {en:"No, it is not worth it, he is not older than that man.",te:"E kore e koikoi kē e kore he pakeke noa ake tērā tāne i a ia"}
   ],
   s4: [
-    {en:"He riri tonu tā Mita Tūhiri hōno tuarā atu ki te matapihi i tōna tari.",te:"He riri tonu tā Mita Tūhiri hōno tuarā atu ki te matapihi i tōna tari"},
-    {en:"Tōna hia pai hoki, engari nā te māramatanga.",te:"Tōna hia pai hoki engari nā te māramatanga"},
-    {en:"Mēnā kāore ia i pērā, ka uaua ake pea tana arotahi atu ki ngā tūwiri i taua ata.",te:"Mēnā kāore ia i pērā ka uaua ake pea tana arotahi atu ki ngā tūwiri i taua ata"},
-    {en:"Ko Mita Tūhiri tana kitenga ake kāore i te pērā rawa te taiohi o tētahi tokorua.",te:"Ko Mita Tūhiri tana kitenga ake kāore i te pērā rawa te taiohi o tētahi tokorua"}
+    {en:"Mita Tūhiri was still angry with his back to the window in his office.",te:"He riri tonu tā Mita Tūhiri hōno tuarā atu ki te matapihi i tōna tari"},
+    {en:"His excitement/thrill, but because of understanding.",te:"Tōna hia pai hoki engari nā te māramatanga"},
+    {en:"If he wasn't like that, his focus on the turnstiles would be more difficult that morning.",te:"Mēnā kāore ia i pērā ka uaua ake pea tana arotahi atu ki ngā tūwiri i taua ata"},
+    {en:"Mita Tūhiri's seeing it was not as much as the youth of a certain couple.",te:"Ko Mita Tūhiri tana kitenga ake kāore i te pērā rawa te taiohi o tētahi tokorua"}
   ]
 };
 
