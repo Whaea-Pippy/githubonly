@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe Coding for Teachers – A Simple Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f3f0ff, #fff7ed);
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+h1, h2 {
+  color: #5b21b6;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.step {
+  margin-bottom: 12px;
+}
+
+.checklist label {
+  display: block;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  margin-right: 8px;
+  transform: scale(1.2);
+}
+
+.flashcard {
+  background: #ede9fe;
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+  font-size: 1.2em;
+  cursor: pointer;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flashcard:hover {
+  background: #ddd6fe;
+}
+
+.small {
+  font-size: 0.9em;
+  color: #555;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🎧 Vibe Coding for Teachers</h1>
+<p><strong>No coding background required.</strong>  
+This is about <em>ideas, curiosity, and creativity</em> — not syntax.</p>
+
+<div class="card">
+<h2>What is Vibe Coding?</h2>
+<p>
+Vibe coding means:
+</p>
+<ul>
+  <li>✨ You describe what you want</li>
+  <li>🤖 AI generates the code</li>
+  <li>🎨 You tweak the look, words, and learning focus</li>
+</ul>
+<p class="small">
+If you can explain a lesson idea, you can vibe code.
+</p>
+</div>
+
+<div class="card">
+<h2>Step-by-Step: How Teachers Vibe Code</h2>
+
+<div class="step">① Start with a teaching goal (not code)</div>
+<div class="step">② Describe the activity in normal teacher language</div>
+<div class="step">③ Ask AI to create the page or tool</div>
+<div class="step">④ Test it like a student would</div>
+<div class="step">⑤ Adjust wording, colours, or difficulty</div>
+<div class="step">⑥ Share or reuse next time</div>
+
+</div>
+
+<div class="card">
+<h2>What Do Teachers Create?</h2>
+<ul>
+  <li>📚 Interactive flashcards</li>
+  <li>✅ Checklists for habits or routines</li>
+  <li>🧠 Quizzes and self-marking tasks</li>
+  <li>🎯 Revision tools for assessments</li>
+  <li>🌈 Wellbeing and reflection pages</li>
+  <li>📱 Student-friendly learning websites</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>Flashcards: Vibe Coding Concepts</h2>
+<p class="small">Click the card to flip it</p>
+
+<div class="flashcard" id="flashcard">What is vibe coding?</div>
+
+</div>
+
+<div class="card">
+<h2>Teacher Vibe Coding Checklist</h2>
+
+<div class="checklist">
+<label><input type="checkbox"> I have a clear learning intention</label>
+<label><input type="checkbox"> I described my idea in plain language</label>
+<label><input type="checkbox"> I tested it as a student</label>
+<label><input type="checkbox"> I adjusted wording or difficulty</label>
+<label><input type="checkbox"> I reused or shared the tool</label>
+</div>
+
+</div>
+
+<div class="card">
+<h2>Try This Prompt (Copy & Paste)</h2>
+<p class="small">
+“Create a simple, colourful webpage for my students with flashcards and a checklist about <em>[topic]</em>.  
+Make it friendly, student-safe, and easy to use.”
+</p>
+</div>
+
+</div>
+
+<script>
+const cards = [
+  ["What is vibe coding?", "Explaining what you want and letting AI build it"],
+  ["Do I need to learn coding?", "No — focus on learning, not syntax"],
+  ["Who is this for?", "Teachers, students, and curious humans"],
+  ["What matters most?", "The learning goal and student experience"]
+];
+
+let cardIndex = 0;
+let flipped = false;
+const flashcard = document.getElementById("flashcard");
+
+flashcard.addEventListener("click", () => {
+  flipped = !flipped;
+  flashcard.textContent = flipped ? cards[cardIndex][1] : cards[cardIndex][0];
+  if (!flipped) {
+    cardIndex = (cardIndex + 1) % cards.length;
+  }
+});
+</script>
+
+</body>
+</html>
