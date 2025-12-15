@@ -163,39 +163,58 @@
 
 <div id="checklist">
 
-  <!-- Discover -->
+  <!-- Discover Section -->
   <div class="section-title">🔍 Discover</div>
   <div class="item">
     <div class="label-row">
       <label>Read about AI in education</label>
-      <input type="checkbox" data-id="read_ai_edu">
+      <input type="checkbox" data-id="discover_read">
     </div>
   </div>
   <div class="item">
     <div class="label-row">
-      <label>Explore AI tools like ChatGPT & Co.</label>
-      <input type="checkbox" data-id="explore_tools">
+      <label>Explore AI tools like ChatGPT, DALL·E, etc.</label>
+      <input type="checkbox" data-id="discover_tools">
+    </div>
+  </div>
+  <div class="item">
+    <div class="label-row">
+      <label>Check recent AI case studies for teaching</label>
+      <input type="checkbox" data-id="discover_cases">
     </div>
   </div>
 
-  <!-- Try -->
+  <!-- Try Section -->
   <div class="section-title">🧪 Try</div>
   <div class="item">
     <div class="label-row">
-      <label>Create a sample lesson using AI prompts</label>
-      <input type="checkbox" data-id="sample_lesson">
+      <label>Create a sample AI lesson prompt</label>
+      <input type="checkbox" data-id="try_lesson">
+    </div>
+  </div>
+  <div class="item">
+    <div class="label-row">
+      <label>Experiment with generating teaching materials</label>
+      <input type="checkbox" data-id="try_materials">
+    </div>
+  </div>
+  <div class="item">
+    <div class="label-row">
+      <label>Test AI-driven quizzes or worksheets</label>
+      <input type="checkbox" data-id="try_quizzes">
     </div>
   </div>
 
-  <!-- Terms to Know -->
+  <!-- Terms to Know Section -->
   <div class="section-title">📚 Terms to Know</div>
+
   <div class="item">
     <div class="label-row">
       <label>GitHub</label>
       <button class="info-btn" onclick="toggleInfo(this)">ℹ️</button>
       <input type="checkbox" data-id="term_github">
     </div>
-    <div class="info-text">A platform to store, share, and collaborate on code. Useful for deploying AI projects and keeping track of changes.</div>
+    <div class="info-text">A platform to store, share, and collaborate on code. Useful for deploying AI projects and tracking versions.</div>
   </div>
 
   <div class="item">
@@ -204,7 +223,7 @@
       <button class="info-btn" onclick="toggleInfo(this)">ℹ️</button>
       <input type="checkbox" data-id="term_prompt">
     </div>
-    <div class="info-text">Crafting effective instructions (prompts) for AI tools like ChatGPT to get the desired output.</div>
+    <div class="info-text">Crafting effective instructions (prompts) for AI tools like ChatGPT to get the desired outputs.</div>
   </div>
 
   <div class="item">
@@ -222,10 +241,10 @@
       <button class="info-btn" onclick="toggleInfo(this)">ℹ️</button>
       <input type="checkbox" data-id="term_api">
     </div>
-    <div class="info-text">Tools to connect AI services into your apps, websites, or lessons programmatically.</div>
+    <div class="info-text">Tools to connect AI services into apps, websites, or lessons programmatically.</div>
   </div>
 
-  <!-- Goals / Next Steps -->
+  <!-- Goal / Next Steps -->
   <div class="section-title">🎯 Goal / Next Steps</div>
   <textarea id="user-goal" placeholder="Write your goal or next steps for today..."></textarea>
 
@@ -250,7 +269,8 @@
   const userGoal = document.getElementById("user-goal");
 
   function toggleInfo(el) {
-    const infoDiv = el.closest('.item').querySelector('.info-text');
+    const infoDiv = el.parentElement.nextElementSibling;
+    if (!infoDiv) return;
     infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
   }
 
