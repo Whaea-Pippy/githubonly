@@ -42,6 +42,7 @@
       font-size: 16px;
       flex: 1;
       padding-right: 10px;
+      cursor: default;
     }
 
     input[type="checkbox"] {
@@ -115,7 +116,6 @@
       color: #0b6623;
       margin: 0.5rem 0;
     }
-
   </style>
 </head>
 <body>
@@ -140,10 +140,22 @@
 
     <!-- Terms to Know -->
     <div class="section-title">📚 Terms to Know</div>
-    <div class="item"><label>GitHub</label><input type="checkbox" data-id="term_github"></div>
-    <div class="item"><label>Prompt Engineering</label><input type="checkbox" data-id="term_prompt"></div>
-    <div class="item"><label>LLM (Large Language Model)</label><input type="checkbox" data-id="term_llm"></div>
-    <div class="item"><label>API & Integration</label><input type="checkbox" data-id="term_api"></div>
+    <div class="item">
+      <label title="A platform to store, share, and collaborate on code. Useful for deploying AI projects and keeping track of changes.">GitHub ℹ️</label>
+      <input type="checkbox" data-id="term_github">
+    </div>
+    <div class="item">
+      <label title="Crafting effective instructions (prompts) for AI tools like ChatGPT to get the desired output.">Prompt Engineering ℹ️</label>
+      <input type="checkbox" data-id="term_prompt">
+    </div>
+    <div class="item">
+      <label title="AI models trained on huge amounts of text to understand and generate human-like language.">LLM (Large Language Model) ℹ️</label>
+      <input type="checkbox" data-id="term_llm">
+    </div>
+    <div class="item">
+      <label title="Tools to connect AI services into your apps, websites, or lessons programmatically.">API & Integration ℹ️</label>
+      <input type="checkbox" data-id="term_api">
+    </div>
 
     <!-- Reflection -->
     <div class="section-title">💡 Reflection</div>
@@ -217,7 +229,7 @@
 
     function loadHistory() {
       historyList.innerHTML = "";
-      const entries = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
+      const entries = JSON.parse(localStorage.getItem("aiChecklistHistory") || "[]");
 
       entries.forEach(e => {
         const div = document.createElement("div");
@@ -304,9 +316,9 @@
         unchecked: unchecked,
         message: savedMessage
       };
-      const history = JSON.parse(localStorage.getItem("dailyHistory") || "[]");
+      const history = JSON.parse(localStorage.getItem("aiChecklistHistory") || "[]");
       history.unshift(entry);
-      localStorage.setItem("dailyHistory", JSON.stringify(history));
+      localStorage.setItem("aiChecklistHistory", JSON.stringify(history));
 
       loadHistory();
     });
