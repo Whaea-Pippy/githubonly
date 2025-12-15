@@ -34,14 +34,20 @@
       border-radius: 12px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .label-row {
+      display: flex;
       align-items: center;
       justify-content: space-between;
+      width: 100%;
     }
 
     label {
       font-size: 16px;
       flex: 1;
-      padding-right: 10px;
       cursor: default;
     }
 
@@ -49,6 +55,39 @@
       width: 22px;
       height: 22px;
       cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .info-btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 18px;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .info-text {
+      display: none;
+      font-size: 1rem;
+      color: #333;
+      background: #e8f5e9;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 12px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      resize: vertical;
     }
 
     button {
@@ -120,209 +159,208 @@
 </head>
 <body>
 
-  <h1>AI Learning Checklist for Teachers</h1>
+<h1>AI Learning Checklist for Teachers</h1>
 
-  <div id="checklist">
+<div id="checklist">
 
-    <!-- Discover -->
-    <div class="section-title">🔍 Discover</div>
-    <div class="item"><label>Read about AI in education</label><input type="checkbox" data-id="read_ai_edu"></div>
-    <div class="item"><label>Explore AI tools like ChatGPT & Co.</label><input type="checkbox" data-id="explore_tools"></div>
-    <div class="item"><label>Watch tutorial videos on AI basics</label><input type="checkbox" data-id="watch_videos"></div>
-    <div class="item"><label>Understand AI ethics & privacy</label><input type="checkbox" data-id="ai_ethics"></div>
+  <!-- Discover -->
+  <div class="section-title">🔍 Discover</div>
+  <div class="item">
+    <div class="label-row">
+      <label>Read about AI in education</label>
+      <input type="checkbox" data-id="read_ai_edu">
+    </div>
+  </div>
+  <div class="item">
+    <div class="label-row">
+      <label>Explore AI tools like ChatGPT & Co.</label>
+      <input type="checkbox" data-id="explore_tools">
+    </div>
+  </div>
 
-    <!-- Try -->
-    <div class="section-title">🧪 Try</div>
-    <div class="item"><label>Create a sample lesson using AI prompts</label><input type="checkbox" data-id="sample_lesson"></div>
-    <div class="item"><label>Experiment with AI quiz generation</label><input type="checkbox" data-id="ai_quiz"></div>
-    <div class="item"><label>Test AI text-to-image tools</label><input type="checkbox" data-id="ai_image"></div>
-    <div class="item"><label>Deploy a small AI demo on GitHub</label><input type="checkbox" data-id="github_deploy"></div>
+  <!-- Try -->
+  <div class="section-title">🧪 Try</div>
+  <div class="item">
+    <div class="label-row">
+      <label>Create a sample lesson using AI prompts</label>
+      <input type="checkbox" data-id="sample_lesson">
+    </div>
+  </div>
 
-    <!-- Terms to Know -->
-    <div class="section-title">📚 Terms to Know</div>
-    <div class="item">
-      <label title="A platform to store, share, and collaborate on code. Useful for deploying AI projects and keeping track of changes.">GitHub ℹ️</label>
+  <!-- Terms to Know -->
+  <div class="section-title">📚 Terms to Know</div>
+  <div class="item">
+    <div class="label-row">
+      <label>GitHub</label>
+      <button class="info-btn" onclick="toggleInfo(this)">ℹ️</button>
       <input type="checkbox" data-id="term_github">
     </div>
-    <div class="item">
-      <label title="Crafting effective instructions (prompts) for AI tools like ChatGPT to get the desired output.">Prompt Engineering ℹ️</label>
+    <div class="info-text">A platform to store, share, and collaborate on code. Useful for deploying AI projects and keeping track of changes.</div>
+  </div>
+
+  <div class="item">
+    <div class="label-row">
+      <label>Prompt Engineering</label>
+      <button class="info-btn" onclick="toggleInfo(this)">ℹ️</button>
       <input type="checkbox" data-id="term_prompt">
     </div>
-    <div class="item">
-      <label title="AI models trained on huge amounts of text to understand and generate human-like language.">LLM (Large Language Model) ℹ️</label>
+    <div class="info-text">Crafting effective instructions (prompts) for AI tools like ChatGPT to get the desired output.</div>
+  </div>
+
+  <div class="item">
+    <div class="label-row">
+      <label>LLM (Large Language Model)</label>
+      <button class="info-btn" onclick="toggleInfo(this)">ℹ️</button>
       <input type="checkbox" data-id="term_llm">
     </div>
-    <div class="item">
-      <label title="Tools to connect AI services into your apps, websites, or lessons programmatically.">API & Integration ℹ️</label>
+    <div class="info-text">AI models trained on huge amounts of text to understand and generate human-like language.</div>
+  </div>
+
+  <div class="item">
+    <div class="label-row">
+      <label>API & Integration</label>
+      <button class="info-btn" onclick="toggleInfo(this)">ℹ️</button>
       <input type="checkbox" data-id="term_api">
     </div>
-
-    <!-- Reflection -->
-    <div class="section-title">💡 Reflection</div>
-    <div class="item"><label>Write notes on what worked</label><input type="checkbox" data-id="notes_worked"></div>
-    <div class="item"><label>Identify challenges</label><input type="checkbox" data-id="notes_challenges"></div>
-    <div class="item"><label>Plan next steps</label><input type="checkbox" data-id="notes_next"></div>
-
+    <div class="info-text">Tools to connect AI services into your apps, websites, or lessons programmatically.</div>
   </div>
 
-  <button id="done">Done for Today</button>
-  <button id="reset">Reset All</button>
+  <!-- Goals / Next Steps -->
+  <div class="section-title">🎯 Goal / Next Steps</div>
+  <textarea id="user-goal" placeholder="Write your goal or next steps for today..."></textarea>
 
-  <div id="report-container"></div>
+</div>
 
-  <div id="history">
-    <h2>Past Entries</h2>
-    <div id="history-list"></div>
-  </div>
+<button id="done">Done for Today</button>
+<button id="reset">Reset All</button>
 
-  <script>
-    const boxes = document.querySelectorAll("input[type='checkbox']");
-    const resetBtn = document.getElementById("reset");
-    const doneBtn = document.getElementById("done");
-    const reportContainer = document.getElementById("report-container");
-    const historyList = document.getElementById("history-list");
+<div id="report-container"></div>
 
-    const quotes = [
-      "You explored AI today — that’s awesome!",
-      "Small steps in AI grow big understanding.",
-      "Every experiment helps you learn more.",
-      "Your effort today matters.",
-      "Keep curiosity alive!",
-      "You are stronger in digital skills than you think.",
-      "Tomorrow is another chance to explore.",
-      "Learning AI is a journey — well done today!",
-      "Your curiosity today is powering tomorrow.",
-      "One step at a time — great progress!"
-    ];
+<div id="history">
+  <h2>Past Entries</h2>
+  <div id="history-list"></div>
+</div>
 
-    const wellbeingQuotes = [
-      "You mastered today’s AI tasks — fantastic work!",
-      "Your experimentation today shows courage and creativity.",
-      "You made space for AI learning and reflection today.",
-      "Exploring AI today was an act of professional growth.",
-      "You showed initiative and curiosity in AI learning.",
-      "Today you invested in your future skills — well done!",
-      "AI learning today contributes to your teaching excellence.",
-      "Your progress with AI today is real and meaningful.",
-      "Every tick shows your commitment to learning.",
-      "Your pace is perfect — keep exploring!"
-    ];
+<script>
+  const boxes = document.querySelectorAll("input[type='checkbox']");
+  const resetBtn = document.getElementById("reset");
+  const doneBtn = document.getElementById("done");
+  const reportContainer = document.getElementById("report-container");
+  const historyList = document.getElementById("history-list");
+  const userGoal = document.getElementById("user-goal");
 
-    // Load saved state
+  function toggleInfo(el) {
+    const infoDiv = el.closest('.item').querySelector('.info-text');
+    infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
+  }
+
+  // Load saved checkboxes
+  boxes.forEach(box => {
+    const id = box.dataset.id;
+    const saved = localStorage.getItem(id);
+    if (saved === "true") box.checked = true;
+    box.addEventListener("change", () => {
+      localStorage.setItem(id, box.checked);
+    });
+  });
+
+  // Load saved goal
+  userGoal.value = localStorage.getItem('userGoal') || '';
+  userGoal.addEventListener("input", () => {
+    localStorage.setItem('userGoal', userGoal.value);
+  });
+
+  // Reset
+  resetBtn.addEventListener("click", () => {
     boxes.forEach(box => {
-      const id = box.dataset.id;
-      const saved = localStorage.getItem(id);
-      if (saved === "true") box.checked = true;
-
-      box.addEventListener("change", () => {
-        localStorage.setItem(id, box.checked);
-      });
+      box.checked = false;
+      localStorage.removeItem(box.dataset.id);
     });
+    userGoal.value = '';
+    localStorage.removeItem('userGoal');
+  });
 
-    // Reset
-    resetBtn.addEventListener("click", () => {
-      boxes.forEach(box => {
-        box.checked = false;
-        localStorage.removeItem(box.dataset.id);
-      });
+  function loadHistory() {
+    historyList.innerHTML = "";
+    const entries = JSON.parse(localStorage.getItem("aiChecklistHistory") || "[]");
+    entries.forEach(e => {
+      const div = document.createElement("div");
+      div.className = "history-item";
+      const dateText = e.date || "(unknown date)";
+      const completed = e.completed || 0;
+      const total = e.total || 0;
+      const stars = e.stars || 0;
+      let html = `<strong>${dateText}</strong> — Completed: ${completed}/${total} (${stars}★)`;
+      if (e.unchecked && e.unchecked.length > 0) {
+        html += '<p><strong>Next focus:</strong></p><ul>';
+        e.unchecked.forEach(item => html += `<li>${item}</li>`);
+        html += '</ul>';
+      }
+      if (e.goal) {
+        html += `<p><strong>Goal / Next Steps:</strong> ${e.goal}</p>`;
+      }
+      if (e.message) {
+        html += `<p class="inspo">${e.message}</p>`;
+      }
+      div.innerHTML = html;
+      historyList.appendChild(div);
     });
+  }
+  loadHistory();
 
-    function loadHistory() {
-      historyList.innerHTML = "";
-      const entries = JSON.parse(localStorage.getItem("aiChecklistHistory") || "[]");
+  // Done for Today
+  doneBtn.addEventListener("click", () => {
+    const unchecked = [];
+    boxes.forEach(box => {
+      if (!box.checked) {
+        const label = box.closest('.item').querySelector('label').textContent;
+        unchecked.push(label);
+      }
+    });
+    const total = boxes.length;
+    const completed = total - unchecked.length;
+    const starsCount = total > 0 ? Math.round((completed / total) * 5) : 0;
+    const filled = "★".repeat(starsCount);
+    const empty = "☆".repeat(5 - starsCount);
+    const today = new Date().toLocaleDateString();
+    const reportMessage = completed === total ? "All tasks completed! Excellent work!" : "Keep progressing!";
 
-      entries.forEach(e => {
-        const div = document.createElement("div");
-        div.className = "history-item";
-
-        const dateText = e.date || "(unknown date)";
-        const completed = typeof e.completed === 'number' ? e.completed : 0;
-        const total = typeof e.total === 'number' ? e.total : 0;
-        const stars = typeof e.stars === 'number' ? e.stars : 0;
-
-        let html = `<strong>${dateText}</strong> — Completed: ${completed}/${total} (${stars}★)`;
-
-        if (Array.isArray(e.unchecked) && e.unchecked.length > 0) {
-          html += '<p><strong>Focus on these next:</strong></p><ul>';
-          e.unchecked.forEach(item => {
-            html += `<li>${item}</li>`;
-          });
-          html += '</ul>';
-        } else {
-          const msg = e.message || 'Awesome work 100%';
-          html += `<p class="inspo">${msg}</p>`;
-        }
-
-        div.innerHTML = html;
-        historyList.appendChild(div);
-      });
+    let reportHTML = `<h2>Daily Report – ${today}</h2>`;
+    reportHTML += `<p class="inspo">${reportMessage}</p>`;
+    reportHTML += `
+      <div class="award-box">
+        <div class="stars">${filled} ${empty}</div>
+        <div>Progress: ${completed}/${total} — ${starsCount} of 5 stars</div>
+      </div>
+    `;
+    if (unchecked.length > 0) {
+      reportHTML += `<p><strong>Next focus:</strong></p><ul>`;
+      unchecked.forEach(item => reportHTML += `<li>${item}</li>`);
+      reportHTML += '</ul>';
     }
+    if (userGoal.value.trim() !== "") {
+      reportHTML += `<p><strong>Goal / Next Steps:</strong> ${userGoal.value}</p>`;
+    }
+
+    reportContainer.innerHTML = reportHTML;
+    reportContainer.style.display = "block";
+
+    const entry = {
+      date: today,
+      completed: completed,
+      total: total,
+      stars: starsCount,
+      unchecked: unchecked,
+      goal: userGoal.value,
+      message: completed === total ? "Fantastic progress today!" : null
+    };
+    const history = JSON.parse(localStorage.getItem("aiChecklistHistory") || "[]");
+    history.unshift(entry);
+    localStorage.setItem("aiChecklistHistory", JSON.stringify(history));
+
     loadHistory();
-
-    // Done for Today
-    doneBtn.addEventListener("click", () => {
-      const unchecked = [];
-      boxes.forEach(box => {
-        if (!box.checked) {
-          const label = box.parentElement.querySelector("label").textContent;
-          unchecked.push(label);
-        }
-      });
-
-      const total = boxes.length;
-      const completed = total - unchecked.length;
-      const quote = quotes[Math.floor(Math.random() * quotes.length)];
-      const today = new Date().toLocaleDateString();
-
-      let savedMessage = null;
-      if (completed === total) {
-        savedMessage = wellbeingQuotes[Math.floor(Math.random() * wellbeingQuotes.length)] || 'Excellent work!';
-      }
-
-      const starsCount = total > 0 ? Math.round((completed / total) * 5) : 0;
-      const filled = "★".repeat(starsCount);
-      const empty = "☆".repeat(5 - starsCount);
-
-      const reportMessage = savedMessage || quote;
-
-      let reportHTML = `<h2>Daily Report – ${today}</h2>`;
-      reportHTML += `<p class="inspo">${reportMessage}</p>`;
-
-      reportHTML += `
-        <div class="award-box">
-          <div class="stars">${filled} ${empty}</div>
-          <div>Progress: ${completed}/${total} — ${starsCount} of 5 stars</div>
-        </div>
-      `;
-
-      if (unchecked.length > 0) {
-        reportHTML += `<p><strong>Next focus:</strong></p><ul>`;
-        unchecked.forEach(item => {
-          reportHTML += `<li>${item}</li>`;
-        });
-        reportHTML += `</ul>`;
-      } else {
-        reportHTML += `<p>All tasks completed! Fantastic work!</p>`;
-      }
-
-      reportContainer.innerHTML = reportHTML;
-      reportContainer.style.display = "block";
-
-      const entry = {
-        date: today,
-        completed: completed,
-        total: total,
-        stars: starsCount,
-        unchecked: unchecked,
-        message: savedMessage
-      };
-      const history = JSON.parse(localStorage.getItem("aiChecklistHistory") || "[]");
-      history.unshift(entry);
-      localStorage.setItem("aiChecklistHistory", JSON.stringify(history));
-
-      loadHistory();
-    });
-  </script>
+  });
+</script>
 
 </body>
 </html>
