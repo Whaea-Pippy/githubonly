@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vibe Coding for Teachers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --color-bg: #E0F7FA;
+      }
+      body {
+        font-family: 'Fredoka', sans-serif;
+        background-color: var(--color-bg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        color: #37474F;
+      }
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      #quiz-container {
+        background: white;
+        padding: 40px;
+        border-radius: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        max-width: 700px;
+        text-align: center;
+      }
+      #question {
+        font-size: 2rem;
+        margin-bottom: 30px;
+      }
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .option-btn {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        padding: 15px;
+        cursor: pointer;
+        color: white;
+        border: 8px solid;
+        border-radius: 30px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        text-transform: none;
+      }
+      .option-btn:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+      }
+      /* Fun teacher colors */
+      .option-btn:nth-child(1) { background-color: #FF5252; border-color: #FF8A80; }
+      .option-btn:nth-child(2) { background-color: #4CAF50; border-color: #A5D6A7; }
+      .option-btn:nth-child(3) { background-color: #03A9F4; border-color: #81D4FA; }
+      .option-btn:nth-child(4) { background-color: #FFC107; border-color: #FFE082; }
+
+      #feedback {
+        font-size: 1.8rem;
+        margin: 30px 0;
+        min-height: 60px;
+      }
+      #score {
+        font-size: 1.8rem;
+        margin-top: 20px;
+      }
+      #next-btn {
+        margin-top: 30px;
+        padding: 15px 40px;
+        font-size: 1.5rem;
+        background-color: #9C27B0;
+        border-color: #E1BEE7;
+      }
+      #start-btn {
+        padding: 20px 50px;
+        font-size: 2rem;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Vibe Coding for Teachers 🎨✨</h1>
+    <div id="quiz-container">
+      <button id="start-btn" class="btn option-btn">Start Learning!</button>
+
+      <div id="quiz" class="hidden">
+        <div id="question"></div>
+        <div class="options" id="options"></div>
+        <div id="feedback"></div>
+        <button id="next-btn" class="btn option-btn hidden">Next ➡️</button>
+      </div>
+
+      <div id="score" class="hidden"></div>
+    </div>
+
+    <script>
+      // Questions specifically about Vibe Coding for teachers
+      const questions = [
+        {
+          question: "What is the main goal of 'Vibe Coding'?",
+          options: [
+            "Writing complex programs for apps",
+            "Creating quick, fun, colourful interactive activities with no setup",
+            "Teaching advanced programming languages",
+            "Making games for professional developers"
+          ],
+          correct: 1
+        },
+        {
+          question: "Why is Vibe Coding perfect for busy teachers?",
+          options: [
+            "It requires expensive software and internet",
+            "It's disposable: one single HTML file you can copy, change, and use instantly",
+            "You need to learn JavaScript for months first",
+            "It only works on school computers"
+          ],
+          correct: 1
+        },
+        {
+          question: "Where do teachers edit the content in Vibe Code activities?",
+          options: [
+            "In a special online editor that needs an account",
+            "Right inside the code – usually in one clear JavaScript array at the top",
+            "By uploading files to a website",
+            "Only developers can change it"
+          ],
+          correct: 1
+        },
+        {
+          question: "What makes Vibe Code activities feel 'fun and engaging' for students?",
+          options: [
+            "Black and white text only",
+            "Big colourful buttons, emojis, hover effects, instant feedback, and positive messages",
+            "Long paragraphs of instructions",
+            "Complicated menus"
+          ],
+          correct: 1
+        },
+        {
+          question: "How long does it take to prepare a Vibe Code lesson?",
+          options: [
+            "Hours of planning and testing",
+            "Minutes – copy the code, change a few words in the list, save, and go!",
+            "A whole weekend",
+            "You need a coding expert to help"
+          ],
+          correct: 1
+        },
+        {
+          question: "Can Vibe Code activities work offline in class?",
+          options: [
+            "No, they always need internet",
+            "Yes! Just save the single HTML file and open it in any browser – no internet needed",
+            "Only on tablets",
+            "Only with Google Chrome"
+          ],
+          correct: 1
+        },
+        {
+          question: "What is the key message teachers should remember about Vibe Coding?",
+          options: [
+            "It's only for computer science lessons",
+            "Anyone can create joyful, instant, personalised learning experiences – no coding experience required",
+            "It's too simple for older students",
+            "You must write everything from scratch"
+          ],
+          correct: 1
+        }
+      ];
+
+      let currentQuestion = 0;
+      let score = 0;
+
+      const startBtn = document.getElementById('start-btn');
+      const quizDiv = document.getElementById('quiz');
+      const questionEl = document.getElementById('question');
+      const optionsEl = document.getElementById('options');
+      const feedbackEl = document.getElementById('feedback');
+      const nextBtn = document.getElementById('next-btn');
+      const scoreEl = document.getElementById('score');
+
+      function startQuiz() {
+        startBtn.classList.add('hidden');
+        quizDiv.classList.remove('hidden');
+        currentQuestion = 0;
+        score = 0;
+        showQuestion();
+      }
+
+      function showQuestion() {
+        const q = questions[currentQuestion];
+        questionEl.textContent = q.question;
+        optionsEl.innerHTML = '';
+        feedbackEl.textContent = '';
+        nextBtn.classList.add('hidden');
+
+        q.options.forEach((option, index) => {
+          const btn = document.createElement('button');
+          btn.classList.add('option-btn');
+          btn.textContent = option;
+          btn.onclick = () => selectAnswer(index);
+          optionsEl.appendChild(btn);
+        });
+      }
+
+      function selectAnswer(selectedIndex) {
+        const q = questions[currentQuestion];
+        const correctIndex = q.correct;
+
+        if (selectedIndex === correctIndex) {
+          feedbackEl.textContent = "Yes! Exactly right! 🎉";
+          feedbackEl.style.color = '#4CAF50';
+          score++;
+        } else {
+          feedbackEl.textContent = `Not quite – the best answer is: "${q.options[correctIndex]}"`;
+          feedbackEl.style.color = '#FF5252';
+        }
+
+        // Disable all buttons
+        const buttons = optionsEl.querySelectorAll('button');
+        buttons.forEach(btn => btn.disabled = true);
+
+        if (currentQuestion < questions.length - 1) {
+          nextBtn.classList.remove('hidden');
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function showFinalScore() {
+        quizDiv.classList.add('hidden');
+        scoreEl.innerHTML = `
+          <strong>Congratulations! 🌟</strong><br><br>
+          You scored ${score} out of ${questions.length}!<br><br>
+          You now understand the magic of Vibe Coding:<br>
+          <strong>Quick • Fun • Colourful • Teacher-made • Instant joy for students</strong><br><br>
+          Start creating your own today – just copy any Vibe Code, change the questions or words, and watch your lessons come alive! 🚀
+        `;
+        scoreEl.classList.remove('hidden');
+
+        const restartBtn = document.createElement('button');
+        restartBtn.textContent = 'Try Again 🔄';
+        restartBtn.classList.add('option-btn');
+        restartBtn.style.marginTop = '30px';
+        restartBtn.style.backgroundColor = '#9C27B0';
+        restartBtn.style.borderColor = '#E1BEE7';
+        restartBtn.onclick = () => location.reload();
+        scoreEl.appendChild(restartBtn);
+      }
+
+      nextBtn.onclick = () => {
+        currentQuestion++;
+        showQuestion();
+      };
+
+      startBtn.onclick = startQuiz;
+    </script>
+  </body>
+</html>
