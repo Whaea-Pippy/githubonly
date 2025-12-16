@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vibe Coding for Teachers – Interactive Deck (Y7–10)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple:#6a5acd;
+  --blue:#4dabf7;
+  --orange:#ffa94d;
+  --green:#51cf66;
+  --pink:#f783ac;
+  --bg:#f8f9fc;
+  --card:#ffffff;
+}
+* { box-sizing: border-box; }
+body {
+  margin:0;
+  font-family:'Poppins', sans-serif;
+  background:var(--bg);
+  display:flex;
+  height:100vh;
+}
+
+/* Navigation */
+nav {
+  width:220px;
+  background:#1f1f2e;
+  padding:20px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+nav h2 {
+  color:#fff;
+  font-size:18px;
+  margin-bottom:10px;
+}
+.nav-btn {
+  border:none;
+  border-radius:12px;
+  padding:12px 14px;
+  color:#1f1f2e;
+  font-weight:600;
+  cursor:pointer;
+  text-align:left;
+  transition:all .2s ease;
+}
+.nav-btn:hover { transform:translateX(4px); }
+.what { background:var(--blue); }
+.why { background:var(--purple); }
+.how { background:var(--orange); }
+.who { background:var(--green); }
+.time { background:var(--pink); }
+.start { background:#e9ecef; }
+
+/* Main content */
+main {
+  flex:1;
+  padding:40px;
+  overflow-y:auto;
+}
+.slide {
+  display:none;
+  animation:fade .3s ease;
+}
+.slide.active { display:block; }
+
+@keyframes fade {
+  from { opacity:0; transform:translateY(10px);} 
+  to { opacity:1; transform:translateY(0);} 
+}
+
+.card {
+  background:var(--card);
+  border-radius:20px;
+  padding:30px;
+  max-width:900px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+h1 { margin-top:0; font-size:34px; }
+h2 { color:#495057; }
+ul { font-size:18px; line-height:1.6; }
+
+.highlight {
+  background:#f1f3f5;
+  border-left:6px solid var(--blue);
+  padding:16px;
+  border-radius:12px;
+  margin-top:20px;
+}
+
+.tag {
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:20px;
+  background:var(--blue);
+  color:#fff;
+  font-size:14px;
+  margin-right:6px;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <h2>Vibe Coding</h2>
+  <button class="nav-btn what" onclick="showSlide('what')">What is it?</button>
+  <button class="nav-btn why" onclick="showSlide('why')">Why it matters</button>
+  <button class="nav-btn how" onclick="showSlide('how')">How it works</button>
+  <button class="nav-btn who" onclick="showSlide('who')">Who it helps</button>
+  <button class="nav-btn time" onclick="showSlide('time')">Time to upskill</button>
+  <button class="nav-btn start" onclick="showSlide('start')">How to start</button>
+</nav>
+
+<main>
+
+<section id="what" class="slide active">
+  <div class="card">
+    <h1>What is Vibe Coding?</h1>
+    <p>Vibe Coding is the practice of designing <strong>interactive learning experiences</strong> using clear instructions, pedagogy, and simple AI-assisted tools.</p>
+    <ul>
+      <li>Flashcards, quizzes, matching, pre-reading activities</li>
+      <li>Reusable learning tools (not one-off worksheets)</li>
+      <li>Designed by teachers, for learners</li>
+    </ul>
+    <div class="highlight">
+      <strong>Key idea:</strong> You design the learning flow — the technology supports it.
+    </div>
+  </div>
+</section>
+
+<section id="why" class="slide">
+  <div class="card">
+    <h1>Why it matters (Years 7–10)</h1>
+    <ul>
+      <li>Transition years show the biggest engagement drop</li>
+      <li>Literacy demands increase across subjects</li>
+      <li>Students expect interaction, not passive content</li>
+    </ul>
+    <div class="highlight">
+      <span class="tag">Memory</span>
+      <span class="tag">Engagement</span>
+      <span class="tag">Confidence</span>
+      <p>Vibe Coding prepares students <em>before</em> they meet complex texts.</p>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="slide">
+  <div class="card">
+    <h1>How it works in a lesson</h1>
+    <h2>Before reading a text</h2>
+    <ul>
+      <li>6 key vocabulary flashcards</li>
+      <li>Quick matching game</li>
+      <li>3-question prediction quiz</li>
+    </ul>
+    <div class="highlight">
+      Less decoding. More comprehension. Better discussion.
+    </div>
+  </div>
+</section>
+
+<section id="who" class="slide">
+  <div class="card">
+    <h1>Who benefits most?</h1>
+    <ul>
+      <li>Reluctant readers</li>
+      <li>Neurodiverse learners</li>
+      <li>ESOL / multilingual students</li>
+      <li>Students needing confidence to start</li>
+    </ul>
+    <div class="highlight">
+      Low-stakes practice = high participation
+    </div>
+  </div>
+</section>
+
+<section id="time" class="slide">
+  <div class="card">
+    <h1>Time to upskill (honest view)</h1>
+    <ul>
+      <li><strong>Week 1:</strong> 30–45 minutes learning the workflow</li>
+      <li><strong>Weeks 2–3:</strong> 1–2 hours experimenting</li>
+      <li><strong>After that:</strong> Faster than worksheets</li>
+    </ul>
+    <div class="highlight">
+      High return on time invested
+    </div>
+  </div>
+</section>
+
+<section id="start" class="slide">
+  <div class="card">
+    <h1>Your first step</h1>
+    <ul>
+      <li>Choose one upcoming text</li>
+      <li>Identify 6 key words</li>
+      <li>Create flashcards + a short quiz</li>
+    </ul>
+    <div class="highlight">
+      Start small. Reuse often. Build confidence.
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+function showSlide(id) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+
+</body>
+</html>
