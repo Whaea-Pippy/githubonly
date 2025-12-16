@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="mi">
+<head>
+  <meta charset="UTF-8">
+  <title>Ari & Tūwharetoa Quiz</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #333; color: #fff; }
+    select { padding: 5px; width: 100%; }
+    .correct { background-color: #c8e6c9; }
+    .incorrect { background-color: #ffcdd2; }
+  </style>
+</head>
+<body>
+
+<h2>Ari & Tūwharetoa Quiz</h2>
+<p>Match each Māori sentence or word with its correct English translation. Each option can only be used once.</p>
+
+<table id="quizTable">
+  <thead>
+    <tr>
+      <th>Māori</th>
+      <th>English Translation</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const fullDialogue = [
+  { maori: "Kia ora! Kei hea au ināianei?", english: "Hello! Where am I now?" },
+  { maori: "Haere mai, e hine. Kei te roto tapu koe.", english: "Welcome, girl. You are at the sacred lake." },
+  { maori: "Ko wai koe?", english: "Who are you?" },
+  { maori: "Ko Tūwharetoa ahau, te kaitiaki o tēnei wāhi.", english: "I am Tūwharetoa, the guardian of this place." },
+  { maori: "Aue! He taniwha koe?", english: "Oh! Are you a taniwha?" },
+  { maori: "Āe. He aha tō kaupapa i konei?", english: "Yes. What is your purpose here?" },
+  { maori: "Kei te rapu au i tētahi taonga i ngaro.", english: "I’m looking for a lost treasure." },
+  { maori: "Me whakamātau koe i tō māia me tō reo.", english: "You must test your courage and your language." },
+  { maori: "Ka pai. Kei te rite au.", english: "Okay. I’m ready." },
+  { maori: "He aha te tikanga o “manaakitanga”?", english: "What is the meaning of “manaakitanga”?" },
+  { maori: "Ko te atawhai me te tiaki i ētahi atu.", english: "It means kindness and caring for others." },
+  { maori: "Tino pai! Ā, he aha te wā?", english: "Very good! And, what’s the time?" },
+  { maori: "Kāore au i te mōhio. Kāore he karaka i konei!", english: "I don’t know. There’s no clock here!" },
+  { maori: "He whakautu pai. Kei te pēhea koe ināianei?", english: "Good answer. How are you feeling now?" },
+  { maori: "Kei te āmaimai au, engari kei te ngana.", english: "I’m nervous, but I’m trying." },
+  { maori: "Ka taea e au te kimi i te taonga?", english: "Can I find the treasure?" },
+  { maori: "Āe, engari me whakamahi koe i tō reo.", english: "Yes, but you must use your language." },
+  { maori: "Tēnā koa, homai te taonga.", english: "Please, give me the treasure." },
+  { maori: "Nāu i whiwhi. Anei tō taonga.", english: "You have earned it. Here is your treasure." },
+  { maori: "Ngā mihi nui, e Tūwharetoa.", english: "Many thanks, Tūwharetoa." },
+  { maori: "Haere pai, e kōtiro māia.", english: "Go well, brave girl." },
+  { maori: "Ka kite anō!", english: "See you again!" },
+  { maori: "Kia kaha, kia māia, kia manawanui.", english: "Be strong, be brave, be steadfast." },
+  { maori: "Ka hoki au ki te kāinga me te taonga.", english: "I will return home with the treasure." },
+  { maori: "Mā te wā.", english: "Until next time." },
+  { maori: "He haerenga whakamīharo tēnei.", english: "This was an amazing journey." },
+  { maori: "Mā te aroha koe e ārahi.", english: "Let love guide you." },
+  { maori: "Ka nui te aroha ki a koe.", english: "Much love to you." },
+  { maori: "Haere rā.", english: "Farewell." }
+];
+
+function shuffle(array) {
+  return array.map(value => ({ value, sort: Math.random() }))
+              .sort((a, b) => a.sort - b.sort)
+              .map(({ value }) => value);
+}
+
+let usedOptions = new Set();
+
+function createDropdown(correctAnswer, row) {
+  const select = document.createElement("select");
+  const defaultOption = document.createElement("option");
+  defaultOption.textContent = "-- Select --";
+  defaultOption.value = "";
+  select.appendChild(defaultOption);
+
+  const distractors = fullDialogue
+    .map(pair => pair.english)
+    .filter(text => text !== correctAnswer);
+
+  const randomDistractors = shuffle(distractors).slice(0, 4);
+  const options = shuffle([correctAnswer, ...randomDistractors]);
+
+  options.forEach(text => {
+    const option = document.createElement("option");
+    option.value = text;
+    option.textContent = text;
+    select.appendChild(option);
+  });
+
+  select.addEventListener("change", () => {
+    const selected = select.value;
+    const allSelects = document.querySelectorAll("select");
+
+    usedOptions.clear();
+    allSelects.forEach(s => {
+      if (s.value) usedOptions.add(s.value);
+    });
+
+    allSelects.forEach(s => {
+      Array.from(s.options).forEach(opt => {
+        opt.disabled = usedOptions.has(opt.value) && s.value !== opt.value;
+      });
+    });
+
+    row.classList.remove("correct", "incorrect");
+    if (selected === correctAnswer) {
+      row.classList.add("correct");
+    } else {
+      row.classList.add("incorrect");
+    }
+  });
+
+  return select;
+}
+
+function generateQuiz() {
+  const tbody = document.querySelector("#quizTable tbody");
+  tbody.innerHTML = "";
+
+  const quizItems = shuffle(fullDialogue).slice(0, 10);
+
+  quizItems.forEach(pair => {
+    const row = document.createElement("tr");
+    const maoriCell = document.createElement("td");
+    maoriCell.textContent = pair.maori;
+
+    const dropdownCell = document.createElement("td");
+    const dropdown = createDropdown(pair.english, row);
+    dropdownCell.appendChild(dropdown);
+
+    row.appendChild(maoriCell);
+    row.appendChild(dropdownCell);
+    tbody.appendChild(row);
+  });
+}
+
+generateQuiz();
+</script>
+</body>
+</html>
