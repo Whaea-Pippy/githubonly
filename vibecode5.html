@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vibe Coding Timeline – Key Milestones</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple:#6a5acd;
+  --blue:#4dabf7;
+  --orange:#ffa94d;
+  --green:#51cf66;
+  --pink:#f783ac;
+  --bg:#f8f9fc;
+  --card:#ffffff;
+}
+* { box-sizing: border-box; }
+body {
+  margin:0;
+  font-family:'Poppins', sans-serif;
+  background:var(--bg);
+  display:flex;
+  height:100vh;
+}
+nav {
+  width:240px;
+  background:#1f1f2e;
+  padding:20px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+nav h2 {
+  color:#fff;
+  font-size:18px;
+  margin-bottom:6px;
+}
+nav p {
+  color:#adb5bd;
+  font-size:13px;
+  margin-bottom:10px;
+}
+.nav-btn {
+  border:none;
+  border-radius:14px;
+  padding:12px 14px;
+  font-weight:600;
+  cursor:pointer;
+  text-align:left;
+  transition:.2s;
+  color:#fff;
+}
+.nav-btn:hover { transform:translateX(4px); }
+.btn-2010 { background:#6c757d; }    /* grey for early */
+.btn-2015 { background:var(--purple); }
+.btn-2018 { background:var(--blue); }
+.btn-2020 { background:var(--orange); }
+.btn-2022 { background:var(--green); }
+.btn-2023 { background:var(--pink); }
+.btn-2024 { background:var(--blue); }
+.btn-now { background:#e03131; }     /* red for current */
+main {
+  flex:1;
+  padding:40px;
+  overflow-y:auto;
+}
+.slide {
+  display:none;
+  animation:fade .3s ease;
+}
+.slide.active { display:block; }
+@keyframes fade {
+  from { opacity:0; transform:translateY(10px);}
+  to { opacity:1; transform:translateY(0);}
+}
+.card {
+  background:var(--card);
+  border-radius:22px;
+  padding:30px;
+  max-width:950px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+h1 { margin-top:0; font-size:32px; }
+h2 { color:#495057; margin-top:24px; }
+p { font-size:18px; line-height:1.6; }
+ul { font-size:18px; line-height:1.6; }
+.highlight {
+  margin-top:20px;
+  padding:16px;
+  border-left:6px solid var(--blue);
+  background:#f8f9fa;
+  border-radius:12px;
+}
+.date {
+  font-weight:700;
+  font-size:20px;
+  color:#212529;
+}
+</style>
+</head>
+<body>
+<nav>
+  <h2>Vibe Coding Timeline</h2>
+  <p>Key milestones that made it possible</p>
+  <button class="nav-btn btn-2010" onclick="showSlide('milestone-2010')">~2010</button>
+  <button class="nav-btn btn-2015" onclick="showSlide('milestone-2015')">2015–2017</button>
+  <button class="nav-btn btn-2018" onclick="showSlide('milestone-2018')">2018</button>
+  <button class="nav-btn btn-2020" onclick="showSlide('milestone-2020')">2020–2021</button>
+  <button class="nav-btn btn-2022" onclick="showSlide('milestone-2022')">Nov 2022</button>
+  <button class="nav-btn btn-2023" onclick="showSlide('milestone-2023')">2023</button>
+  <button class="nav-btn btn-2024" onclick="showSlide('milestone-2024')">2024–2025</button>
+  <button class="nav-btn btn-now" onclick="showSlide('milestone-now')">Today →</button>
+</nav>
+<main>
+<section id="milestone-2010" class="slide active">
+  <div class="card">
+    <h1>~2010 – The Foundations</h1>
+    <p class="date">Early 2010s</p>
+    <p>Interactive digital learning tools begin to emerge in classrooms:</p>
+    <ul>
+      <li>Tools like Quizlet (2005–2010 growth) popularise digital flashcards</li>
+      <li>Kahoot! (2013) shows the power of gamified quizzes</li>
+      <li>Google Docs & Forms make simple interactive activities accessible</li>
+      <li>Teachers start experimenting with “flipped” and blended learning</li>
+    </ul>
+    <div class="highlight">
+      Teachers realise: interaction + immediate feedback = better engagement and retention.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-2015" class="slide">
+  <div class="card">
+    <h1>2015–2017 – Research Solidifies</h1>
+    <p class="date">Mid-2010s</p>
+    <p>Cognitive science and retrieval practice gain mainstream attention in education.</p>
+    <ul>
+      <li>Books like <em>Make It Stick</em> (2014) and <em>Powerful Teaching</em> (2019) highlight retrieval practice</li>
+      <li>Studies show spaced repetition and low-stakes quizzing dramatically improve long-term memory</li>
+      <li>Tools like Anki and Duolingo demonstrate the power of adaptive repetition</li>
+    </ul>
+    <div class="highlight">
+      The pedagogy behind Vibe Coding becomes undeniable – but tools are still clunky or time-consuming.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-2018" class="slide">
+  <div class="card">
+    <h1>2018 – AI Starts Helping Teachers</h1>
+    <p class="date">2018–2019</p>
+    <p>Early AI writing tools appear, letting teachers generate content faster.</p>
+    <ul>
+      <li>Grammarly and early GPT-2 demos show AI can assist with text</li>
+      <li>Educators begin using AI to draft worksheets and quiz questions</li>
+      <li>First “no-code” platforms (Glide, Bubble) make simple apps possible without coding</li>
+    </ul>
+    <div class="highlight">
+      Teachers start saving time – but activities are still mostly static PDFs or Google Forms.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-2020" class="slide">
+  <div class="card">
+    <h1>2020–2021 – Remote Learning Boom</h1>
+    <p class="date">COVID era</p>
+    <p>Pandemic forces rapid digital adoption in schools worldwide.</p>
+    <ul>
+      <li>Teachers become comfortable with digital sharing and online tools</li>
+      <li>Engagement becomes a critical problem in remote/hybrid settings</li>
+      <li>Demand grows for interactive, self-paced student activities</li>
+    </ul>
+    <div class="highlight">
+      The need for engaging, reusable digital resources explodes.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-2022" class="slide">
+  <div class="card">
+    <h1>November 2022 – ChatGPT Arrives</h1>
+    <p class="date">30 Nov 2022</p>
+    <p>The breakthrough moment: accessible, powerful AI becomes free for everyone.</p>
+    <ul>
+      <li>Teachers discover they can ask AI to generate flashcards, quizzes, matching activities</li>
+      <li>Prompt engineering becomes a practical teacher skill</li>
+      <li>Simple HTML/JS activities can be created in minutes with AI help</li>
+    </ul>
+    <div class="highlight">
+      Suddenly any teacher can create polished interactive experiences – no coding degree needed.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-2023" class="slide">
+  <div class="card">
+    <h1>2023 – Explosion of AI Tools</h1>
+    <p class="date">Throughout 2023</p>
+    <p>Competition drives rapid improvement and specialisation.</p>
+    <ul>
+      <li>Claude, Gemini, Grok, and improved GPT models appear</li>
+      <li>Teachers share “prompt libraries” for generating learning activities</li>
+      <li>Communities form around “AI-assisted teaching”</li>
+      <li>Self-hosted HTML activities become popular (easy to share, no logins)</li>
+    </ul>
+    <div class="highlight">
+      Vibe Coding practices spread quickly among innovative teachers.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-2024" class="slide">
+  <div class="card">
+    <h1>2024–2025 – Mainstream Adoption</h1>
+    <p class="date">Current wave</p>
+    <p>Vibe Coding becomes a recognised, practical approach.</p>
+    <ul>
+      <li>More schools encourage AI literacy for staff</li>
+      <li>Professional development includes “AI for interactive resources”</li>
+      <li>Reusable activity libraries grow</li>
+      <li>Teachers report higher engagement and better preparation for complex texts</li>
+    </ul>
+    <div class="highlight">
+      What was once experimental is now efficient, evidence-based practice.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-now" class="slide">
+  <div class="card">
+    <h1>Today & Tomorrow</h1>
+    <p class="date">December 2025 →</p>
+    <p>You are here – the perfect time to start.</p>
+    <ul>
+      <li>Tools are mature and teacher-friendly</li>
+      <li>Pedagogy is proven</li>
+      <li>Minimal time investment yields reusable, high-impact resources</li>
+      <li>The next wave: even smarter personalisation and integration</li>
+    </ul>
+    <div class="highlight">
+      <strong>Your first Vibe Coding activity could be ready in under an hour.</strong><br>
+      Start small, reuse often, and watch student confidence and retention grow.
+    </div>
+  </div>
+</section>
+</main>
+<script>
+function showSlide(id) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
