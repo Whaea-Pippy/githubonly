@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Examples of Vibe Coding – Student Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple:#6a5acd;
+  --blue:#4dabf7;
+  --orange:#ffa94d;
+  --green:#51cf66;
+  --pink:#f783ac;
+  --bg:#f8f9fc;
+  --card:#ffffff;
+  --correct:#51cf66;
+  --wrong:#ff6b6b;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:'Poppins', sans-serif;
+  background:var(--bg);
+  display:flex;
+  height:100vh;
+}
+nav {
+  width:240px;
+  background:#1f1f2e;
+  padding:20px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+nav h2 { color:#fff; font-size:18px; margin-bottom:6px; }
+nav p { color:#adb5bd; font-size:13px; margin-bottom:10px; }
+.nav-btn {
+  border:none;
+  border-radius:14px;
+  padding:12px 14px;
+  font-weight:600;
+  cursor:pointer;
+  text-align:left;
+  transition:.2s;
+  color:#fff;
+}
+.nav-btn:hover { transform:translateX(4px); }
+.flash { background:var(--blue); }
+.match { background:var(--purple); }
+.multi { background:var(--orange); }
+.build { background:var(--green); }
+.links { background:var(--pink); }
+main { flex:1; padding:40px; overflow-y:auto; }
+.slide { display:none; animation:fade .3s ease; }
+.slide.active { display:block; }
+@keyframes fade { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+.card {
+  background:var(--card);
+  border-radius:22px;
+  padding:30px;
+  max-width:950px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+h1 { margin-top:0; font-size:32px; }
+h2 { color:#495057; }
+p { font-size:18px; }
+ul { font-size:18px; line-height:1.6; }
+.activity {
+  margin-top:20px;
+  padding:20px;
+  background:#f1f3f5;
+  border-radius:16px;
+}
+.note {
+  margin-top:20px;
+  padding:16px;
+  border-left:6px solid var(--blue);
+  background:#f8f9fa;
+  border-radius:12px;
+}
+
+/* FLASHCARDS */
+.fc {
+  perspective:1000px;
+  cursor:pointer;
+}
+.fc-inner {
+  position:relative;
+  width:100%;
+  height:140px;
+  text-align:center;
+  transition:transform 0.6s;
+  transform-style:preserve-3d;
+}
+.fc.flipped .fc-inner {
+  transform:rotateY(180deg);
+}
+.fc-front, .fc-back {
+  position:absolute;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  font-weight:600;
+}
+.fc-front {
+  background:#ffffff;
+  border:2px solid var(--blue);
+}
+.fc-back {
+  background:var(--blue);
+  color:#fff;
+  transform:rotateY(180deg);
+}
+
+/* MATCHING */
+.match-item {
+  cursor:pointer;
+  padding:12px 16px;
+  margin:8px 0;
+  background:#fff;
+  border-radius:12px;
+  border:2px solid transparent;
+  transition:.2s;
+}
+.match-item.selected {
+  border-color:var(--purple);
+  background:#f3f0ff;
+}
+.match-item.matched {
+  border-color:var(--correct);
+  background:#e6fcf0;
+  cursor:default;
+}
+.match-pair {
+  display:inline-block;
+  width:45%;
+  vertical-align:top;
+  margin:10px;
+}
+#match-feedback { margin-top:20px; font-weight:600; min-height:28px; }
+
+/* MULTI CHOICE */
+.choice {
+  display:block;
+  padding:12px;
+  margin:8px 0;
+  background:#fff;
+  border-radius:12px;
+  cursor:pointer;
+  transition:.2s;
+}
+.choice:hover { background:#f0f0f0; }
+.choice input { margin-right:10px; }
+.correct { background:var(--correct) !important; color:#fff; }
+.wrong { background:var(--wrong) !important; color:#fff; }
+
+/* SENTENCE BUILDER */
+.sentence {
+  margin:20px 0;
+  padding:12px;
+  background:#fff;
+  border-radius:12px;
+  line-height:2;
+}
+.sentence-slot {
+  display:inline-block;
+  min-width:140px;
+  min-height:44px;
+  margin:0 4px;
+  padding:8px 12px;
+  background:#fff;
+  border-radius:10px;
+  border:2px dashed #adb5bd;
+  text-align:center;
+  vertical-align:middle;
+}
+.sentence-slot.filled {
+  border-style:solid;
+  border-color:var(--green);
+  background:#e6fcf0;
+}
+.sentence-slot.correct {
+  background:var(--correct);
+  color:#fff;
+}
+.sentence-slot.wrong {
+  border-color:var(--wrong);
+  background:#ffe0e0;
+}
+.word-bank {
+  margin:30px 0;
+  text-align:center;
+}
+.word {
+  display:inline-block;
+  padding:10px 18px;
+  margin:8px;
+  background:#fff;
+  border-radius:12px;
+  border:2px solid #dee2e6;
+  cursor:pointer;
+  transition:.2s;
+}
+.word.used {
+  opacity:0.3;
+  cursor:not-allowed;
+}
+#build-feedback { margin-top:20px; font-weight:600; min-height:32px; }
+.hint-btn {
+  margin-top:12px;
+  padding:8px 16px;
+  border:none;
+  border-radius:8px;
+  background:#6c757d;
+  color:#fff;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+<nav>
+  <h2>Examples of Vibe Coding</h2>
+  <p>Student view – try them all!</p>
+  <button class="nav-btn flash" onclick="showSlide('flash')">Flashcards</button>
+  <button class="nav-btn match" onclick="showSlide('match')">Matching</button>
+  <button class="nav-btn multi" onclick="showSlide('multi')">Multi-choice</button>
+  <button class="nav-btn build" onclick="showSlide('build')">Sentence Builder</button>
+  <button class="nav-btn links" onclick="showSlide('links')">Links & Sharing</button>
+</nav>
+<main>
+
+<section id="flash" class="slide active">
+  <div class="card">
+    <h1>Flashcards (6 cards)</h1>
+    <p>Click any card to flip it and see the answer.</p>
+    <div class="activity" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px;">
+      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">What is Vibe Coding?</div><div class="fc-back">Designing interactive learning using clear instructions + simple AI support</div></div></div>
+      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">Why use flashcards?</div><div class="fc-back">They strengthen memory through retrieval and repetition</div></div></div>
+      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">When can you use Vibe Coding?</div><div class="fc-back">Before, during, and after learning</div></div></div>
+      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">Who benefits most?</div><div class="fc-back">Reluctant readers and students needing confidence</div></div></div>
+      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">Teacher skill needed?</div><div class="fc-back">Clear teaching goals — not advanced tech skills</div></div></div>
+      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">Why teachers like it</div><div class="fc-back">Reusable, engaging, and faster than worksheets</div></div></div>
+    </div>
+    <div class="note">
+      Keep flipping – the more you retrieve, the better you remember!
+    </div>
+  </div>
+</section>
+
+<section id="match" class="slide">
+  <div class="card">
+    <h1>Matching (6 pairs)</h1>
+    <p>Click one item from each column to make a pair. Try to match all correctly!</p>
+    <div class="activity">
+      <div style="text-align:center;">
+        <div class="match-pair">
+          <h3>Activity</h3>
+          <div class="match-item" data-pair="1" onclick="selectMatch(this)">Flashcards</div>
+          <div class="match-item" data-pair="2" onclick="selectMatch(this)">Matching</div>
+          <div class="match-item" data-pair="3" onclick="selectMatch(this)">Quizzes</div>
+          <div class="match-item" data-pair="4" onclick="selectMatch(this)">Sentence Builder</div>
+          <div class="match-item" data-pair="5" onclick="selectMatch(this)">Multiple Choice</div>
+          <div class="match-item" data-pair="6" onclick="selectMatch(this)">Links & Sharing</div>
+        </div>
+        <div class="match-pair">
+          <h3>Purpose</h3>
+          <div class="match-item" data-pair="4" onclick="selectMatch(this)">Constructing ideas</div>
+          <div class="match-item" data-pair="1" onclick="selectMatch(this)">Recall</div>
+          <div class="match-item" data-pair="6" onclick="selectMatch(this)">Distributing resources</div>
+          <div class="match-item" data-pair="3" onclick="selectMatch(this)">Checking understanding</div>
+          <div class="match-item" data-pair="5" onclick="selectMatch(this)">Quick assessment</div>
+          <div class="match-item" data-pair="2" onclick="selectMatch(this)">Consolidation</div>
+        </div>
+      </div>
+      <div id="match-feedback"></div>
+      <button onclick="resetMatch()" style="margin-top:12px; padding:8px 16px; border:none; border-radius:8px; background:#495057; color:#fff; cursor:pointer;">Reset</button>
+    </div>
+    <div class="note">
+      Great job matching – this helps lock ideas in your brain.
+    </div>
+  </div>
+</section>
+
+<section id="multi" class="slide">
+  <div class="card">
+    <h1>Multiple Choice (6 questions)</h1>
+    <p>Choose the best answer for each question and get instant feedback.</p>
+    <div class="activity">
+      <div class="question">
+        <p><strong>1. Why does Vibe Coding work so well?</strong></p>
+        <label class="choice" onclick="checkMulti(this,1)">Because it looks fancy</label>
+        <label class="choice" data-correct="true" onclick="checkMulti(this,1)">Because it supports recall and repetition</label>
+        <label class="choice" onclick="checkMulti(this,1)">Because students like screens</label>
+      </div>
+      <div class="question">
+        <p><strong>2. What skills do teachers need for Vibe Coding?</strong></p>
+        <label class="choice" onclick="checkMulti(this,2)">Advanced coding skills</label>
+        <label class="choice" data-correct="true" onclick="checkMulti(this,2)">Clear teaching goals</label>
+        <label class="choice" onclick="checkMulti(this,2)">Graphic design expertise</label>
+      </div>
+      <div class="question">
+        <p><strong>3. When can Vibe Coding be used?</strong></p>
+        <label class="choice" onclick="checkMulti(this,3)">Only before learning</label>
+        <label class="choice" onclick="checkMulti(this,3)">Only after learning</label>
+        <label class="choice" data-correct="true" onclick="checkMulti(this,3)">Before, during, and after learning</label>
+      </div>
+      <div class="question">
+        <p><strong>4. Who benefits most from Vibe Coding?</strong></p>
+        <label class="choice" onclick="checkMulti(this,4)">Advanced students only</label>
+        <label class="choice" data-correct="true" onclick="checkMulti(this,4)">Reluctant readers and students needing confidence</label>
+        <label class="choice" onclick="checkMulti(this,4)">Teachers exclusively</label>
+      </div>
+      <div class="question">
+        <p><strong>5. Why do teachers like Vibe Coding?</strong></p>
+        <label class="choice" onclick="checkMulti(this,5)">It's complicated</label>
+        <label class="choice" data-correct="true" onclick="checkMulti(this,5)">Reusable, engaging, and faster than worksheets</label>
+        <label class="choice" onclick="checkMulti(this,5)">Requires lots of time</label>
+      </div>
+      <div class="question">
+        <p><strong>6. What is key to Vibe Coding?</strong></p>
+        <label class="choice" onclick="checkMulti(this,6)">Complex algorithms</label>
+        <label class="choice" onclick="checkMulti(this,6)">Expensive software</label>
+        <label class="choice" data-correct="true" onclick="checkMulti(this,6)">Clear instructions + simple AI support</label>
+      </div>
+      <div id="multi-feedback" style="margin-top:16px; font-weight:600;"></div>
+    </div>
+    <div class="note">
+      No wrong answers are bad – they just help you learn faster next time!
+    </div>
+  </div>
+</section>
+
+<section id="build" class="slide">
+  <div class="card">
+    <h1>Sentence Builder (6 sentences)</h1>
+    <p>Drag or click the correct word from the bank into each blank. There are exactly 6 words for 6 sentences.</p>
+    <div class="activity">
+
+      <div class="sentence">1. Vibe Coding helps teachers <span class="sentence-slot" data-answer="design"></span> interactive lessons.</div>
+      <div class="sentence">2. Flashcards are great for quick <span class="sentence-slot" data-answer="recall"></span>.</div>
+      <div class="sentence">3. Students who need more <span class="sentence-slot" data-answer="confidence"></span> love these activities.</div>
+      <div class="sentence">4. You don’t need advanced <span class="sentence-slot" data-answer="coding"></span> skills.</div>
+      <div class="sentence">5. Activities are <span class="sentence-slot" data-answer="reusable"></span> again and again.</div>
+      <div class="sentence">6. Just share a simple <span class="sentence-slot" data-answer="link"></span> with students.</div>
+
+      <div class="word-bank" id="wordBank">
+        <!-- Words will be inserted here randomly by JavaScript -->
+      </div>
+
+      <div id="build-feedback"></div>
+      <button class="hint-btn" onclick="showHints()">Stuck? Show me the answers</button>
+      <button onclick="resetBuild()" style="margin-left:10px; padding:8px 16px; border:none; border-radius:8px; background:#495057; color:#fff; cursor:pointer;">Reset</button>
+    </div>
+    <div class="note">
+      Great job! Filling blanks like this helps your brain remember the ideas forever.
+    </div>
+  </div>
+</section>
+
+<section id="links" class="slide">
+  <div class="card">
+    <h1>Links & Sharing (6 examples)</h1>
+    <p>Your teacher can share activities just like this one with a simple link. Here are some useful links:</p>
+    <ul>
+      <li><a href="https://github.com" target="_blank">GitHub - for hosting and sharing code</a></li>
+      <li><a href="https://chat.openai.com" target="_blank">ChatGPT - AI for conversations and ideas</a></li>
+      <li><a href="https://grok.x.ai" target="_blank">Grok - xAI's helpful AI</a></li>
+      <li><a href="https://gemini.google.com" target="_blank">Gemini - Google's AI assistant</a></li>
+      <li><a href="https://www.anthropic.com/claude" target="_blank">Claude - Anthropic's AI</a></li>
+      <li><a href="https://copilot.microsoft.com" target="_blank">Copilot - Microsoft's AI companion</a></li>
+    </ul>
+    <div class="activity">
+      <h2>Embedded Video</h2>
+      <iframe width="560" height="315" src="YOUR_VIDEO_LINK_HERE" title="Video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="note">
+      Just click the links – and start exploring! Replace the video src with your link.
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+function showSlide(id) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// Flashcards
+function flip(card) {
+  card.classList.toggle('flipped');
+}
+
+// Matching
+let selectedLeft = null;
+let selectedRight = null;
+let matches = 0;
+
+function selectMatch(el) {
+  if (el.classList.contains('matched')) return;
+  const pair = el.dataset.pair;
+  const isLeft = el.parentElement.querySelector('h3').textContent === 'Activity';
+
+  el.parentElement.querySelectorAll('.match-item:not(.matched)').forEach(item => item.classList.remove('selected'));
+  el.classList.add('selected');
+
+  if (isLeft) {
+    selectedLeft = pair;
+  } else {
+    selectedRight = pair;
+  }
+
+  if (selectedLeft && selectedRight) {
+    const leftEl = document.querySelector('.match-pair:nth-child(1) .selected');
+    const rightEl = document.querySelector('.match-pair:nth-child(2) .selected');
+    if (selectedLeft === selectedRight) {
+      matches++;
+      leftEl.classList.remove('selected');
+      rightEl.classList.remove('selected');
+      leftEl.classList.add('matched');
+      rightEl.classList.add('matched');
+      leftEl.onclick = null;
+      rightEl.onclick = null;
+      document.getElementById('match-feedback').innerHTML = '<span style="color:var(--correct);">Correct match! Keep going.</span>';
+      if (matches === 6) {
+        document.getElementById('match-feedback').innerHTML = '<span style="color:var(--correct);font-size:1.2em;">🎉 All matched perfectly!</span>';
+      }
+    } else {
+      document.getElementById('match-feedback').innerHTML = '<span style="color:var(--wrong);">Not quite – try again!</span>';
+      leftEl.classList.remove('selected');
+      rightEl.classList.remove('selected');
+    }
+    selectedLeft = null;
+    selectedRight = null;
+  }
+}
+
+function resetMatch() {
+  document.querySelectorAll('.match-item').forEach(item => {
+    item.classList.remove('selected', 'matched');
+    item.onclick = function() { selectMatch(this); };
+  });
+  selectedLeft = null;
+  selectedRight = null;
+  matches = 0;
+  document.getElementById('match-feedback').innerHTML = '';
+}
+
+// Multiple Choice
+function checkMulti(el, qNum) {
+  const question = el.closest('.question');
+  question.querySelectorAll('.choice').forEach(c => {
+    c.classList.remove('correct', 'wrong');
+  });
+
+  if (el.dataset.correct) {
+    el.classList.add('correct');
+    document.getElementById('multi-feedback').innerHTML = `<span style="color:var(--correct);">Question ${qNum}: Correct! 🎉</span>`;
+  } else {
+    el.classList.add('wrong');
+    question.querySelector('.choice[data-correct]').classList.add('correct');
+    document.getElementById('multi-feedback').innerHTML = `<span style="color:var(--wrong);">Question ${qNum}: Not quite – see the correct answer highlighted.</span>`;
+  }
+}
+
+// Sentence Builder
+let correctCount = 0;
+
+const wordList = [
+  {word: "design", text: "design"},
+  {word: "recall", text: "recall"},
+  {word: "confidence", text: "confidence"},
+  {word: "coding", text: "coding"},
+  {word: "reusable", text: "reusable"},
+  {word: "link", text: "link"}
+];
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function initSentenceBuilder() {
+  const bank = document.getElementById('wordBank');
+  bank.innerHTML = '';
+  
+  // Shuffle and add words
+  const shuffled = shuffleArray([...wordList]);
+  shuffled.forEach(item => {
+    const span = document.createElement('span');
+    span.className = 'word';
+    span.dataset.word = item.word;
+    span.textContent = item.text;
+    span.draggable = true;
+    bank.appendChild(span);
+  });
+
+  const slots = document.querySelectorAll('.sentence-slot');
+  const words = document.querySelectorAll('.word');
+
+  slots.forEach(slot => {
+    slot.ondragover = e => e.preventDefault();
+    slot.ondrop = e => {
+      e.preventDefault();
+      const word = e.dataTransfer.getData("word");
+      if (word && !slot.classList.contains('filled')) {
+        placeWord(slot, word);
+      }
+    };
+    slot.onclick = () => {
+      if (slot.classList.contains('filled')) {
+        returnWordToBank(slot.textContent.trim());
+        slot.textContent = '';
+        slot.classList.remove('filled', 'correct', 'wrong');
+      }
+    };
+  });
+
+  words.forEach(word => {
+    word.ondragstart = e => {
+      if (!word.classList.contains('used')) {
+        e.dataTransfer.setData("word", word.dataset.word);
+      }
+    };
+    word.onclick = () => {
+      if (!word.classList.contains('used')) {
+        const emptySlot = document.querySelector('.sentence-slot:not(.filled)');
+        if (emptySlot) {
+          placeWord(emptySlot, word.dataset.word);
+          word.classList.add('used');
+        }
+      }
+    };
+  });
+}
+
+function placeWord(slot, word) {
+  slot.textContent = word;
+  slot.classList.add('filled');
+  document.querySelector(`.word[data-word="${word}"]`).classList.add('used');
+
+  if (word === slot.dataset.answer) {
+    slot.classList.add('correct');
+    slot.classList.remove('wrong');
+    correctCount++;
+    checkAllCorrect();
+  } else {
+    slot.classList.add('wrong');
+    slot.classList.remove('correct');
+  }
+}
+
+function returnWordToBank(wordText) {
+  const wordEl = document.querySelector(`.word[data-word="${wordText}"]`);
+  if (wordEl) {
+    wordEl.classList.remove('used');
+  }
+  if (correctCount > document.querySelectorAll('.sentence-slot.correct').length) {
+    correctCount--;
+  }
+}
+
+function checkAllCorrect() {
+  if (document.querySelectorAll('.sentence-slot.correct').length === 6) {
+    document.getElementById('build-feedback').innerHTML = '<span style="color:var(--correct);font-size:1.5em;">🎉 Amazing! You got all 6 perfect!</span>';
+  }
+}
+
+function showHints() {
+  document.querySelectorAll('.sentence-slot').forEach(slot => {
+    if (!slot.classList.contains('filled') || slot.classList.contains('wrong')) {
+      const answer = slot.dataset.answer;
+      slot.textContent = answer;
+      slot.classList.add('filled', 'correct');
+      slot.classList.remove('wrong');
+      const wordEl = document.querySelector(`.word[data-word="${answer}"]`);
+      if (wordEl) wordEl.classList.add('used');
+    }
+  });
+  correctCount = 6;
+  document.getElementById('build-feedback').innerHTML = '<span style="color:var(--correct);">Here are all the answers – now you know!</span>';
+}
+
+function resetBuild() {
+  document.querySelectorAll('.sentence-slot').forEach(slot => {
+    slot.textContent = '';
+    slot.classList.remove('filled', 'correct', 'wrong');
+  });
+  document.querySelectorAll('.word').forEach(w => w.classList.remove('used'));
+  correctCount = 0;
+  document.getElementById('build-feedback').innerHTML = '';
+  initSentenceBuilder(); // Re-shuffle on reset
+}
+
+// Initialise everything
+initSentenceBuilder();
+
+</script>
+</body>
+</html>
