@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vibe Coding Around the World – AI in Education (2025)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple:#6a5acd;
+  --blue:#4dabf7;
+  --orange:#ffa94d;
+  --green:#51cf66;
+  --pink:#f783ac;
+  --red:#ef4444;
+  --yellow:#facc15;
+  --bg:#f8f9fc;
+  --card:#ffffff;
+}
+* { box-sizing: border-box; }
+body {
+  margin:0;
+  font-family:'Poppins', sans-serif;
+  background:var(--bg);
+  display:flex;
+  height:100vh;
+}
+nav {
+  width:240px;
+  background:#1f1f2e;
+  padding:20px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+nav h2 {
+  color:#fff;
+  font-size:18px;
+  margin-bottom:6px;
+}
+nav p {
+  color:#adb5bd;
+  font-size:13px;
+  margin-bottom:10px;
+}
+.nav-btn {
+  border:none;
+  border-radius:14px;
+  padding:12px 14px;
+  font-weight:600;
+  cursor:pointer;
+  text-align:left;
+  transition:.2s;
+  color:#fff;
+}
+.nav-btn:hover { transform:translateX(4px); }
+.nz { background:#1e40af; }      /* NZ blue */
+.sg { background:#ef4444; }      /* Singapore red */
+.ee { background:#0ea5e9; }      /* Estonia sky blue */
+.fi { background:#003580; }      /* Finland blue */
+.cn { background:#dc2626; }      /* China red */
+.us { background:#3b82f6; }      /* US blue */
+.global { background:var(--purple); }
+main {
+  flex:1;
+  padding:40px;
+  overflow-y:auto;
+}
+.slide {
+  display:none;
+  animation:fade .3s ease;
+}
+.slide.active { display:block; }
+@keyframes fade {
+  from { opacity:0; transform:translateY(10px);}
+  to { opacity:1; transform:translateY(0);}
+}
+.card {
+  background:var(--card);
+  border-radius:22px;
+  padding:30px;
+  max-width:950px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+h1 { margin-top:0; font-size:32px; }
+h2 { color:#495057; margin-top:24px; }
+p { font-size:18px; line-height:1.6; }
+ul { font-size:18px; line-height:1.6; }
+.highlight {
+  margin-top:20px;
+  padding:16px;
+  border-left:6px solid var(--blue);
+  background:#f8f9fa;
+  border-radius:12px;
+}
+.status {
+  font-weight:700;
+  font-size:20px;
+  margin-bottom:12px;
+}
+.good { color:var(--green); }
+.mid { color:var(--orange); }
+.lead { color:var(--blue); }
+</style>
+</head>
+<body>
+<nav>
+  <h2>AI in Education Worldwide</h2>
+  <p>How countries are adopting AI tools like Vibe Coding (2025 snapshot)</p>
+  <button class="nav-btn nz" onclick="showSlide('nz')">New Zealand</button>
+  <button class="nav-btn sg" onclick="showSlide('sg')">Singapore</button>
+  <button class="nav-btn ee" onclick="showSlide('ee')">Estonia</button>
+  <button class="nav-btn fi" onclick="showSlide('fi')">Finland</button>
+  <button class="nav-btn cn" onclick="showSlide('cn')">China</button>
+  <button class="nav-btn us" onclick="showSlide('us')">United States</button>
+  <button class="nav-btn global" onclick="showSlide('global')">Global View</button>
+</nav>
+<main>
+<section id="nz" class="slide active">
+  <div class="card">
+    <h1>New Zealand</h1>
+    <p class="status mid">Solid grassroots adoption – catching up on national strategy</p>
+    <ul>
+      <li>69% of teachers use AI weekly (mostly for planning, resources, and personalisation)</li>
+      <li>High individual innovation: teachers creating interactive tools independently</li>
+      <li>New high school curriculum adds AI and data literacy subjects</li>
+      <li>GenAI restricted in some national assessments, but encouraged for teaching</li>
+      <li>Calls for earlier AI education (before Year 13)</li>
+    </ul>
+    <div class="highlight">
+      <strong>NZ strength:</strong> Teacher-led creativity (like Vibe Coding) is thriving despite slower national roll-out. Many educators are already ahead of policy.
+    </div>
+  </div>
+</section>
+
+<section id="sg" class="slide">
+  <div class="card">
+    <h1>Singapore</h1>
+    <p class="status lead">Global leader – systematic and ambitious</p>
+    <ul>
+      <li>National AI Strategy 2.0 with heavy education investment</li>
+      <li>Student Learning Space integrates AI for personalised pathways</li>
+      <li>MOE AI-in-Education Ethics Framework guides responsible use</li>
+      <li>AI literacy built into curriculum; tools adapt to individual strengths</li>
+      <li>Focus on equity: AI to replicate small-class benefits at scale</li>
+    </ul>
+    <div class="highlight">
+      Singapore shows what strong national vision + funding can achieve – personalised learning for every student.
+    </div>
+  </div>
+</section>
+
+<section id="ee" class="slide">
+  <div class="card">
+    <h1>Estonia</h1>
+    <p class="status lead">Bold national leap – AI tools for all</p>
+    <ul>
+      <li>AI Leap 2025 programme: free advanced AI tools for every student and teacher</li>
+      <li>Custom Estonian-language AI models in classrooms</li>
+      <li>Focus on ethical use, digital competence, and meaningful learning</li>
+      <li>Building on decades of digital education leadership (e-Estonia)</li>
+      <li>Aiming for full integration by 2027</li>
+    </ul>
+    <div class="highlight">
+      Estonia is setting the global standard: nationwide AI access + teacher support from day one.
+    </div>
+  </div>
+</section>
+
+<section id="fi" class="slide">
+  <div class="card">
+    <h1>Finland</h1>
+    <p class="status good">Balanced and thoughtful integration</p>
+    <ul>
+      <li>Strong focus on AI literacy and critical thinking (building on media literacy success)</li>
+      <li>National teacher training programmes for AI in education</li>
+      <li>Guidelines emphasise ethics, equity, and human-centred use</li>
+      <li>AI used to support differentiation and reduce teacher workload</li>
+      <li>Experimenting carefully – avoiding over-reliance</li>
+    </ul>
+    <div class="highlight">
+      Finland prioritises understanding over tools – preparing students to use AI wisely.
+    </div>
+  </div>
+</section>
+
+<section id="cn" class="slide">
+  <div class="card">
+    <h1>China</h1>
+    <p class="status lead">Massive scale – compulsory and rapid</p>
+    <ul>
+      <li>AI education compulsory in many regions (e.g. Hangzhou)</li>
+      <li>National goal: AI in all primary/secondary schools by 2030</li>
+      <li>Tiered curriculum from basic awareness to advanced projects</li>
+      <li>Huge investment in AI tutors, smart classrooms, and adaptive platforms</li>
+      <li>Focus on nurturing innovation and national competitiveness</li>
+    </ul>
+    <div class="highlight">
+      China demonstrates speed and scale – reaching millions of students quickly.
+    </div>
+  </div>
+</section>
+
+<section id="us" class="slide">
+  <div class="card">
+    <h1>United States</h1>
+    <p class="status good">High usage – state-by-state variety</p>
+    <ul>
+      <li>85–86% of teachers and students used AI in 2024–25 school year</li>
+      <li>28+ states have official AI guidance for K–12</li>
+      <li>Federal encouragement but implementation varies widely</li>
+      <li>Popular for personalised learning, admin tasks, and creative tools</li>
+      <li>Debates around equity, privacy, and assessment integrity</li>
+    </ul>
+    <div class="highlight">
+      Like NZ, much US adoption is teacher-driven – innovation happens at classroom level.
+    </div>
+  </div>
+</section>
+
+<section id="global" class="slide">
+  <div class="card">
+    <h1>Global View & Opportunity for NZ</h1>
+    <p>NZ is <strong>not far behind</strong> – teacher adoption rates match or exceed many leaders.</p>
+    <ul>
+      <li>Leaders (Singapore, Estonia, China) have strong national programmes and funding</li>
+      <li>NZ excels in creative, low-cost, teacher-led practices (perfect for Vibe Coding)</li>
+      <li>Grassroots innovation often spreads faster than top-down mandates</li>
+      <li>2025–2026 curriculum changes will help close the policy gap</li>
+    </ul>
+    <div class="highlight">
+      <strong>Your advantage:</strong> NZ teachers are already building reusable interactive resources with AI – share them, collaborate, and lead from the classroom.
+    </div>
+  </div>
+</section>
+</main>
+<script>
+function showSlide(id) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
