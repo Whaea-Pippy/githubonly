@@ -114,6 +114,7 @@ ul { font-size:18px; line-height:1.6; }
   <button class="nav-btn who" onclick="showSlide('who')">Who it helps</button>
   <button class="nav-btn time" onclick="showSlide('time')">Time to upskill</button>
   <button class="nav-btn start" onclick="showSlide('start')">How to start</button>
+  <button class="nav-btn what" onclick="showSlide('embed')">Embed Slides</button>
 </nav>
 
 <main>
@@ -153,14 +154,30 @@ ul { font-size:18px; line-height:1.6; }
 <section id="how" class="slide">
   <div class="card">
     <h1>How it works in a lesson</h1>
-    <h2>Before reading a text</h2>
+
+    <h2>Before learning (prepare the brain)</h2>
     <ul>
-      <li>6 key vocabulary flashcards</li>
-      <li>Quick matching game</li>
-      <li>3-question prediction quiz</li>
+      <li>Pre-teach key vocabulary</li>
+      <li>Activate prior knowledge</li>
+      <li>Reduce cognitive load before reading or viewing</li>
     </ul>
+
+    <h2>During learning (hold attention)</h2>
+    <ul>
+      <li>Short interactive checks for understanding</li>
+      <li>Immediate feedback keeps students engaged</li>
+      <li>Chunked tasks support focus</li>
+    </ul>
+
+    <h2>After learning (lock it in)</h2>
+    <ul>
+      <li>Recall-based quizzes</li>
+      <li>Repetition without boredom</li>
+      <li>Consolidation of facts, terms, and concepts</li>
+    </ul>
+
     <div class="highlight">
-      Less decoding. More comprehension. Better discussion.
+      Repetition + retrieval = stronger memory and transfer
     </div>
   </div>
 </section>
@@ -204,6 +221,24 @@ ul { font-size:18px; line-height:1.6; }
     </ul>
     <div class="highlight">
       Start small. Reuse often. Build confidence.
+    </div>
+  </div>
+</section>
+
+<section id="embed" class="slide">
+  <div class="card">
+    <h1>Embed existing Google Slides</h1>
+    <p>You don’t replace your slides — you <strong>upgrade</strong> them.</p>
+    <ul>
+      <li>Keep existing PLD or lesson slides</li>
+      <li>Embed them inside an interactive shell</li>
+      <li>Add navigation, focus, and pacing</li>
+    </ul>
+
+    <iframe src="https://docs.google.com/presentation/d/1O0QsUPeqLbhXoYhVDkivFJGuHvlGfg9F/embed?start=false&loop=false&delayms=60000" style="width:100%; height:420px; border:none; border-radius:16px;"></iframe>
+
+    <div class="highlight">
+      Same content. Better experience.
     </div>
   </div>
 </section>
