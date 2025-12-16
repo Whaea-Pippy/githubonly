@@ -7,36 +7,54 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --o:#9E2A89;--lo:#C75CBB;--r:#5C2A99;--e:#2A0A4B;
-    --c:#EBE6FF;--p:#DED7FF;--k:#C1B6E6;--t:#2A0A4B;
+    --sun:#FFD60A; /* bright yellow */
+    --mint:#A7F3D0; /* mint green */
+    --blue:#60A5FA; /* happy blue */
+    --lime:#BEF264; /* lime green */
+    --bg:#FEFCE8; /* very light yellow for background */
   }
-  body{font-family:'Poppins',sans-serif;background:var(--c);color:var(--t);margin:0;padding:20px 10px;line-height:1.6}
-  .header{text-align:center;background:linear-gradient(135deg,var(--o),var(--r));color:white;padding:30px 15px;border-radius:18px;margin-bottom:30px}
-  .header h1{margin:0;font-size:2.7rem}
-  .authors{font-size:1.5rem;margin:8px 0}
-  .page-number{font-size:1.9rem;background:rgba(255,255,255,.3);padding:10px 35px;border-radius:50px;display:inline-block;margin-top:8px}
+  body{font-family:'Poppins',sans-serif;background:var(--bg);color:#000000;margin:0;padding:20px 10px;line-height:1.6}
+  .header{text-align:center;background:linear-gradient(135deg,var(--sun),var(--blue));color:#000000;padding:30px 15px;border-radius:18px;margin-bottom:30px}
+  .header h1{margin:0;font-size:2.7rem;color:#000}
+  .authors{font-size:1.5rem;margin:8px 0;color:#000}
+  .page-number{font-size:1.9rem;background:rgba(255,255,255,.6);padding:10px 35px;border-radius:50px;display:inline-block;margin-top:8px;color:#000}
   .section-buttons{display:flex;justify-content:center;gap:18px;margin:35px auto;overflow-x:auto;padding-bottom:10px}
-  .section-btn{flex:1;max-width:280px;padding:18px 8px;font-size:1.45rem;font-weight:600;color:white;background:var(--r);border:none;border-radius:14px;cursor:pointer;opacity:.7}
-  .section-btn.active{opacity:1;background:#7D46CC;font-weight:900}
-  h3{color:var(--r);border-bottom:5px solid var(--o);padding-bottom:8px;margin:50px 0 25px}
+  .section-btn{flex:1;max-width:280px;padding:18px 8px;font-size:1.45rem;font-weight:600;color:#000;background:var(--mint);border:none;border-radius:14px;cursor:pointer;opacity:.8}
+  .section-btn.active{opacity:1;background:var(--lime);font-weight:900}
+  h3{color:var(--blue);border-bottom:5px solid var(--sun);padding-bottom:8px;margin:50px 0 25px}
   #flashcards-section,#quiz-section .quiz-options{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  .card{background:var(--k);height:135px;border:5px solid var(--e);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;text-align:center;padding:10px}
-  .card.flipped{background:var(--o);color:white}
-  .quiz-options button{padding:15px;font-size:1.2rem;border:4px solid var(--e);border-radius:12px;font-weight:600;background:white}
-  .quiz-options button.correct{background:#C8E6C9}
-  .quiz-options button.incorrect{background:#FFCDD2}
+  .card{background:var(--mint);height:135px;border:5px solid var(--blue);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;text-align:center;padding:10px}
+  .card.flipped{background:var(--sun);color:#000}
+  .quiz-question{font-size:1.4rem;font-weight:bold;color:var(--blue);margin-bottom:15px;text-align:center}
+  .quiz-options button{padding:15px;font-size:1.3rem;border:4px solid var(--blue);border-radius:12px;font-weight:600;background:white;color:#000}
+  .quiz-options button.correct{background:#BEF264;color:#000}
+  .quiz-options button.incorrect{background:#FCA5A5;color:#000}
   .matching-container{display:flex;gap:25px;margin-top:25px;flex-wrap:wrap;justify-content:center}
-  .matching-box{flex:1;min-width:280px;max-width:400px;background:white;border:4px dashed var(--e);border-radius:14px;padding:20px}
-  .drag-item{background:var(--p);border:3px solid var(--e);margin:10px 0;padding:15px;border-radius:12px;text-align:center;font-weight:600;cursor:pointer}
-  .pair{background:var(--k);padding:12px;margin:8px;border-radius:10px;font-weight:bold;border-left:8px solid var(--o)}
-  #sentence-builder{background:white;padding:30px;border-radius:18px;border:6px solid var(--o);margin:50px 0}
-  .builder-sentence{background:#EBE6FF;padding:22px;border-radius:14px;margin-bottom:28px;position:relative}
-  .english-prompt{font-size:1.5rem;font-weight:bold;color:var(--r);margin-bottom:15px}
-  .answer-area,.word-bank{min-height:80px;padding:16px;border:3px dashed var(--e);border-radius:12px;background:#FAFAFA;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-  .word{background:#BE9FDC;padding:11px 22px;border-radius:11px;cursor:pointer;font-weight:600}
-  .word.in-answer{background:var(--r);color:white}
-  .builder-sentence.correct{background:#E6FFE6;border-left:12px solid #00AA00}
-  .check-mark{position:absolute;top:10px;right:10px;font-size:2rem;color:#00AA00;display:none}
+  .matching-box{flex:1;min-width:280px;max-width:400px;background:white;border:4px dashed var(--blue);border-radius:14px;padding:20px}
+  .matching-item{background:var(--lime);border:3px solid var(--blue);margin:10px 0;padding:15px;border-radius:12px;text-align:center;font-weight:600;cursor:pointer;color:#000;transition:0.3s}
+  .matching-item.selected{border-color:var(--sun);box-shadow:0 0 15px var(--sun);}
+  .matching-item.matched{opacity:0.5;pointer-events:none}
+  .pair{
+    background:var(--mint);
+    padding:15px;
+    margin:12px auto;
+    max-width:500px;
+    border-radius:12px;
+    font-weight:bold;
+    border-left:10px solid var(--sun);
+    color:#000;
+    text-align:center;
+    font-size:1.3rem;
+    transition: all 0.4s;
+  }
+  #sentence-builder{background:white;padding:30px;border-radius:18px;border:6px solid var(--sun);margin:50px 0}
+  .builder-sentence{background:var(--mint);padding:22px;border-radius:14px;margin-bottom:28px;position:relative}
+  .english-prompt{font-size:1.5rem;font-weight:bold;color:var(--blue);margin-bottom:15px}
+  .answer-area,.word-bank{min-height:80px;padding:16px;border:3px dashed var(--blue);border-radius:12px;background:#FFFFFF;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .word{background:var(--lime);padding:11px 22px;border-radius:11px;cursor:pointer;font-weight:600;color:#000}
+  .word.in-answer{background:var(--blue);color:white}
+  .builder-sentence.correct{background:#BEF264;border-left:12px solid var(--lime)}
+  .check-mark{position:absolute;top:10px;right:10px;font-size:2rem;color:var(--lime);display:none}
   .builder-sentence.correct .check-mark{display:block}
   @media (max-width:768px){
     #flashcards-section,#quiz-section .quiz-options{grid-template-columns:repeat(2,1fr)}
@@ -89,6 +107,10 @@ const sentences = {
 };
 
 let currentWords = [], currentSentences = [];
+let selectedLeft = null;
+
+// Sunny rainbow colours for matched pairs
+const colors = ['#FFD60A', '#BEF264', '#A7F3D0', '#60A5FA', '#FFB3E6', '#C084FC', '#A78BFA', '#FBBF24'];
 
 function shuffle(a) { return a.slice().sort(() => Math.random() - 0.5); }
 
@@ -97,6 +119,7 @@ function loadSection(s) {
   currentSentences = shuffle([...sentences[s]]);
   document.querySelectorAll('.section-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('btn' + s[1]).classList.add('active');
+  selectedLeft = null;
   showFlashcards();
   showQuiz();
   showMatching();
@@ -109,7 +132,7 @@ function showFlashcards() {
   currentWords.forEach(p => {
     const card = document.createElement('div');
     card.className = 'card';
-    card.textContent = p[0]; // Māori / phrase front
+    card.textContent = p[0];
     card.onclick = () => {
       card.classList.toggle('flipped');
       card.textContent = card.classList.contains('flipped') ? p[1] : p[0];
@@ -123,22 +146,31 @@ function showQuiz() {
   container.innerHTML = '';
   currentWords.forEach(p => {
     const questionDiv = document.createElement('div');
-    questionDiv.style.marginBottom = '40px';
-    questionDiv.innerHTML = `<b>${p[0]}</b>`; // Always Māori/phrase as question
+    questionDiv.style.marginBottom = '50px';
+
+    const qText = document.createElement('div');
+    qText.className = 'quiz-question';
+    qText.textContent = p[1]; // English question
+    questionDiv.appendChild(qText);
 
     const options = document.createElement('div');
     options.className = 'quiz-options';
 
-    const allEnglish = shuffle(currentWords.map(x => x[1]));
-    shuffle(allEnglish.slice(0,4)).forEach(ans => {
+    let choices = shuffle(currentWords.map(x => x[0])).slice(0,4);
+    if (!choices.includes(p[0])) {
+      choices[Math.floor(Math.random()*4)] = p[0];
+    }
+
+    choices.forEach(maoriWord => {
       const btn = document.createElement('button');
-      btn.textContent = ans;
+      btn.textContent = maoriWord;
       btn.onclick = () => {
-        btn.classList.add(ans === p[1] ? 'correct' : 'incorrect');
+        btn.classList.add(maoriWord === p[0] ? 'correct' : 'incorrect');
         options.querySelectorAll('button').forEach(b => b.disabled = true);
       };
       options.appendChild(btn);
     });
+
     questionDiv.appendChild(options);
     container.appendChild(questionDiv);
   });
@@ -150,41 +182,65 @@ function showMatching() {
   section.innerHTML = '';
   matched.innerHTML = '';
 
-  const leftWords = shuffle(currentWords.map(p => p[0]));
-  const rightWords = shuffle(currentWords.map(p => p[1]));
+  const maoriWords = shuffle(currentWords.map(p => ({text: p[0], eng: p[1]})));
+  const englishWords = shuffle(currentWords.map(p => p[1]));
 
   const leftBox = document.createElement('div');
   leftBox.className = 'matching-box';
-  leftWords.forEach(word => {
-    const item = document.createElement('div');
-    item.className = 'drag-item';
-    item.textContent = word;
-    item.draggable = true;
-    item.ondragstart = e => e.dataTransfer.setData('text', word);
-    leftBox.appendChild(item);
-  });
+  leftBox.innerHTML = '<h3 style="text-align:center;color:var(--blue);">Te Reo Māori</h3>';
 
   const rightBox = document.createElement('div');
   rightBox.className = 'matching-box';
-  rightWords.forEach(word => {
-    const target = document.createElement('div');
-    target.className = 'drag-item';
-    target.textContent = word;
-    target.ondragover = e => e.preventDefault();
-    target.ondrop = e => {
-      e.preventDefault();
-      const draggedText = e.dataTransfer.getData('text');
-      const pair = currentWords.find(p => p[0] === draggedText);
-      if (pair && pair[1] === word) {
+  rightBox.innerHTML = '<h3 style="text-align:center;color:var(--blue);">English</h3>';
+
+  const pairMap = {};
+  currentWords.forEach(p => pairMap[p[0]] = p[1]);
+
+  maoriWords.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'matching-item';
+    el.textContent = item.text;
+    el.onclick = () => {
+      document.querySelectorAll('.matching-item.selected').forEach(x => x.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedLeft = item.text;
+    };
+    leftBox.appendChild(el);
+  });
+
+  englishWords.forEach(eng => {
+    const el = document.createElement('div');
+    el.className = 'matching-item';
+    el.textContent = eng;
+    el.onclick = () => {
+      if (!selectedLeft) return;
+      if (pairMap[selectedLeft] === eng) {
+        // Correct match!
+        const colorIndex = matched.children.length % colors.length;
+        const pairColor = colors[colorIndex];
+
         const pairDiv = document.createElement('div');
         pairDiv.className = 'pair';
-        pairDiv.textContent = `${draggedText} — ${word}`;
+        pairDiv.style.backgroundColor = pairColor;
+        pairDiv.style.borderLeftColor = pairColor;
+        pairDiv.textContent = `${selectedLeft} — ${eng}`;
         matched.appendChild(pairDiv);
-        item.remove();
-        target.style.visibility = 'hidden';
+
+        // Mark as matched
+        document.querySelectorAll('.matching-item').forEach(item => {
+          if (item.textContent === selectedLeft || item.textContent === eng) {
+            item.classList.add('matched');
+          }
+        });
+      } else {
+        // Wrong - flash red briefly
+        el.style.background = '#FF8A80';
+        setTimeout(() => el.style.background = '', 500);
       }
+      selectedLeft = null;
+      document.querySelectorAll('.matching-item.selected').forEach(x => x.classList.remove('selected'));
     };
-    rightBox.appendChild(target);
+    rightBox.appendChild(el);
   });
 
   section.className = 'matching-container';
@@ -209,7 +265,6 @@ function showSentences() {
     const answerArea = sentenceDiv.querySelector('.answer-area');
     const wordBank = sentenceDiv.querySelector('.word-bank');
 
-    // Split te reo sentence into words and shuffle
     const words = shuffle(item.te.split(' '));
     words.forEach(w => {
       const wordEl = document.createElement('div');
