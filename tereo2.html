@@ -15,36 +15,41 @@
   .header h1{margin:0;font-size:2.7rem}
   .authors{font-size:1.5rem;margin:8px 0}
   .page-number{font-size:1.9rem;background:rgba(255,255,255,.3);padding:10px 35px;border-radius:50px;display:inline-block;margin-top:8px}
-  .section-buttons{display:flex;justify-content:center;gap:18px;margin:35px auto;overflow-x:auto}
+  .section-buttons{display:flex;justify-content:center;gap:18px;margin:35px auto;overflow-x:auto;padding-bottom:10px}
   .section-btn{flex:1;max-width:280px;padding:18px 8px;font-size:1.45rem;font-weight:600;color:white;background:var(--r);border:none;border-radius:14px;cursor:pointer;opacity:.7}
   .section-btn.active{opacity:1;background:#7D46CC;font-weight:900}
   h3{color:var(--r);border-bottom:5px solid var(--o);padding-bottom:8px;margin:50px 0 25px}
-  #flashcards-section{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  .card{background:var(--k);height:135px;border:5px solid var(--e);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer}
+  #flashcards-section,#quiz-section .quiz-options{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .card{background:var(--k);height:135px;border:5px solid var(--e);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;text-align:center;padding:10px}
   .card.flipped{background:var(--o);color:white}
-  .quiz-options{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  .quiz-options button{padding:15px;font-size:1.2rem;border:4px solid var(--e);border-radius:12px;font-weight:600}
-  .matching-container{display:flex;gap:25px;margin-top:25px;flex-wrap:wrap}
-  .matching-box{flex:1;min-width:300px;background:white;border:4px dashed var(--e);border-radius:14px;padding:20px}
+  .quiz-options button{padding:15px;font-size:1.2rem;border:4px solid var(--e);border-radius:12px;font-weight:600;background:white}
+  .quiz-options button.correct{background:#C8E6C9}
+  .quiz-options button.incorrect{background:#FFCDD2}
+  .matching-container{display:flex;gap:25px;margin-top:25px;flex-wrap:wrap;justify-content:center}
+  .matching-box{flex:1;min-width:280px;max-width:400px;background:white;border:4px dashed var(--e);border-radius:14px;padding:20px}
   .drag-item{background:var(--p);border:3px solid var(--e);margin:10px 0;padding:15px;border-radius:12px;text-align:center;font-weight:600;cursor:pointer}
   .pair{background:var(--k);padding:12px;margin:8px;border-radius:10px;font-weight:bold;border-left:8px solid var(--o)}
   #sentence-builder{background:white;padding:30px;border-radius:18px;border:6px solid var(--o);margin:50px 0}
-  .builder-sentence{background:#EBE6FF;padding:22px;border-radius:14px;margin-bottom:28px}
-  .english-prompt{font-size:1.5rem;font-weight:bold;color:var(--r)}
-  .answer-area,.word-bank{min-height:80px;padding:16px;border:3px dashed var(--e);border-radius:12px;background:#FAFAFA;display:flex;flex-wrap:wrap;gap:12px}
+  .builder-sentence{background:#EBE6FF;padding:22px;border-radius:14px;margin-bottom:28px;position:relative}
+  .english-prompt{font-size:1.5rem;font-weight:bold;color:var(--r);margin-bottom:15px}
+  .answer-area,.word-bank{min-height:80px;padding:16px;border:3px dashed var(--e);border-radius:12px;background:#FAFAFA;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
   .word{background:#BE9FDC;padding:11px 22px;border-radius:11px;cursor:pointer;font-weight:600}
   .word.in-answer{background:var(--r);color:white}
   .builder-sentence.correct{background:#E6FFE6;border-left:12px solid #00AA00}
+  .check-mark{position:absolute;top:10px;right:10px;font-size:2rem;color:#00AA00;display:none}
+  .builder-sentence.correct .check-mark{display:block}
+  @media (max-width:768px){
+    #flashcards-section,#quiz-section .quiz-options{grid-template-columns:repeat(2,1fr)}
+    .section-buttons{flex-wrap:wrap}
+  }
 </style>
 </head>
 <body>
-
 <div class="header">
   <h1>Pūkana</h1>
   <div class="authors">He hōtaka tamariki – Māori Television</div>
   <div class="page-number">Ngā Kupu Hou mō ngā Tamariki</div>
 </div>
-
 <div class="section-buttons">
   <button class="section-btn active" id="btn1" onclick="loadSection('s1')">1. Kupu Taketake</button>
   <button class="section-btn" id="btn2" onclick="loadSection('s2')">2. Tinana & Kākahu</button>
@@ -52,110 +57,188 @@
   <button class="section-btn" id="btn4" onclick="loadSection('s4')">4. Rerenga Kōrero</button>
 </div>
 
-<h3>Ngā Kaari Kupu</h3><div id="flashcards-section"></div>
-<h3>Ngā Pātai</h3><div id="quiz-section"></div>
-<h3>Tōpū Kupu</h3><div id="matched-pairs"></div><div id="matching-section"></div>
+<h3>Ngā Kaari Kupu</h3>
+<div id="flashcards-section"></div>
+
+<h3>Ngā Pātai</h3>
+<div id="quiz-section"></div>
+
+<h3>Tōpū Kupu</h3>
+<div id="matched-pairs"></div>
+<div id="matching-section"></div>
+
 <h3>Hanga Rerenga Kōrero</h3>
-<div id="sentence-builder"><div id="sentences-container"></div></div>
+<div id="sentence-builder">
+  <div id="sentences-container"></div>
+</div>
 
 <script>
 // CONTENT FOR PŪKANA
-
 const vocab = {
-  s1: [
-    ["kanohi","face"],["waha","mouth"],["ringa","hand"],["waewae","foot"],
-    ["hoa","friend"],["whānau","family"],["reo","language"],["ataata","smile"]
-  ],
-  s2: [
-    ["pōtae","hat"],["hū","shoes"],["kākahu","clothes"],["tarau","pants"],
-    ["koti","jacket"],["pōtae rā","sunhat"],["tīhāte","t-shirt"],["kākahu kura","school clothes"]
-  ],
-  s3: [
-    ["kata","laugh"],["waiata","sing"],["kanikani","dance"],["oma","run"],
-    ["peke","jump"],["kōrero","talk"],["titiro","look"],["whakarongo","listen"]
-  ],
-  s4: [
-    ["Kei te kata au","I am laughing"],
-    ["Kei te waiata mātou","We are singing"],
-    ["Aroha mai","Sorry"],
-    ["Tino pai!","Very good!"],
-    ["Me tākaro tātou","Let’s play"],
-    ["Haere mai","Come here"],
-    ["Ka rawe!","Awesome!"],
-    ["Kia kaha","Be strong / keep going"]
-  ]
+  s1: [["kanohi","face"],["waha","mouth"],["ringa","hand"],["waewae","foot"],["hoa","friend"],["whānau","family"],["reo","language"],["ataata","smile"]],
+  s2: [["pōtae","hat"],["hū","shoes"],["kākahu","clothes"],["tarau","pants"],["koti","jacket"],["pōtae rā","sunhat"],["tīhāte","t-shirt"],["kākahu kura","school clothes"]],
+  s3: [["kata","laugh"],["waiata","sing"],["kanikani","dance"],["oma","run"],["peke","jump"],["kōrero","talk"],["titiro","look"],["whakarongo","listen"]],
+  s4: [["Kei te kata au","I am laughing"],["Kei te waiata mātou","We are singing"],["Aroha mai","Sorry"],["Tino pai!","Very good!"],["Me tākaro tātou","Let’s play"],["Haere mai","Come here"],["Ka rawe!","Awesome!"],["Kia kaha","Be strong / keep going"]]
 };
 
 const sentences = {
-  s1: [
-    {en:"I am smiling.",te:"Kei te ataata au"},
-    {en:"This is my family.",te:"Ko taku whānau tēnei"},
-    {en:"She has a happy face.",te:"He kanohi hari tōna"},
-    {en:"We are friends.",te:"He hoa mātou"}
-  ],
-  s2: [
-    {en:"I am wearing a hat.",te:"Kei te mau pōtae au"},
-    {en:"He is wearing shoes.",te:"Kei te mau hū ia"},
-    {en:"The clothes are red.",te:"He whero ngā kākahu"},
-    {en:"I have my school clothes on.",te:"Kei te mau kākahu kura au"}
-  ],
-  s3: [
-    {en:"We are dancing.",te:"Kei te kanikani mātou"},
-    {en:"The children are running.",te:"Kei te oma ngā tamariki"},
-    {en:"She is listening.",te:"Kei te whakarongo ia"},
-    {en:"They are jumping.",te:"Kei te peke rātou"}
-  ],
-  s4: [
-    {en:"Let’s sing together.",te:"Me waiata tātou"},
-    {en:"You are doing very well!",te:"Kei te tino pai koe!"},
-    {en:"Come and play.",te:"Haere mai ki te tākaro"},
-    {en:"Be strong, keep going.",te:"Kia kaha, haere tonu"}
-  ]
+  s1: [{en:"I am smiling.",te:"Kei te ataata au"},{en:"This is my family.",te:"Ko taku whānau tēnei"},{en:"She has a happy face.",te:"He kanohi hari tōna"},{en:"We are friends.",te:"He hoa mātou"}],
+  s2: [{en:"I am wearing a hat.",te:"Kei te mau pōtae au"},{en:"He is wearing shoes.",te:"Kei te mau hū ia"},{en:"The clothes are red.",te:"He whero ngā kākahu"},{en:"I have my school clothes on.",te:"Kei te mau kākahu kura au"}],
+  s3: [{en:"We are dancing.",te:"Kei te kanikani mātou"},{en:"The children are running.",te:"Kei te oma ngā tamariki"},{en:"She is listening.",te:"Kei te whakarongo ia"},{en:"They are jumping.",te:"Kei te peke rātou"}],
+  s4: [{en:"Let’s sing together.",te:"Me waiata tātou"},{en:"You are doing very well!",te:"Kei te tino pai koe!"},{en:"Come and play.",te:"Haere mai ki te tākaro"},{en:"Be strong, keep going.",te:"Kia kaha, haere tonu"}]
 };
 
-// DO NOT CHANGE BELOW
-let currentWords=[],currentSentences=[];
-function shuffle(a){return a.slice().sort(()=>Math.random()-0.5)}
-function loadSection(s){
-  currentWords=shuffle([...vocab[s]]);
-  currentSentences=sentences[s];
-  document.querySelectorAll('.section-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('btn'+s[1]).classList.add('active');
-  showFlashcards();showQuiz();showMatching();showSentences();
+let currentWords = [], currentSentences = [];
+
+function shuffle(a) { return a.slice().sort(() => Math.random() - 0.5); }
+
+function loadSection(s) {
+  currentWords = shuffle([...vocab[s]]);
+  currentSentences = shuffle([...sentences[s]]);
+  document.querySelectorAll('.section-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn' + s[1]).classList.add('active');
+  showFlashcards();
+  showQuiz();
+  showMatching();
+  showSentences();
 }
-function showFlashcards(){
-  const c=document.getElementById('flashcards-section');c.innerHTML='';
-  currentWords.forEach(p=>{
-    const d=document.createElement('div');d.className='card';d.textContent=p[0];
-    d.onclick=()=>{d.classList.toggle('flipped');d.textContent=d.classList.contains('flipped')?p[1]:p[0]};
-    c.appendChild(d);
+
+function showFlashcards() {
+  const container = document.getElementById('flashcards-section');
+  container.innerHTML = '';
+  currentWords.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.textContent = p[0]; // Māori / phrase front
+    card.onclick = () => {
+      card.classList.toggle('flipped');
+      card.textContent = card.classList.contains('flipped') ? p[1] : p[0];
+    };
+    container.appendChild(card);
   });
 }
-function showQuiz(){
-  const c=document.getElementById('quiz-section');c.innerHTML='';
-  currentWords.forEach(p=>{
-    const q=document.createElement('div');q.innerHTML=`<b>${p[1]}</b>`;
-    const o=document.createElement('div');o.className='quiz-options';
-    shuffle([...currentWords].map(x=>x[0])).slice(0,4).forEach(a=>{
-      const b=document.createElement('button');b.textContent=a;
-      b.onclick=()=>{b.style.background=a===p[0]?'#C8E6C9':'#FFCDD2'};
-      o.appendChild(b);
+
+function showQuiz() {
+  const container = document.getElementById('quiz-section');
+  container.innerHTML = '';
+  currentWords.forEach(p => {
+    const questionDiv = document.createElement('div');
+    questionDiv.style.marginBottom = '40px';
+    questionDiv.innerHTML = `<b>${p[0]}</b>`; // Always Māori/phrase as question
+
+    const options = document.createElement('div');
+    options.className = 'quiz-options';
+
+    const allEnglish = shuffle(currentWords.map(x => x[1]));
+    shuffle(allEnglish.slice(0,4)).forEach(ans => {
+      const btn = document.createElement('button');
+      btn.textContent = ans;
+      btn.onclick = () => {
+        btn.classList.add(ans === p[1] ? 'correct' : 'incorrect');
+        options.querySelectorAll('button').forEach(b => b.disabled = true);
+      };
+      options.appendChild(btn);
     });
-    q.appendChild(o);c.appendChild(q);
+    questionDiv.appendChild(options);
+    container.appendChild(questionDiv);
   });
 }
-function showMatching(){
-  const s=document.getElementById('matching-section'),m=document.getElementById('matched-pairs');
-  s.innerHTML='';m.innerHTML='';
+
+function showMatching() {
+  const section = document.getElementById('matching-section');
+  const matched = document.getElementById('matched-pairs');
+  section.innerHTML = '';
+  matched.innerHTML = '';
+
+  const leftWords = shuffle(currentWords.map(p => p[0]));
+  const rightWords = shuffle(currentWords.map(p => p[1]));
+
+  const leftBox = document.createElement('div');
+  leftBox.className = 'matching-box';
+  leftWords.forEach(word => {
+    const item = document.createElement('div');
+    item.className = 'drag-item';
+    item.textContent = word;
+    item.draggable = true;
+    item.ondragstart = e => e.dataTransfer.setData('text', word);
+    leftBox.appendChild(item);
+  });
+
+  const rightBox = document.createElement('div');
+  rightBox.className = 'matching-box';
+  rightWords.forEach(word => {
+    const target = document.createElement('div');
+    target.className = 'drag-item';
+    target.textContent = word;
+    target.ondragover = e => e.preventDefault();
+    target.ondrop = e => {
+      e.preventDefault();
+      const draggedText = e.dataTransfer.getData('text');
+      const pair = currentWords.find(p => p[0] === draggedText);
+      if (pair && pair[1] === word) {
+        const pairDiv = document.createElement('div');
+        pairDiv.className = 'pair';
+        pairDiv.textContent = `${draggedText} — ${word}`;
+        matched.appendChild(pairDiv);
+        item.remove();
+        target.style.visibility = 'hidden';
+      }
+    };
+    rightBox.appendChild(target);
+  });
+
+  section.className = 'matching-container';
+  section.appendChild(leftBox);
+  section.appendChild(rightBox);
 }
-function showSentences(){
-  const c=document.getElementById('sentences-container');c.innerHTML='';
-  currentSentences.forEach(i=>{
-    const d=document.createElement('div');d.className='builder-sentence';
-    d.innerHTML=`<div class="english-prompt">${i.en}</div>`;
-    c.appendChild(d);
+
+function showSentences() {
+  const container = document.getElementById('sentences-container');
+  container.innerHTML = '';
+  currentSentences.forEach(item => {
+    const sentenceDiv = document.createElement('div');
+    sentenceDiv.className = 'builder-sentence';
+
+    sentenceDiv.innerHTML = `
+      <div class="english-prompt">${item.en}</div>
+      <div class="answer-area"></div>
+      <div class="word-bank"></div>
+      <div class="check-mark">✓</div>
+    `;
+
+    const answerArea = sentenceDiv.querySelector('.answer-area');
+    const wordBank = sentenceDiv.querySelector('.word-bank');
+
+    // Split te reo sentence into words and shuffle
+    const words = shuffle(item.te.split(' '));
+    words.forEach(w => {
+      const wordEl = document.createElement('div');
+      wordEl.className = 'word';
+      wordEl.textContent = w;
+      wordEl.onclick = () => {
+        if (wordEl.parentElement === wordBank) {
+          answerArea.appendChild(wordEl);
+        } else {
+          wordBank.appendChild(wordEl);
+        }
+        checkSentence();
+      };
+      wordBank.appendChild(wordEl);
+    });
+
+    function checkSentence() {
+      const built = Array.from(answerArea.querySelectorAll('.word')).map(el => el.textContent).join(' ');
+      if (built === item.te) {
+        sentenceDiv.classList.add('correct');
+      } else {
+        sentenceDiv.classList.remove('correct');
+      }
+    }
+
+    container.appendChild(sentenceDiv);
   });
 }
+
 loadSection('s1');
 </script>
 </body>
