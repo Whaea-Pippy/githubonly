@@ -34,32 +34,68 @@
             text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
         }
         .buttons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
             margin: 50px auto;
-            max-width: 1200px;
+            max-width: 1400px;
+            padding: 0 20px;
         }
         button {
-            padding: 20px 40px;
-            font-size: 1.5em;
+            padding: 25px 40px;
+            font-size: 1.6em;
             font-weight: bold;
-            border-radius: 15px;
-            border-width: 4px;
+            border-radius: 20px;
+            border-width: 5px;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 250px;
         }
         /* Button styles */
         .btn-purple { background-color: #9C27B0; border-color: #E1BEE7; color: #FFFFFF; }
-        .btn-purple:hover { background-color: #7B1FA2; border-color: #FFFFFF; color: #FFFFFF; }
+        .btn-purple:hover { background-color: #7B1FA2; border-color: #FFFFFF; }
         .btn-yellow { background-color: #FFEB3B; border-color: #FFF59D; color: #000000; }
         .btn-yellow:hover { background-color: #FDD835; border-color: #FFFFFF; color: #000000; }
         .btn-pink { background-color: #E91E63; border-color: #F8BBD0; color: #FFFFFF; }
-        .btn-pink:hover { background-color: #C2185B; border-color: #FFFFFF; color: #FFFFFF; }
+        .btn-pink:hover { background-color: #C2185B; border-color: #FFFFFF; }
         .btn-orange { background-color: #FF9800; border-color: #FFE0B2; color: #000000; }
         .btn-orange:hover { background-color: #F57C00; border-color: #FFFFFF; color: #000000; }
+        .btn-teal { background-color: #009688; border-color: #80CBC4; color: #FFFFFF; }
+        .btn-teal:hover { background-color: #00796B; border-color: #FFFFFF; }
+        .btn-green { background-color: #4CAF50; border-color: #C8E6C9; color: #FFFFFF; }
+        .btn-green:hover { background-color: #388E3C; border-color: #FFFFFF; }
+
+        .quote-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .quote-box {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            max-width: 80%;
+            font-size: 2em;
+            color: #333;
+            text-align: center;
+        }
+        .quote-box button {
+            margin-top: 30px;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        .quote-box button:hover {
+            background: #388E3C;
+        }
 
         .audit-trail {
             margin: 50px auto;
@@ -68,12 +104,8 @@
             border-radius: 15px;
             padding: 20px;
             color: white;
-            text-align: left;
         }
-        .audit-trail h2 {
-            text-align: center;
-            color: white;
-        }
+        .audit-trail h2 { text-align: center; }
         .audit-entry {
             padding: 10px;
             margin: 10px 0;
@@ -87,12 +119,12 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
+            gap: 30px;
         }
         .images img {
             border-radius: 20px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            max-width: 300px;
+            max-width: 350px;
             height: auto;
         }
     </style>
@@ -104,43 +136,76 @@
     <div class="progress" id="progress">Celebrations today: 0 🏆</div>
 
     <div class="buttons">
-        <button class="btn-purple" data-message="You're a Super Learner! 🌟">You're a Super Learner! 🌟</button>
-        <button class="btn-yellow" data-message="Keep Going Strong! 💪">Keep Going Strong! 💪</button>
-        <button class="btn-pink" data-message="Amazing Job Today! 👏">Amazing Job Today! 👏</button>
-        <button class="btn-orange" data-message="You're Unstoppable! 🚀">You're Unstoppable! 🚀</button>
+        <button class="btn-purple" data-message="You're a Super Learner! 🌟" data-quote="Challenges are exciting – wow, here's a chance to grow!">You're a Super Learner! 🌟</button>
+        <button class="btn-yellow" data-message="Keep Going Strong! 💪" data-quote="Effort is what turns ability into awesome accomplishments!">Keep Going Strong! 💪</button>
+        <button class="btn-pink" data-message="Amazing Job Today! 👏" data-quote="Mistakes are proof you're trying – keep going!">Amazing Job Today! 👏</button>
+        <button class="btn-orange" data-message="You're Unstoppable! 🚀" data-quote="Patience + hard work = magic! Difficult things get easier 🚀">You're Unstoppable! 🚀</button>
+        <button class="btn-teal" data-message="Believe in Yourself! ✨" data-quote="I haven't got it yet... but I will with practice!">Believe in Yourself! ✨</button>
+        <button class="btn-green" data-message="You Can Do Hard Things! 🏅" data-quote="Keep trying – perseverance makes dreams come true!">You Can Do Hard Things! 🏅</button>
     </div>
 
     <p>Click any button to celebrate your effort!</p>
 
     <div class="images">
 
-<grok-card data-id="e4e216" data-type="image_card"></grok-card>
+<grok-card data-id="11b5b8" data-type="image_card"></grok-card>
 
 
 
-<grok-card data-id="8b261c" data-type="image_card"></grok-card>
+<grok-card data-id="3334aa" data-type="image_card"></grok-card>
 
 
 
-<grok-card data-id="3b838f" data-type="image_card"></grok-card>
+<grok-card data-id="608c3e" data-type="image_card"></grok-card>
 
 
 
-<grok-card data-id="0253a2" data-type="image_card"></grok-card>
+<grok-card data-id="6704c7" data-type="image_card"></grok-card>
 
 
 
-<grok-card data-id="664686" data-type="image_card"></grok-card>
+<grok-card data-id="4d1759" data-type="image_card"></grok-card>
 
 
 
-<grok-card data-id="c4f471" data-type="image_card"></grok-card>
+<grok-card data-id="b81ce5" data-type="image_card"></grok-card>
+
+
+
+<grok-card data-id="b94b1e" data-type="image_card"></grok-card>
+
+
+
+<grok-card data-id="cfc634" data-type="image_card"></grok-card>
+
+
+
+<grok-card data-id="305b77" data-type="image_card"></grok-card>
+
+
+
+<grok-card data-id="5b3fb1" data-type="image_card"></grok-card>
+
+
+
+<grok-card data-id="de3122" data-type="image_card"></grok-card>
+
+
+
+<grok-card data-id="819462" data-type="image_card"></grok-card>
 
     </div>
 
     <div class="audit-trail">
         <h2>Audit Trail of Awesomeness 📜</h2>
         <div id="trail"></div>
+    </div>
+
+    <div class="quote-overlay" id="quoteOverlay">
+        <div class="quote-box">
+            <div id="quoteText"></div>
+            <button id="closeQuote">Got it! 😊</button>
+        </div>
     </div>
 
     <p style="font-size:2em; margin-top:50px;">High five! You've got this! ✋</p>
@@ -151,6 +216,9 @@
         const progressEl = document.getElementById('progress');
         const trailEl = document.getElementById('trail');
         const cheer = document.getElementById('cheerSound');
+        const quoteOverlay = document.getElementById('quoteOverlay');
+        const quoteText = document.getElementById('quoteText');
+        const closeQuote = document.getElementById('closeQuote');
 
         let count = parseInt(localStorage.getItem('celebrationCount') || '0');
         let trail = JSON.parse(localStorage.getItem('celebrationTrail') || '[]');
@@ -166,36 +234,47 @@
             });
         }
 
-        function celebrate(message) {
-            // Confetti!
+        function showQuote(quote) {
+            quoteText.textContent = quote;
+            quoteOverlay.style.display = 'flex';
+        }
+
+        function hideQuote() {
+            quoteOverlay.style.display = 'none';
+        }
+
+        function celebrate(message, quote) {
             confetti({
-                particleCount: 150,
-                spread: 70,
+                particleCount: 200,
+                spread: 80,
                 origin: { y: 0.6 },
-                colors: ['#FFEB3B', '#E91E63', '#FF9800', '#9C27B0']
+                colors: ['#FFEB3B', '#E91E63', '#FF9800', '#9C27B0', '#009688', '#4CAF50']
             });
 
-            // Sound
             cheer.currentTime = 0;
             cheer.play();
 
-            // Progress
             count++;
             localStorage.setItem('celebrationCount', count);
 
-            // Audit trail
             const now = new Date();
             const timeStr = now.toLocaleString();
             trail.push({ time: timeStr, message });
             localStorage.setItem('celebrationTrail', JSON.stringify(trail));
 
+            showQuote(quote);
             updateDisplay();
         }
 
         document.querySelectorAll('button[data-message]').forEach(btn => {
             btn.addEventListener('click', () => {
-                celebrate(btn.dataset.message);
+                celebrate(btn.dataset.message, btn.dataset.quote);
             });
+        });
+
+        closeQuote.addEventListener('click', hideQuote);
+        quoteOverlay.addEventListener('click', (e) => {
+            if (e.target === quoteOverlay) hideQuote();
         });
 
         updateDisplay();
