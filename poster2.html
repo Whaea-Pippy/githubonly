@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibecoding for Teachers</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #6a5cff, #ff7ad9);
+  color: #222;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 24px;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  margin-bottom: 24px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.4rem;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  opacity: 0.85;
+  margin-bottom: 20px;
+}
+
+/* Poster image */
+.poster {
+  width: 100%;
+  max-width: 720px;
+  display: block;
+  margin: 0 auto;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+/* Buttons */
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+button {
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+  color: white;
+  border: none;
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+}
+
+/* Fun reveal box */
+.fun-box {
+  display: none;
+  margin-top: 20px;
+  padding: 20px;
+  background: #f5f7ff;
+  border-radius: 16px;
+  border-left: 8px solid #6a5cff;
+}
+
+.fun-box h3 {
+  margin-top: 0;
+}
+
+.code-sample {
+  background: #111;
+  color: #00ffb3;
+  padding: 16px;
+  border-radius: 12px;
+  font-family: monospace;
+  overflow-x: auto;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.75;
+  margin-top: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="card">
+    <h1>Vibecoding for Teachers</h1>
+    <div class="subtitle">
+      No pressure. No perfection. Just playful learning with code.
+    </div>
+
+    <img 
+      src="https://raw.githubusercontent.com/Whaea-Pippy/githubonly/main/vibecodeposter.png"
+      alt="Vibecoding poster for teachers"
+      class="poster"
+    >
+
+    <div class="buttons">
+      <button onclick="showWhy()">Why Vibecoding?</button>
+      <button onclick="showTry()">Try Vibecoding (30 seconds)</button>
+      <button onclick="showClassroom()">Classroom Ready?</button>
+    </div>
+
+    <div id="funBox" class="fun-box"></div>
+  </div>
+
+  <footer>
+    Built for curious kaiako 💛 | Vibecoding is about confidence, not credentials.
+  </footer>
+
+</div>
+
+<script>
+function showWhy() {
+  document.getElementById("funBox").style.display = "block";
+  document.getElementById("funBox").innerHTML = `
+    <h3>✨ Why Vibecoding?</h3>
+    <ul>
+      <li>No “real programmer” gatekeeping</li>
+      <li>Perfect for beginners (teachers included!)</li>
+      <li>Students focus on ideas, not syntax fear</li>
+      <li>You model learning alongside your class</li>
+    </ul>
+  `;
+}
+
+function showTry() {
+  document.getElementById("funBox").style.display = "block";
+  document.getElementById("funBox").innerHTML = `
+    <h3>🎧 30-Second Vibecoding</h3>
+    <p>Read this out loud to students (or yourself):</p>
+    <div class="code-sample">
+      "Computer, make a colourful page<br>
+      with buttons that celebrate learning<br>
+      and tell students they’re doing great."
+    </div>
+    <p>
+      Vibecoding starts with <strong>ideas and intent</strong>,
+      not perfect code.
+    </p>
+  `;
+}
+
+function showClassroom() {
+  document.getElementById("funBox").style.display = "block";
+  document.getElementById("funBox").innerHTML = `
+    <h3>🏫 Classroom-Ready Truth</h3>
+    <p>
+      If you can:
+    </p>
+    <ul>
+      <li>Ask good questions</li>
+      <li>Encourage curiosity</li>
+      <li>Say “Let’s try” instead of “I don’t know”</li>
+    </ul>
+    <p><strong>You are ready.</strong></p>
+  `;
+}
+</script>
+
+</body>
+</html>
