@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>🪩 Vibe Coding Jeopardy – Fixed Columns</title>
+<title>🪩 Vibe Coding Jeopardy</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -14,63 +14,186 @@
   --purple:#8a2be2;
   --bg:#05010a;
 }
-
 body{
   margin:0;
   font-family:'Poppins',sans-serif;
   background:radial-gradient(circle at top,#1a0033,var(--bg));
   color:white;
 }
-
 h1{text-align:center;font-size:3rem;margin:16px 0 6px;text-shadow:0 0 20px #fff;}
 .subtitle{text-align:center;opacity:.85;margin-bottom:10px;}
 
 /* SCOREBOARD */
-.scoreboard{display:flex;justify-content:center;gap:20px;margin-bottom:10px;}
-.team{padding:10px 20px;border-radius:18px;text-align:center;min-width:160px;box-shadow:0 0 15px rgba(255,255,255,.3);} 
-.team.active{outline:4px solid #fff;transform:scale(1.05);} 
-.team h2{margin:0;font-size:1.2rem;} 
-.team .score{font-size:2rem;font-weight:900;} 
-.team button{margin:4px;padding:4px 10px;font-weight:700;border:none;border-radius:20px;cursor:pointer;} 
-.team1{background:linear-gradient(135deg,var(--cyan),#003344);} 
-.team2{background:linear-gradient(135deg,var(--pink),#33001f);} 
+.scoreboard{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+  padding:0 10px;
+}
+.team{
+  padding:12px 24px;
+  border-radius:18px;
+  text-align:center;
+  min-width:160px;
+  box-shadow:0 0 15px rgba(255,255,255,.3);
+}
+.team.active{outline:4px solid #fff;transform:scale(1.05);}
+.team h2{margin:0;font-size:1.3rem;}
+.team .score{font-size:2.2rem;font-weight:900;}
+.team button{
+  margin:6px 4px;
+  padding:10px 16px;
+  font-weight:700;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  font-size:1.1rem;
+  min-width:48px;
+  min-height:48px; /* better touch target */
+}
+.team1{background:linear-gradient(135deg,var(--cyan),#003344);}
+.team2{background:linear-gradient(135deg,var(--pink),#33001f);}
 
-/* BOARD */
-.board{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:16px;}
-.category{padding:12px;text-align:center;font-weight:900;text-transform:uppercase;border-radius:14px;box-shadow:0 0 20px currentColor;}
-.cell{background:#0d0220;border-radius:14px;padding:24px 10px;text-align:center;font-size:1.6rem;font-weight:900;cursor:pointer;box-shadow:0 0 12px currentColor;}
-.cell.used{opacity:.25;cursor:default;box-shadow:none;}
+/* BOARD - Always 5 columns, with horizontal scroll on mobile */
+.board-wrapper {
+  overflow-x:auto;
+  padding:10px;
+  margin:0 10px;
+  border-radius:16px;
+}
+.board{
+  display:grid;
+  grid-template-columns:repeat(5, minmax(200px, 1fr));
+  gap:12px;
+  padding:16px;
+  min-width:900px; /* forces horizontal scroll on small screens */
+}
 
-/* COLUMN COLOURS – CONSISTENT PER TOPIC */
-.col-0{color:var(--pink);border:3px solid var(--pink);} 
-.col-1{color:var(--cyan);border:3px solid var(--cyan);} 
-.col-2{color:var(--green);border:3px solid var(--green);} 
-.col-3{color:var(--yellow);border:3px solid var(--yellow);} 
-.col-4{color:var(--purple);border:3px solid var(--purple);} 
+/* Hint for mobile users */
+.scroll-hint {
+  text-align:center;
+  font-size:0.9rem;
+  opacity:0.7;
+  margin:8px 0;
+  display:none;
+}
 
-/* MODAL */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;}
-.modal-content{max-width:720px;width:90%;padding:30px;border-radius:22px;text-align:center;background:linear-gradient(135deg,#1a0033,#05010a);box-shadow:0 0 30px #fff;} 
-.question{font-size:1.7rem;margin-bottom:18px;} 
-.answer{display:none;font-size:1.3rem;margin-top:14px;} 
-.modal button{margin:8px;padding:10px 20px;border:none;border-radius:30px;font-weight:800;cursor:pointer;} 
-.show{background:var(--green);} 
-.close{background:var(--pink);} 
-.note{text-align:center;opacity:.7;margin-bottom:12px;} 
+/* SHARED */
+.category{
+  padding:16px;
+  text-align:center;
+  font-weight:900;
+  text-transform:uppercase;
+  border-radius:14px;
+  box-shadow:0 0 20px currentColor;
+  font-size:1.1rem;
+}
+.cell{
+  background:#0d0220;
+  border-radius:14px;
+  padding:28px 10px;
+  text-align:center;
+  font-size:1.9rem;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 0 12px currentColor;
+  touch-action:manipulation;
+}
+.cell.used{
+  opacity:.25;
+  cursor:default;
+  box-shadow:none;
+}
+
+/* COLUMN COLOURS */
+.col-0{color:var(--pink);border:3px solid var(--pink);}
+.col-1{color:var(--cyan);border:3px solid var(--cyan);}
+.col-2{color:var(--green);border:3px solid var(--green);}
+.col-3{color:var(--yellow);border:3px solid var(--yellow);}
+.col-4{color:var(--purple);border:3px solid var(--purple);}
+
+/* MOBILE IMPROVEMENTS ONLY */
+@media (max-width: 900px) {
+  h1 { font-size:2.4rem; }
+  .board {
+    grid-template-columns:repeat(5, minmax(160px, 1fr));
+    gap:10px;
+    padding:12px;
+  }
+  .category { font-size:1rem; padding:14px; }
+  .cell { font-size:1.7rem; padding:24px 10px; }
+  .scroll-hint { display:block; }
+  .team button { min-width:44px; min-height:44px; padding:8px 12px; }
+}
+
+/* MODAL - better on mobile */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.95);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  overflow-y:auto;
+}
+.modal-content{
+  max-width:720px;
+  width:95%;
+  padding:40px;
+  border-radius:22px;
+  text-align:center;
+  background:linear-gradient(135deg,#1a0033,#05010a);
+  box-shadow:0 0 30px #fff;
+}
+.question{font-size:1.9rem;margin-bottom:24px;line-height:1.5;}
+.answer{display:none;font-size:1.5rem;margin-top:24px;line-height:1.5;}
+.modal button{
+  margin:12px 8px;
+  padding:16px 28px;
+  border:none;
+  border-radius:30px;
+  font-weight:800;
+  cursor:pointer;
+  font-size:1.2rem;
+  min-height:56px;
+}
+.show{background:var(--green); color:black;}
+.close{background:var(--pink);}
+
+/* TOGGLE BUTTON */
+#lang-toggle{
+  display:block;
+  margin:15px auto;
+  padding:12px 24px;
+  border-radius:20px;
+  font-weight:800;
+  background:linear-gradient(135deg, var(--cyan), var(--pink));
+  color:white;
+  border:none;
+  cursor:pointer;
+  font-size:1.1rem;
+}
 </style>
 </head>
 <body>
-
 <h1>🪩 Vibe Coding Jeopardy</h1>
-<div class="subtitle">Each column = one topic • one colour • no chaos</div>
+<div class="subtitle">Te reo Māori ↔ English toggle • Disco Jeopardy for teachers</div>
 
 <div class="scoreboard">
   <div id="team1" class="team team1 active"><h2>Team 1</h2><div id="score1" class="score">0</div><button onclick="adjustScore(1,1)">+</button><button onclick="adjustScore(1,-1)">−</button></div>
   <div id="team2" class="team team2"><h2>Team 2</h2><div id="score2" class="score">0</div><button onclick="adjustScore(2,1)">+</button><button onclick="adjustScore(2,-1)">−</button></div>
 </div>
 
-<div class="board" id="board"></div>
-<div class="note">✨ Same topic down the column — like real Jeopardy</div>
+<button id="lang-toggle">English ↔ Te reo Māori</button>
+
+<div class="scroll-hint">← Scroll sideways to see all categories →</div>
+
+<div class="board-wrapper">
+  <div class="board" id="board"></div>
+</div>
 
 <div class="modal" id="modal">
   <div class="modal-content">
@@ -82,60 +205,76 @@ h1{text-align:center;font-size:3rem;margin:16px 0 6px;text-shadow:0 0 20px #fff;
 </div>
 
 <script>
-// DATA: each category = one column
-const categories=[
- {name:'Vibe Basics',color:'col-0',qs:[
-  'What is vibe coding?','What matters more than syntax?','Why is vibe coding empowering?'
- ],as:[
-  'Describing intent and refining AI code.','Clarity of intent.','It lowers technical barriers.'
- ]},
- {name:'Prompt Power',color:'col-1',qs:[
-  'What is a prompt?','Name one thing strong prompts include.','Why iterate prompts?'
- ],as:[
-  'A clear instruction to AI.','Audience, purpose, layout.','Each version improves accuracy.'
- ]},
- {name:'AI Reality',color:'col-2',qs:[
-  'Does AI code work first time?','What to do when code breaks?','Why review AI output?'
- ],as:[
-  'Usually not.','Describe the problem clearly.','Accuracy, safety, learning.'
- ]},
- {name:'Classroom Use',color:'col-3',qs:[
-  'One thing you can build?','Why good for differentiation?','Student-safe intro?'
- ],as:[
-  'Quizzes, flashcards, games.','Easy adaptation.','Teacher-led demos.'
- ]},
- {name:'Teacher Energy',color:'col-4',qs:[
-  'What feeling should this spark?','Finish: I don’t break code, I…','Why play matters?'
- ],as:[
-  'Confidence.','Learn from it.','Reduces fear and builds flow.'
- ]}
+const categories = [
+ {name:{en:'Vibe Basics',mi:'Ngā Tikanga Vibe'},color:'col-0',qs:{en:['What is vibe coding?','What matters more than syntax?','Why is vibe coding empowering?','What role does curiosity play?','Why is failure useful?'],mi:['He aha te vibe coding?','He aha te mea nui ake i te wetereo?','He aha te painga o te vibe coding?','He aha te mahi a te pākiki?','He aha te painga o te hē?']},as:{en:['Describing intent and refining AI code.','Clarity of intent.','It lowers technical barriers.','It drives exploration.','It supports learning.'],mi:['He whakaahua i te whakaaro, ā, ka whakapai ake i te waehere AI.','Ko te mārama o te whakaaro.','Ka whakaheke i ngā ārai hangarau.','Ka akiaki i te torotoro.','Ka tautoko i te ako.']}},
+ {name:{en:'Prompt Power',mi:'Te Kaha o te Tohutohu'},color:'col-1',qs:{en:['What is a prompt?','Name one thing strong prompts include.','Why iterate prompts?','Why mention audience?','Why specify layout?'],mi:['He aha te prompt?','Whakahuatia tētahi wāhanga o te prompt pai.','He aha te take o te whakahou prompt?','He aha te take o te hunga whakarongo?','He aha te take o te whakatakotoranga?']},as:{en:['A clear instruction to AI.','Audience, purpose, layout.','Each version improves accuracy.','It shapes tone and complexity.','It guides structure.'],mi:['He tohutohu mārama ki te AI.','Te hunga whakarongo, te kaupapa, te āhua.','Ka pai ake te tika o ia putanga.','Ka whakatau i te reo me te uaua.','Ka ārahi i te hanganga.']}},
+ {name:{en:'AI Reality',mi:'Te Ao Tūturu o AI'},color:'col-2',qs:{en:['Does AI code work first time?','What to do when code breaks?','Why review AI output?','Is AI a teacher?','Who is responsible for errors?'],mi:['Ka tika tonu te waehere AI i te tuatahi?','Me aha ina pakaru te waehere?','He aha te take o te arotake?','He kaiako rānei te AI?','Nā wai te kawenga mō ngā hē?']},as:{en:['Usually not.','Describe the problem clearly.','Accuracy, safety, learning.','No, it is a tool.','The human user.'],mi:['Te nuinga kāore.','Whakamārama mārama i te raruraru.','Te tika, te haumaru, te ako.','Kāo, he taputapu.','Nā te tangata whakamahi.']}},
+ {name:{en:'Classroom Use',mi:'Te Whakamahi i te Akoranga'},color:'col-3',qs:{en:['One thing you can build?','Why good for differentiation?','Student-safe intro?','Why teacher-led first?','How does it save time?'],mi:['He aha tētahi mea ka hangaia?','He aha te painga mō te rerekētanga?','He tīmatanga haumaru mā ngā ākonga?','He aha te take mā te kaiako e ārahi?','He pēhea te whakaora wā?']},as:{en:['Quizzes, flashcards, games.','Easy adaptation.','Teacher-led demos.','Models thinking.','Rapid prototyping.'],mi:['Ngā pātaitai, kāri ako, kēmu.','He māmā te whakarerekē.','Ngā whakaaturanga ā-kaiako.','Ka whakaatu i te whakaaro.','He hanga tere.']}},
+ {name:{en:'Teacher Energy',mi:'Te Hihiko o te Kaiako'},color:'col-4',qs:{en:['What feeling should this spark?','Finish: I don’t break code, I…','Why play matters?','What reduces fear?','What builds confidence?'],mi:['He aha te kare ā-roto ka puta?','Whakaoti: Kāore au e wawahi waehere, ka…','He aha te take o te tākaro?','He aha te mea e whakaiti i te mataku?','He aha te mea e whakapiki i te māia?']},as:{en:['Confidence.','Learn from it.','Reduces fear and builds flow.','Playfulness.','Small wins.'],mi:['Te māia.','Ako mai i reira.','Ka whakaiti i te mataku, ka hanga rere.','Te ngahau.','Ngā angitū iti.']}}
 ];
 
-const board=document.getElementById('board');
-const modal=document.getElementById('modal');
-const qEl=document.getElementById('question');
-const aEl=document.getElementById('answer');
-let currentValue=0,currentTeam=1,currentCell=null;
-let scores={1:0,2:0};
+let currentLang = 'en';
+const board = document.getElementById('board');
+const modal = document.getElementById('modal');
+const qEl = document.getElementById('question');
+const aEl = document.getElementById('answer');
+let currentValue = 0, currentTeam = 1, currentCell = null;
+let scores = {1:0, 2:0};
 
-// HEADERS
-categories.forEach(c=>{const h=document.createElement('div');h.className=`category ${c.color}`;h.textContent=c.name;board.appendChild(h);});
+document.getElementById('lang-toggle').onclick = () => {
+  currentLang = currentLang === 'en' ? 'mi' : 'en';
+  renderBoard();
+};
 
-// QUESTIONS – COLUMN-LOCKED
-[100,200,300].forEach((val,row)=>{
- categories.forEach((c,col)=>{
-  const cell=document.createElement('div');
-  cell.className=`cell ${c.color}`;
-  cell.textContent=val;
-  cell.onclick=()=>openQuestion(cell,c.qs[row],c.as[row],val);
-  board.appendChild(cell);
- });
-});
+function renderBoard() {
+  board.innerHTML = '';
+  categories.forEach(c => {
+    const h = document.createElement('div');
+    h.className = `category ${c.color}`;
+    h.textContent = c.name[currentLang];
+    board.appendChild(h);
+  });
+  [100, 200, 300, 400, 500].forEach((val, row) => {
+    categories.forEach(c => {
+      const cell = document.createElement('div');
+      cell.className = `cell ${c.color}`;
+      cell.textContent = val;
+      cell.onclick = () => openQuestion(cell, c.qs[currentLang][row], c.as[currentLang][row], val);
+      board.appendChild(cell);
+    });
+  });
+}
 
-function openQuestion(cell,q,a,val){ if(cell.classList.contains('used'))return; currentCell=cell; currentValue=val; qEl.textContent=q; aEl.textContent=a; aEl.style.display='none'; modal.style.display='flex'; }
-function showAnswer(){ aEl.style.display='block'; }
-function closeModal(){ modal.style.display='none'; if(currentCell) currentCell.classList.add('used'); }
-function adjustScore(team,m){ if(!currentValue)return; scores[team]+=currentValue*m; document.getElementById('score'+team).textContent=scores[team]; currentTeam=team===1?2:1; document.getElementById('team1').classList.toggle('active',currentTeam===1); document.getElementById('team2').classList.toggle('active',currentTeam===2); currentValue=0; }
+renderBoard();
+
+function openQuestion(cell, q, a, val) {
+  if (cell.classList.contains('used')) return;
+  currentCell = cell;
+  currentValue = val;
+  qEl.textContent = q;
+  aEl.textContent = a;
+  aEl.style.display = 'none';
+  modal.style.display = 'flex';
+}
+
+function showAnswer() {
+  aEl.style.display = 'block';
+}
+
+function closeModal() {
+  modal.style.display = 'none';
+  if (currentCell) currentCell.classList.add('used');
+}
+
+function adjustScore(team, m) {
+  if (!currentValue) return;
+  scores[team] += currentValue * m;
+  document.getElementById('score' + team).textContent = scores[team];
+  currentTeam = team === 1 ? 2 : 1;
+  document.getElementById('team1').classList.toggle('active', currentTeam === 1);
+  document.getElementById('team2').classList.toggle('active', currentTeam === 2);
+  currentValue = 0;
+}
 </script>
 </body>
 </html>
