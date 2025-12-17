@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Who Wants to Be a Growth Mindset Millionaire? 🌟</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #FFEB3B, #E91E63, #FF9800, #9C27B0, #009688, #4CAF50);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        h1 {
+            font-size: 3em;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+            margin: 20px;
+        }
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .question {
+            font-size: 2.2em;
+            margin: 40px 0;
+            min-height: 120px;
+            line-height: 1.4;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .option {
+            background: rgba(255,255,255,0.2);
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 4px solid transparent;
+        }
+        .option:hover {
+            background: rgba(255,255,255,0.4);
+            transform: scale(1.05);
+        }
+        .option.correct { background: #4CAF50 !important; border-color: white; animation: pulse 0.5s; }
+        .option.wrong { background: #F44336 !important; border-color: white; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .money-ladder {
+            float: right;
+            background: rgba(0,0,0,0.5);
+            padding: 20px;
+            border-radius: 15px;
+            width: 250px;
+            height: fit-content;
+        }
+        .level {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            font-size: 1.2em;
+        }
+        .level.current {
+            background: gold;
+            color: black;
+            font-weight: bold;
+            font-size: 1.4em;
+        }
+        .level.safe {
+            background: #4CAF50;
+            font-weight: bold;
+        }
+        .level.won {
+            background: linear-gradient(45deg, gold, #FFD700);
+            color: black;
+            font-weight: bold;
+            font-size: 1.5em;
+            animation: glow 2s infinite alternate;
+        }
+        @keyframes glow { 0% { box-shadow: 0 0 5px gold; } 100% { box-shadow: 0 0 20px gold, 0 0 30px #FFD700; } }
+        .feedback {
+            font-size: 2em;
+            margin: 40px;
+            min-height: 80px;
+        }
+        button {
+            padding: 18px 35px;
+            font-size: 1.6em;
+            background: #FF9800;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 15px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button:hover { background: #F57C00; transform: scale(1.05); }
+        button.play-again { background: #4CAF50; font-size: 1.8em; padding: 25px 50px; }
+        button.play-again:hover { background: #388E3C; }
+        .images {
+            margin: 40px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .images img {
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Who Wants to Be a<br>Growth Mindset Millionaire? 🌟💰</h1>
+
+    <div class="game-container">
+        <div class="money-ladder" id="ladder"></div>
+
+        <div class="question" id="question">Click "Start Game" to begin your journey to a growth mindset fortune!</div>
+
+        <div class="options" id="options"></div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <button id="startBtn">🚀 Start Game</button>
+        <button id="nextBtn" style="display:none;">Next Question ➡️</button>
+    </div>
+
+    <div class="images">
+    </div>
+
+    <audio id="correctSound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3" preload="auto"></audio>
+    <audio id="winSound" src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_4c1f3e8e5d.mp3?filename=cheerful-crowd-cheering-yay-24137.mp3" preload="auto"></audio>
+
+    <script>
+        const questions = [
+            { q: "What is a growth mindset?", a: "Believing your abilities can grow with effort", options: ["Believing you're born smart or not", "Believing your abilities can grow with effort", "Avoiding challenges", "Giving up easily"], prize: 100 },
+            { q: "When you make a mistake, a growth mindset says:", a: "This is a chance to learn!", options: ["I'm not good at this", "This is a chance to learn!", "I should quit", "Mistakes are bad"], prize: 200 },
+            { q: "Effort is important because:", a: "It helps your brain grow stronger", options: ["Smart people don't need it", "It helps your brain grow stronger", "It's only for tests", "Teachers just say that"], prize: 300 },
+            { q: "The word 'YET' is powerful because it means:", a: "I haven't mastered it... yet!", options: ["I can't do it ever", "I haven't mastered it... yet!", "I'm done trying", "It's too hard"], prize: 500 },
+            { q: "What should you do when something is hard?", a: "Keep trying and ask for help", options: ["Give up right away", "Keep trying and ask for help", "Pretend you know it", "Blame someone else"], prize: 1000 },
+            { q: "A great teacher believes:", a: "Every student can grow and improve", options: ["Only some kids are smart", "Every student can grow and improve", "Learning should be easy", "Grades are everything"], prize: 2000 },
+            { q: "Feedback from teachers helps you:", a: "Get better and stronger", options: ["Feel bad about yourself", "Get better and stronger", "Stay the same", "Win prizes"], prize: 4000 },
+            { q: "Perseverance means:", a: "Keeping going even when it's tough", options: ["Quitting when tired", "Keeping going even when it's tough", "Only doing easy things", "Waiting for luck"], prize: 8000 },
+            { q: "Praise for effort (not just being smart) helps because:", a: "It encourages you to keep trying", options: ["It makes you proud forever", "It encourages you to keep trying", "It wins games", "Nothing really"], prize: 16000 },
+            { q: "Challenges are:", a: "Opportunities to grow your brain", options: ["Something to avoid", "Opportunities to grow your brain", "Only for experts", "Too scary"], prize: 32000 },
+            { q: "Learning from others' success means:", a: "I can learn strategies from them", options: ["They're better than me", "I can learn strategies from them", "I should copy everything", "It doesn't help me"], prize: 64000 },
+            { q: "Your brain is like a:", a: "Muscle that gets stronger with practice", options: ["Computer that never changes", "Muscle that gets stronger with practice", "Toy that breaks easily", "Cloud that floats"], prize: 125000 },
+            { q: "A growth mindset helps you feel:", a: "Excited about learning", options: ["Bored all the time", "Excited about learning", "Afraid of trying", "Always perfect"], prize: 250000 },
+            { q: "The secret to getting better at anything is:", a: "Practice, effort, and learning from mistakes", options: ["Being born talented", "Practice, effort, and learning from mistakes", "Luck and wishing", "Never making errors"], prize: 500000 },
+            { q: "You are a growth mindset millionaire when you believe:", a: "I can improve at anything with effort and time!", options: ["Only smart people succeed", "I can improve at anything with effort and time!", "Learning stops after school", "Effort doesn't matter"], prize: 1000000 }
+        ];
+
+        let currentQuestion = 0;
+        let winnings = 0;
+        let gameOver = false;
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const ladderEl = document.getElementById('ladder');
+        const startBtn = document.getElementById('startBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const correctSound = document.getElementById('correctSound');
+        const wrongSound = document.getElementById('wrongSound');
+        const winSound = document.getElementById('winSound');
+
+        function buildLadder() {
+            ladderEl.innerHTML = '<h3>💰 Money Ladder 💰</h3>';
+            questions.slice().reverse().forEach((q, i) => {
+                const levelNum = questions.length - i;
+                const div = document.createElement('div');
+                div.className = 'level';
+                if (levelNum === currentQuestion + 1) div.classList.add('current');
+                if (currentQuestion >= questions.length && levelNum === 15) div.classList.add('won');
+                if ([5,10,15].includes(levelNum)) div.classList.add('safe');
+                div.textContent = `${levelNum}. $${q.prize.toLocaleString()}`;
+                ladderEl.appendChild(div);
+            });
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            questionEl.innerHTML = `<strong>Question ${currentQuestion + 1}:</strong><br>${q.q}`;
+            feedbackEl.innerHTML = `Current winnings: <strong>$${winnings.toLocaleString()}</strong> 🏆`;
+
+            optionsEl.innerHTML = '';
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+            shuffled.forEach(opt => {
+                const btn = document.createElement('div');
+                btn.className = 'option';
+                btn.textContent = opt;
+                btn.onclick = () => selectAnswer(opt, q.a);
+                optionsEl.appendChild(btn);
+            });
+
+            buildLadder();
+        }
+
+        function startNewGame() {
+            currentQuestion = 0;
+            winnings = 0;
+            gameOver = false;
+            startBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            questionEl.textContent = 'Get ready... Loading your growth mindset challenge!';
+            setTimeout(() => {
+                showQuestion();
+            }, 800);
+        }
+
+        function selectAnswer(selected, correct) {
+            if (gameOver) return;
+            gameOver = true;
+
+            const opts = optionsEl.children;
+            for (let opt of opts) {
+                opt.style.pointerEvents = 'none';
+                if (opt.textContent === correct) opt.classList.add('correct');
+                if (opt.textContent === selected && selected !== correct) opt.classList.add('wrong');
+            }
+
+            if (selected === correct) {
+                winnings = questions[currentQuestion].prize;
+                feedbackEl.innerHTML = `🎉 <strong>Correct!</strong> 🎉<br>Great mindset – your effort is paying off!<br>$${winnings.toLocaleString()} banked! 💰`;
+                correctSound.play();
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+
+                currentQuestion++;
+
+                if (currentQuestion >= questions.length) {
+                    // BIG CONGRATULATIONS!
+                    questionEl.innerHTML = `
+                        <div style="font-size: 4em; color: gold; text-shadow: 0 0 40px gold, 0 0 60px orange; animation: bounce 1s infinite;">
+                            🎉 CONGRATULATIONS! 🎉
+                        </div>
+                        <br>
+                        <div style="font-size: 3em; color: #FFD700;">
+                            You Won <strong>$1,000,000 💰</strong>!
+                        </div>
+                        <br>
+                        <div style="font-size: 2.2em;">
+                            You're officially a <em>Growth Mindset Millionaire</em>! 🌟🚀✨
+                        </div>
+                    `;
+                    feedbackEl.innerHTML = `
+                        Your brain leveled up with every question. 
+                        <br><strong>Keep growing – you've got the power! 💪🔥</strong>
+                    `;
+                    nextBtn.textContent = 'Play Again! 🎮';
+                    nextBtn.classList.add('play-again');
+                    nextBtn.style.display = 'inline-block';
+                    buildLadder(); // Show won level
+
+                    // Epic confetti celebration
+                    confetti({
+                        particleCount: 400,
+                        spread: 120,
+                        origin: { y: 0.6 },
+                        colors: ['#FFD700', '#FFA500', '#FFEB3B', '#4CAF50']
+                    });
+                    setTimeout(() => confetti({ particleCount: 200, angle: 60, spread: 55, origin: { x: 0 } }), 1500);
+                    setTimeout(() => confetti({ particleCount: 200, angle: 120, spread: 55, origin: { x: 1 } }), 2500);
+                    setTimeout(() => confetti({ particleCount: 300, spread: 100 }), 4000);
+
+                    winSound.play();
+                } else {
+                    nextBtn.textContent = 'Next Question ➡️';
+                    nextBtn.classList.remove('play-again');
+                    nextBtn.style.display = 'inline-block';
+                }
+            } else {
+                wrongSound.play();
+                feedbackEl.innerHTML = `
+                    🌱 <strong>That's okay!</strong> 🌱<br>
+                    The correct answer was: <em>"${correct}"</em><br>
+                    Every try makes you stronger – growth mindset activated! 💥
+                `;
+                nextBtn.textContent = 'Play Again! 🎮';
+                nextBtn.classList.add('play-again');
+                nextBtn.style.display = 'inline-block';
+            }
+        }
+
+        // Button event listeners
+        startBtn.onclick = startNewGame;
+
+        nextBtn.onclick = () => {
+            if (nextBtn.textContent.includes('Play Again')) {
+                nextBtn.classList.remove('play-again');
+                startNewGame();
+            } else {
+                gameOver = false;
+                nextBtn.style.display = 'none';
+                showQuestion();
+            }
+        };
+
+        // Initial setup
+        buildLadder();
+    </script>
+</body>
+</html>
