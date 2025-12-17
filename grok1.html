@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celebrate Learning! 🎉</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #FFEB3B, #E91E63, #FF9800, #9C27B0);
+            background-attachment: fixed;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        h1 {
+            font-size: 3.5em;
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            margin-top: 40px;
+        }
+        p {
+            font-size: 1.8em;
+            color: white;
+            margin: 20px;
+        }
+        .progress {
+            font-size: 2em;
+            color: white;
+            margin: 40px;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+        }
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin: 50px auto;
+            max-width: 1200px;
+        }
+        button {
+            padding: 20px 40px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 15px;
+            border-width: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 250px;
+        }
+        /* Button styles */
+        .btn-purple { background-color: #9C27B0; border-color: #E1BEE7; color: #FFFFFF; }
+        .btn-purple:hover { background-color: #7B1FA2; border-color: #FFFFFF; color: #FFFFFF; }
+        .btn-yellow { background-color: #FFEB3B; border-color: #FFF59D; color: #000000; }
+        .btn-yellow:hover { background-color: #FDD835; border-color: #FFFFFF; color: #000000; }
+        .btn-pink { background-color: #E91E63; border-color: #F8BBD0; color: #FFFFFF; }
+        .btn-pink:hover { background-color: #C2185B; border-color: #FFFFFF; color: #FFFFFF; }
+        .btn-orange { background-color: #FF9800; border-color: #FFE0B2; color: #000000; }
+        .btn-orange:hover { background-color: #F57C00; border-color: #FFFFFF; color: #000000; }
+
+        .audit-trail {
+            margin: 50px auto;
+            max-width: 800px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            text-align: left;
+        }
+        .audit-trail h2 {
+            text-align: center;
+            color: white;
+        }
+        .audit-entry {
+            padding: 10px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            font-size: 1.2em;
+        }
+        .images {
+            margin: 50px auto;
+            max-width: 1200px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .images img {
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            max-width: 300px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>You're Doing Great! 🎉</h1>
+    <p>Keep learning, keep growing – every step makes you amazing!</p>
+
+    <div class="progress" id="progress">Celebrations today: 0 🏆</div>
+
+    <div class="buttons">
+        <button class="btn-purple" data-message="You're a Super Learner! 🌟">You're a Super Learner! 🌟</button>
+        <button class="btn-yellow" data-message="Keep Going Strong! 💪">Keep Going Strong! 💪</button>
+        <button class="btn-pink" data-message="Amazing Job Today! 👏">Amazing Job Today! 👏</button>
+        <button class="btn-orange" data-message="You're Unstoppable! 🚀">You're Unstoppable! 🚀</button>
+    </div>
+
+    <p>Click any button to celebrate your effort!</p>
+
+    <div class="images">
+
+<grok-card data-id="e4e216" data-type="image_card"></grok-card>
+
+
+
+<grok-card data-id="8b261c" data-type="image_card"></grok-card>
+
+
+
+<grok-card data-id="3b838f" data-type="image_card"></grok-card>
+
+
+
+<grok-card data-id="0253a2" data-type="image_card"></grok-card>
+
+
+
+<grok-card data-id="664686" data-type="image_card"></grok-card>
+
+
+
+<grok-card data-id="c4f471" data-type="image_card"></grok-card>
+
+    </div>
+
+    <div class="audit-trail">
+        <h2>Audit Trail of Awesomeness 📜</h2>
+        <div id="trail"></div>
+    </div>
+
+    <p style="font-size:2em; margin-top:50px;">High five! You've got this! ✋</p>
+
+    <audio id="cheerSound" src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_4c1f3e8e5d.mp3?filename=cheerful-crowd-cheering-yay-24137.mp3" preload="auto"></audio>
+
+    <script>
+        const progressEl = document.getElementById('progress');
+        const trailEl = document.getElementById('trail');
+        const cheer = document.getElementById('cheerSound');
+
+        let count = parseInt(localStorage.getItem('celebrationCount') || '0');
+        let trail = JSON.parse(localStorage.getItem('celebrationTrail') || '[]');
+
+        function updateDisplay() {
+            progressEl.textContent = `Celebrations today: ${count} 🏆`;
+            trailEl.innerHTML = '';
+            trail.slice().reverse().forEach(entry => {
+                const div = document.createElement('div');
+                div.className = 'audit-entry';
+                div.textContent = `${entry.time} — ${entry.message}`;
+                trailEl.appendChild(div);
+            });
+        }
+
+        function celebrate(message) {
+            // Confetti!
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#FFEB3B', '#E91E63', '#FF9800', '#9C27B0']
+            });
+
+            // Sound
+            cheer.currentTime = 0;
+            cheer.play();
+
+            // Progress
+            count++;
+            localStorage.setItem('celebrationCount', count);
+
+            // Audit trail
+            const now = new Date();
+            const timeStr = now.toLocaleString();
+            trail.push({ time: timeStr, message });
+            localStorage.setItem('celebrationTrail', JSON.stringify(trail));
+
+            updateDisplay();
+        }
+
+        document.querySelectorAll('button[data-message]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                celebrate(btn.dataset.message);
+            });
+        });
+
+        updateDisplay();
+    </script>
+</body>
+</html>
