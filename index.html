@@ -22,7 +22,29 @@
         min-height: 100vh;
         margin: 0;
         gap: 25px; /* space between rows */
+        padding: 40px 20px;
       }
+      /* Added this to create a clean text area */
+.description-box {
+  max-width: 800px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+  padding: 20px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  color: var(--color-text);
+}
+
+.description-box h1 {
+  margin-top: 0;
+  color: #0288D1; /* Matches the blue buttons */
+}
+
+.description-box p {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
 
       .row {
         display: flex;       /* buttons side by side */
@@ -129,6 +151,10 @@
     </style>
   </head>
   <body>
+    <div class="description-box">
+  <h1>Teacher Resource Portal</h1>
+  <p>Explore a collection of interactive activities and digital resources designed for the classroom. These examples showcase how teachers can use Vibe Code to create engaging learning experiences, from Te Reo Māori activities to AI-assisted challenges.</p>
+</div>
         <div class="row">
           <button class="btn btn-yellow" onclick="location.href='https://whaea-pippy.github.io/GAME-DEVELOPMENT/KumiKupu_code/'">Development Site</button>
         </div>
