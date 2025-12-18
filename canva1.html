@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Human Body Science Games</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    .card-flip {
+      perspective: 1000px;
+    }
+    
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    
+    .card-flip.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      padding: 24px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    
+    .card-back {
+      transform: rotateY(180deg);
+    }
+    
+    .matching-card {
+      transition: all 0.3s ease;
+    }
+    
+    .matching-card:hover {
+      transform: translateY(-4px);
+    }
+    
+    .matching-card.selected {
+      transform: scale(1.05);
+    }
+    
+    .matching-card.matched {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full overflow-auto"></div>
+  <script>
+    const defaultConfig = {
+      background_color: "#f0f9ff",
+      surface_color: "#ffffff",
+      text_color: "#1e293b",
+      primary_action_color: "#3b82f6",
+      secondary_action_color: "#64748b",
+      font_family: "system-ui",
+      font_size: 16,
+      main_title: "Human Body Science Games",
+      flashcard_title: "Flashcards",
+      matching_title: "Matching Game",
+      sentence_title: "Sentence Building",
+      quiz_title: "Multiple Choice Quiz"
+    };
+
+    const humanBodyData = [
+      { term: "Heart", definition: "The organ that pumps blood around the body" },
+      { term: "Lungs", definition: "Organs that allow us to breathe and exchange oxygen and carbon dioxide" },
+      { term: "Brain", definition: "The control center of the nervous system that processes information" },
+      { term: "Stomach", definition: "The organ that breaks down food using acids and enzymes" },
+      { term: "Liver", definition: "The organ that filters blood and produces bile for digestion" },
+      { term: "Kidneys", definition: "Organs that filter waste from blood to produce urine" },
+      { term: "Skeleton", definition: "The framework of bones that supports and protects the body" },
+      { term: "Muscles", definition: "Tissues that contract to produce movement in the body" }
+    ];
+
+    const quizQuestions = [
+      {
+        question: "Which organ pumps blood around your body?",
+        options: ["Brain", "Heart", "Lungs", "Liver"],
+        correct: 1
+      },
+      {
+        question: "What do the lungs exchange with the air?",
+        options: ["Oxygen and carbon dioxide", "Water and minerals", "Blood and plasma", "Nutrients and waste"],
+        correct: 0
+      },
+      {
+        question: "Which organ is the control center of the nervous system?",
+        options: ["Heart", "Stomach", "Brain", "Kidneys"],
+        correct: 2
+      },
+      {
+        question: "What does the stomach use to break down food?",
+        options: ["Oxygen", "Acids and enzymes", "Blood", "Electricity"],
+        correct: 1
+      },
+      {
+        question: "What framework supports and protects the body?",
+        options: ["Muscles", "Skin", "Skeleton", "Nerves"],
+        correct: 2
+      }
+    ];
+
+    const sentenceData = [
+      {
+        sentence: "The _____ pumps blood throughout the entire body system.",
+        answer: "heart",
+        words: ["heart", "brain", "stomach", "muscle"]
+      },
+      {
+        sentence: "Your _____ help you breathe by taking in oxygen.",
+        answer: "lungs",
+        words: ["lungs", "kidneys", "liver", "bones"]
+      },
+      {
+        sentence: "The _____ controls all thoughts, movements, and body functions.",
+        answer: "brain",
+        words: ["heart", "brain", "spine", "nerves"]
+      }
+    ];
+
+    let currentMode = 'menu';
+    let currentCardIndex = 0;
+    let matchingCards = [];
+    let selectedCards = [];
+    let matchedPairs = 0;
+    let currentQuestionIndex = 0;
+    let quizScore = 0;
+    let currentSentenceIndex = 0;
+    let sentenceScore = 0;
+
+    function saveScore(mode, score) {
+      const scores = JSON.parse(localStorage.getItem('humanBodyScores') || '{}');
+      if (!scores[mode]) scores[mode] = [];
+      scores[mode].push({ score, date: new Date().toISOString() });
+      localStorage.setItem('humanBodyScores', JSON.stringify(scores));
+    }
+
+    function getHighScore(mode) {
+      const scores = JSON.parse(localStorage.getItem('humanBodyScores') || '{}');
+      if (!scores[mode] || scores[mode].length === 0) return 0;
+      return Math.max(...scores[mode].map(s => s.score));
+    }
+
+    function renderMenu() {
+      const customFont = window.elementSdk?.config?.font_family || defaultConfig.font_family;
+      const baseSize = window.elementSdk?.config?.font_size || defaultConfig.font_size;
+      const baseFontStack = 'system-ui, -apple-system, sans-serif';
+      const bgColor = window.elementSdk?.config?.background_color || defaultConfig.background_color;
+      const surfaceColor = window.elementSdk?.config?.surface_color || defaultConfig.surface_color;
+      const textColor = window.elementSdk?.config?.text_color || defaultConfig.text_color;
+      const primaryColor = window.elementSdk?.config?.primary_action_color || defaultConfig.primary_action_color;
+      const mainTitle = window.elementSdk?.config?.main_title || defaultConfig.main_title;
+
+      return `
+        <div style="background: ${bgColor}; min-height: 100%; padding: 32px; font-family: ${customFont}, ${baseFontStack};">
+          <div style="max-width: 1200px; margin: 0 auto;">
+            <h1 style="font-size: ${baseSize * 2.5}px; font-weight: 700; text-align: center; margin-bottom: 16px; color: ${textColor};">
+              ${mainTitle}
+            </h1>
+            <p style="text-align: center; font-size: ${baseSize * 1.1}px; color: ${textColor}; opacity: 0.8; margin-bottom: 48px;">
+              Choose a learning mode to explore the human body
+            </p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+              <button onclick="startFlashcards()" style="background: ${surfaceColor}; padding: 32px; border-radius: 16px; border: none; cursor: pointer; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s;">
+                <div style="font-size: ${baseSize * 2}px; margin-bottom: 8px;">🃏</div>
+                <h2 style="font-size: ${baseSize * 1.5}px; font-weight: 600; margin-bottom: 8px; color: ${textColor};">Flashcards</h2>
+                <p style="font-size: ${baseSize * 0.9}px; color: ${textColor}; opacity: 0.7;">Learn terms and definitions by flipping cards</p>
+              </button>
+              
+              <button onclick="startMatching()" style="background: ${surfaceColor}; padding: 32px; border-radius: 16px; border: none; cursor: pointer; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s;">
+                <div style="font-size: ${baseSize * 2}px; margin-bottom: 8px;">🎯</div>
+                <h2 style="font-size: ${baseSize * 1.5}px; font-weight: 600; margin-bottom: 8px; color: ${textColor};">Matching</h2>
+                <p style="font-size: ${baseSize * 0.9}px; color: ${textColor}; opacity: 0.7;">Match terms with their definitions</p>
+                <p style="font-size: ${baseSize * 0.8}px; color: ${primaryColor}; margin-top: 8px; font-weight: 600;">High Score: ${getHighScore('matching')}</p>
+              </button>
+              
+              <button onclick="startSentence()" style="background: ${surfaceColor}; padding: 32px; border-radius: 16px; border: none; cursor: pointer; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s;">
+                <div style="font-size: ${baseSize * 2}px; margin-bottom: 8px;">📝</div>
+                <h2 style="font-size: ${baseSize * 1.5}px; font-weight: 600; margin-bottom: 8px; color: ${textColor};">Sentence Building</h2>
+                <p style="font-size: ${baseSize * 0.9}px; color: ${textColor}; opacity: 0.7;">Complete sentences about the human body</p>
+                <p style="font-size: ${baseSize * 0.8}px; color: ${primaryColor}; margin-top: 8px; font-weight: 600;">High Score: ${getHighScore('sentence')}</p>
+              </button>
+              
+              <button onclick="startQuiz()" style="background: ${surfaceColor}; padding: 32px; border-radius: 16px; border: none; cursor: pointer; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s;">
+                <div style="font-size: ${baseSize * 2}px; margin-bottom: 8px;">✅</div>
+                <h2 style="font-size: ${baseSize * 1.5}px; font-weight: 600; margin-bottom: 8px; color: ${textColor};">Quiz</h2>
+                <p style="font-size: ${baseSize * 0.9}px; color: ${textColor}; opacity: 0.7;">Test your knowledge with multiple choice</p>
+                <p style="font-size: ${baseSize * 0.8}px; color: ${primaryColor}; margin-top: 8px; font-weight: 600;">High Score: ${getHighScore('quiz')}/5</p>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFlashcards() {
+      const card = humanBodyData[currentCardIndex];
+      const customFont = window.elementSdk?.config?.font_family || defaultConfig.font_family;
+      const baseSize = window.elementSdk?.config?.font_size || defaultConfig.font_size;
+      const baseFontStack = 'system-ui, -apple-system, sans-serif';
+      const bgColor = window.elementSdk?.config?.background_color || defaultConfig.background_color;
+      const surfaceColor = window.elementSdk?.config?.surface_color || defaultConfig.surface_color;
+      const textColor = window.elementSdk?.config?.text_color || defaultConfig.text_color;
+      const primaryColor = window.elementSdk?.config?.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = window.elementSdk?.config?.secondary_action_color || defaultConfig.secondary_action_color;
+      const flashcardTitle = window.elementSdk?.config?.flashcard_title || defaultConfig.flashcard_title;
+
+      return `
+        <div style="background: ${bgColor}; min-height: 100%; padding: 32px; font-family: ${customFont}, ${baseFontStack};">
+          <div style="max-width: 800px; margin: 0 auto;">
+            <button onclick="backToMenu()" style="background: ${secondaryColor}; color: white; padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-size: ${baseSize}px; margin-bottom: 24px;">
+              ← Back to Menu
+            </button>
+            
+            <h1 style="font-size: ${baseSize * 2}px; font-weight: 700; text-align: center; margin-bottom: 32px; color: ${textColor};">
+              ${flashcardTitle}
+            </h1>
+            
+            <div style="text-align: center; margin-bottom: 24px; font-size: ${baseSize}px; color: ${textColor};">
+              Card ${currentCardIndex + 1} of ${humanBodyData.length}
+            </div>
+            
+            <div class="card-flip" id="flashcard" onclick="flipCard()" style="width: 100%; height: 300px; cursor: pointer; margin-bottom: 32px;">
+              <div class="card-inner">
+                <div class="card-front" style="background: ${surfaceColor}; color: ${textColor}; box-shadow: 0 8px 16px rgba(0,0,0,0.1);">
+                  <div>
+                    <div style="font-size: ${baseSize * 0.9}px; opacity: 0.6; margin-bottom: 8px;">TERM</div>
+                    <div style="font-size: ${baseSize * 1.8}px;">${card.term}</div>
+                  </div>
+                </div>
+                <div class="card-back" style="background: ${primaryColor}; color: white; box-shadow: 0 8px 16px rgba(0,0,0,0.1);">
+                  <div>
+                    <div style="font-size: ${baseSize * 0.9}px; opacity: 0.9; margin-bottom: 8px;">DEFINITION</div>
+                    <div style="font-size: ${baseSize * 1.2}px; line-height: 1.6;">${card.definition}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 16px; justify-content: center;">
+              <button onclick="prevCard()" ${currentCardIndex === 0 ? 'disabled' : ''} style="background: ${secondaryColor}; color: white; padding: 16px 32px; border-radius: 8px; border: none; cursor: pointer; font-size: ${baseSize}px; ${currentCardIndex === 0 ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                ← Previous
+              </button>
+              <button onclick="nextCard()" ${currentCardIndex === humanBodyData.length - 1 ? 'disabled' : ''} style="background: ${primaryColor}; color: white; padding: 16px 32px; border-radius: 8px; border: none; cursor: pointer; font-size: ${baseSize}px; ${currentCardIndex === humanBodyData.length - 1 ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                Next →
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderMatching() {
+      const customFont = window.elementSdk?.config?.font_family || defaultConfig.font_family;
+      const baseSize = window.elementSdk?.config?.font_size || defaultConfig.font_size;
+      const baseFontStack = 'system-ui, -apple-system, sans-serif';
+      const bgColor = window.elementSdk?.config?.background_color || defaultConfig.background_color;
+      const surfaceColor = window.elementSdk?.config?.surface_color || defaultConfig.surface_color;
+      const textColor = window.elementSdk?.config?.text_color || defaultConfig.text_color;
+      const primaryColor = window.elementSdk?.config?.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = window.elementSdk?.config?.secondary_action_color || defaultConfig.secondary_action_color;
+      const matchingTitle = window.elementSdk?.config?.matching_title || defaultConfig.matching_title;
+
+      let cardsHtml = '';
+      matchingCards.forEach((card, index) => {
+        const isMatched = card.matched;
+        const isSelected = selectedCards.some(s => s.index === index);
+        cardsHtml += `
+          <button 
+            onclick="selectMatchingCard(${index})" 
+            class="matching-card ${isMatched ? 'matched' : ''} ${isSelected ? 'selected' : ''}"
+            style="background: ${isSelected ? primaryColor : surfaceColor}; 
+                   color: ${isSelected ? 'white' : textColor}; 
+                   padding: 24px; 
+                   border-radius: 12px; 
+                   border: 2px solid ${isSelected ? primaryColor : 'transparent'}; 
+                   cursor: pointer; 
+                   font-size: ${baseSize}px; 
+                   text-align: center;
+                   box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            ${card.text}
+          </button>
+        `;
+      });
+
+      return `
+        <div style="background: ${bgColor}; min-height: 100%; padding: 32px; font-family: ${customFont}, ${baseFontStack};">
+          <div style="max-width: 1000px; margin: 0 auto;">
+            <button onclick="backToMenu()" style="background: ${secondaryColor}; color: white; padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-size: ${baseSize}px; margin-bottom: 24px;">
+              ← Back to Menu
+            </button>
+            
+            <h1 style="font-size: ${baseSize * 2}px; font-weight: 700; text-align: center; margin-bottom: 16px; color: ${textColor};">
+              ${matchingTitle}
+            </h1>
+            
+            <div style="text-align: center; margin-bottom: 32px; font-size: ${baseSize * 1.2}px; color: ${textColor}; font-weight: 600;">
+              Matches: ${matchedPairs} / ${humanBodyData.length}
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+              ${cardsHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSentence() {
+      const sentence = sentenceData[currentSentenceIndex];
+      const customFont = window.elementSdk?.config?.font_family || defaultConfig.font_family;
+      const baseSize = window.elementSdk?.config?.font_size || defaultConfig.font_size;
+      const baseFontStack = 'system-ui, -apple-system, sans-serif';
+      const bgColor = window.elementSdk?.config?.background_color || defaultConfig.background_color;
+      const surfaceColor = window.elementSdk?.config?.surface_color || defaultConfig.surface_color;
+      const textColor = window.elementSdk?.config?.text_color || defaultConfig.text_color;
+      const primaryColor = window.elementSdk?.config?.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = window.elementSdk?.config?.secondary_action_color || defaultConfig.secondary_action_color;
+      const sentenceTitle = window.elementSdk?.config?.sentence_title || defaultConfig.sentence_title;
+
+      let wordsHtml = '';
+      sentence.words.forEach((word, index) => {
+        wordsHtml += `
+          <button 
+            onclick="checkSentenceAnswer('${word}')" 
+            style="background: ${primaryColor}; 
+                   color: white; 
+                   padding: 16px 32px; 
+                   border-radius: 8px; 
+                   border: none; 
+                   cursor: pointer; 
+                   font-size: ${baseSize * 1.1}px;
+                   font-weight: 600;">
+            ${word}
+          </button>
+        `;
+      });
+
+      return `
+        <div style="background: ${bgColor}; min-height: 100%; padding: 32px; font-family: ${customFont}, ${baseFontStack};">
+          <div style="max-width: 900px; margin: 0 auto;">
+            <button onclick="backToMenu()" style="background: ${secondaryColor}; color: white; padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-size: ${baseSize}px; margin-bottom: 24px;">
+              ← Back to Menu
+            </button>
+            
+            <h1 style="font-size: ${baseSize * 2}px; font-weight: 700; text-align: center; margin-bottom: 16px; color: ${textColor};">
+              ${sentenceTitle}
+            </h1>
+            
+            <div style="text-align: center; margin-bottom: 32px; font-size: ${baseSize * 1.1}px; color: ${textColor};">
+              Question ${currentSentenceIndex + 1} of ${sentenceData.length} | Score: ${sentenceScore}
+            </div>
+            
+            <div style="background: ${surfaceColor}; padding: 48px; border-radius: 16px; margin-bottom: 32px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+              <p style="font-size: ${baseSize * 1.5}px; line-height: 1.8; color: ${textColor}; text-align: center;">
+                ${sentence.sentence}
+              </p>
+            </div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
+              ${wordsHtml}
+            </div>
+            
+            <div id="sentence-feedback" style="margin-top: 24px; text-align: center; font-size: ${baseSize * 1.1}px; font-weight: 600; min-height: 30px;">
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderQuiz() {
+      const question = quizQuestions[currentQuestionIndex];
+      const customFont = window.elementSdk?.config?.font_family || defaultConfig.font_family;
+      const baseSize = window.elementSdk?.config?.font_size || defaultConfig.font_size;
+      const baseFontStack = 'system-ui, -apple-system, sans-serif';
+      const bgColor = window.elementSdk?.config?.background_color || defaultConfig.background_color;
+      const surfaceColor = window.elementSdk?.config?.surface_color || defaultConfig.surface_color;
+      const textColor = window.elementSdk?.config?.text_color || defaultConfig.text_color;
+      const primaryColor = window.elementSdk?.config?.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = window.elementSdk?.config?.secondary_action_color || defaultConfig.secondary_action_color;
+      const quizTitle = window.elementSdk?.config?.quiz_title || defaultConfig.quiz_title;
+
+      let optionsHtml = '';
+      question.options.forEach((option, index) => {
+        optionsHtml += `
+          <button 
+            onclick="checkQuizAnswer(${index})" 
+            style="background: ${surfaceColor}; 
+                   color: ${textColor}; 
+                   padding: 20px; 
+                   border-radius: 12px; 
+                   border: 2px solid ${surfaceColor}; 
+                   cursor: pointer; 
+                   font-size: ${baseSize * 1.1}px;
+                   text-align: left;
+                   transition: all 0.2s;
+                   box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            ${option}
+          </button>
+        `;
+      });
+
+      return `
+        <div style="background: ${bgColor}; min-height: 100%; padding: 32px; font-family: ${customFont}, ${baseFontStack};">
+          <div style="max-width: 800px; margin: 0 auto;">
+            <button onclick="backToMenu()" style="background: ${secondaryColor}; color: white; padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-size: ${baseSize}px; margin-bottom: 24px;">
+              ← Back to Menu
+            </button>
+            
+            <h1 style="font-size: ${baseSize * 2}px; font-weight: 700; text-align: center; margin-bottom: 16px; color: ${textColor};">
+              ${quizTitle}
+            </h1>
+            
+            <div style="text-align: center; margin-bottom: 32px; font-size: ${baseSize * 1.1}px; color: ${textColor};">
+              Question ${currentQuestionIndex + 1} of ${quizQuestions.length} | Score: ${quizScore}
+            </div>
+            
+            <div style="background: ${surfaceColor}; padding: 32px; border-radius: 16px; margin-bottom: 32px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+              <p style="font-size: ${baseSize * 1.3}px; line-height: 1.6; color: ${textColor}; font-weight: 600;">
+                ${question.question}
+              </p>
+            </div>
+            
+            <div style="display: grid; gap: 16px;">
+              ${optionsHtml}
+            </div>
+            
+            <div id="quiz-feedback" style="margin-top: 24px; text-align: center; font-size: ${baseSize * 1.1}px; font-weight: 600; min-height: 30px;">
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function render() {
+      const app = document.getElementById('app');
+      
+      if (currentMode === 'menu') {
+        app.innerHTML = renderMenu();
+      } else if (currentMode === 'flashcards') {
+        app.innerHTML = renderFlashcards();
+      } else if (currentMode === 'matching') {
+        app.innerHTML = renderMatching();
+      } else if (currentMode === 'sentence') {
+        app.innerHTML = renderSentence();
+      } else if (currentMode === 'quiz') {
+        app.innerHTML = renderQuiz();
+      }
+    }
+
+    function startFlashcards() {
+      currentMode = 'flashcards';
+      currentCardIndex = 0;
+      render();
+    }
+
+    function startMatching() {
+      currentMode = 'matching';
+      matchedPairs = 0;
+      selectedCards = [];
+      
+      matchingCards = [];
+      humanBodyData.forEach((item, index) => {
+        matchingCards.push({ text: item.term, type: 'term', pairId: index, matched: false });
+        matchingCards.push({ text: item.definition, type: 'definition', pairId: index, matched: false });
+      });
+      
+      for (let i = matchingCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [matchingCards[i], matchingCards[j]] = [matchingCards[j], matchingCards[i]];
+      }
+      
+      render();
+    }
+
+    function startSentence() {
+      currentMode = 'sentence';
+      currentSentenceIndex = 0;
+      sentenceScore = 0;
+      render();
+    }
+
+    function startQuiz() {
+      currentMode = 'quiz';
+      currentQuestionIndex = 0;
+      quizScore = 0;
+      render();
+    }
+
+    function backToMenu() {
+      currentMode = 'menu';
+      render();
+    }
+
+    function flipCard() {
+      document.getElementById('flashcard').classList.toggle('flipped');
+    }
+
+    function nextCard() {
+      if (currentCardIndex < humanBodyData.length - 1) {
+        currentCardIndex++;
+        render();
+      }
+    }
+
+    function prevCard() {
+      if (currentCardIndex > 0) {
+        currentCardIndex--;
+        render();
+      }
+    }
+
+    function selectMatchingCard(index) {
+      if (matchingCards[index].matched) return;
+      
+      const alreadySelected = selectedCards.findIndex(s => s.index === index);
+      if (alreadySelected !== -1) {
+        selectedCards.splice(alreadySelected, 1);
+        render();
+        return;
+      }
+      
+      selectedCards.push({ index, card: matchingCards[index] });
+      
+      if (selectedCards.length === 2) {
+        const [first, second] = selectedCards;
+        
+        if (first.card.pairId === second.card.pairId && first.card.type !== second.card.type) {
+          matchingCards[first.index].matched = true;
+          matchingCards[second.index].matched = true;
+          matchedPairs++;
+          selectedCards = [];
+          
+          if (matchedPairs === humanBodyData.length) {
+            saveScore('matching', matchedPairs);
+            setTimeout(() => {
+              const textColor = window.elementSdk?.config?.text_color || defaultConfig.text_color;
+              document.getElementById('app').innerHTML += `
+                <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 48px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); text-align: center; color: ${textColor};">
+                  <div style="font-size: 64px; margin-bottom: 16px;">🎉</div>
+                  <h2 style="font-size: 32px; margin-bottom: 16px;">Congratulations!</h2>
+                  <p style="font-size: 20px;">You matched all pairs correctly!</p>
+                  <button onclick="backToMenu()" style="margin-top: 24px; background: #3b82f6; color: white; padding: 16px 32px; border-radius: 8px; border: none; cursor: pointer; font-size: 18px;">Back to Menu</button>
+                </div>
+              `;
+            }, 500);
+          }
+        } else {
+          setTimeout(() => {
+            selectedCards = [];
+            render();
+          }, 1000);
+        }
+      }
+      
+      render();
+    }
+
+    function checkSentenceAnswer(word) {
+      const sentence = sentenceData[currentSentenceIndex];
+      const feedback = document.getElementById('sentence-feedback');
+      const primaryColor = window.elementSdk?.config?.primary_action_color || defaultConfig.primary_action_color;
+      
+      if (word === sentence.answer) {
+        sentenceScore++;
+        feedback.style.color = primaryColor;
+        feedback.textContent = '✓ Correct!';
+        
+        setTimeout(() => {
+          if (currentSentenceIndex < sentenceData.length - 1) {
+            currentSentenceIndex++;
+            render();
+          } else {
+            saveScore('sentence', sentenceScore);
+            const textColor = window.elementSdk?.config?.text_color || defaultConfig.text_color;
+            document.getElementById('app').innerHTML = `
+              <div style="background: ${window.elementSdk?.config?.background_color || defaultConfig.background_color}; min-height: 100%; padding: 32px; display: flex; align-items: center; justify-content: center;">
+                <div style="background: white; padding: 48px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); text-align: center; max-width: 500px; color: ${textColor};">
+                  <div style="font-size: 64px; margin-bottom: 16px;">🎉</div>
+                  <h2 style="font-size: 32px; margin-bottom: 16px;">Well Done!</h2>
+                  <p style="font-size: 24px; margin-bottom: 8px;">Final Score: ${sentenceScore}/${sentenceData.length}</p>
+                  <button onclick="backToMenu()" style="margin-top: 24px; background: ${primaryColor}; color: white; padding: 16px 32px; border-radius: 8px; border: none; cursor: pointer; font-size: 18px;">Back to Menu</button>
+                </div>
+              </div>
+            `;
+          }
+        }, 1500);
+      } else {
+        feedback.style.color = '#ef4444';
+        feedback.textContent = '✗ Try again!';
+      }
+    }
+
+    function checkQuizAnswer(selectedIndex) {
+      const question = quizQuestions[currentQuestionIndex];
+      const feedback = document.getElementById('quiz-feedback');
+      const primaryColor = window.elementSdk?.config?.primary_action_color || defaultConfig.primary_action_color;
+      
+      if (selectedIndex === question.correct) {
+        quizScore++;
+        feedback.style.color = primaryColor;
+        feedback.textContent = '✓ Correct!';
+      } else {
+        feedback.style.color = '#ef4444';
+        feedback.textContent = '✗ Incorrect. The answer was: ' + question.options[question.correct];
+      }
+      
+      setTimeout(() => {
+        if (currentQuestionIndex < quizQuestions.length - 1) {
+          currentQuestionIndex++;
+          render();
+        } else {
+          saveScore('quiz', quizScore);
+          const textColor = window.elementSdk?.config?.text_color || defaultConfig.text_color;
+          document.getElementById('app').innerHTML = `
+            <div style="background: ${window.elementSdk?.config?.background_color || defaultConfig.background_color}; min-height: 100%; padding: 32px; display: flex; align-items: center; justify-content: center;">
+              <div style="background: white; padding: 48px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); text-align: center; max-width: 500px; color: ${textColor};">
+                <div style="font-size: 64px; margin-bottom: 16px;">📊</div>
+                <h2 style="font-size: 32px; margin-bottom: 16px;">Quiz Complete!</h2>
+                <p style="font-size: 24px; margin-bottom: 8px;">Final Score: ${quizScore}/${quizQuestions.length}</p>
+                <p style="font-size: 18px; opacity: 0.7;">${Math.round((quizScore/quizQuestions.length)*100)}%</p>
+                <button onclick="backToMenu()" style="margin-top: 24px; background: ${primaryColor}; color: white; padding: 16px 32px; border-radius: 8px; border: none; cursor: pointer; font-size: 18px;">Back to Menu</button>
+              </div>
+            </div>
+          `;
+        }
+      }, 2000);
+    }
+
+    async function onConfigChange(config) {
+      render();
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.config.primary_action_color = value;
+                window.elementSdk.setConfig({ primary_action_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.config.secondary_action_color = value;
+                window.elementSdk.setConfig({ secondary_action_color: value });
+              }
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            if (window.elementSdk) {
+              window.elementSdk.config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            if (window.elementSdk) {
+              window.elementSdk.config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["main_title", config.main_title || defaultConfig.main_title],
+        ["flashcard_title", config.flashcard_title || defaultConfig.flashcard_title],
+        ["matching_title", config.matching_title || defaultConfig.matching_title],
+        ["sentence_title", config.sentence_title || defaultConfig.sentence_title],
+        ["quiz_title", config.quiz_title || defaultConfig.quiz_title]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+
+    render();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b00588e57671c5f',t:'MTc2NjA3ODU4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
