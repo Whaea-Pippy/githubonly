@@ -48,15 +48,15 @@ nav p { color:#fff; font-size:13px; margin-bottom:10px; }
   cursor:pointer;
   text-align:left;
   transition:.2s;
-  color:#000000; /* Black text on light buttons for better readability */
+  color:#000000; /* Black text */
   box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 .nav-btn:hover { transform:translateY(-3px); box-shadow:0 8px 16px rgba(0,0,0,0.2); }
-.flash { background:var(--rainbow5); }   /* cyan */
-.match { background:var(--rainbow7); }   /* purple */
-.multi { background:var(--rainbow2); }   /* orange */
-.build { background:var(--rainbow4); }   /* green */
-.links { background:var(--rainbow8); }   /* pink */
+.flash { background:var(--rainbow5); }
+.match { background:var(--rainbow7); }
+.multi { background:var(--rainbow2); }
+.build { background:var(--rainbow4); }
+.links { background:var(--rainbow8); }
 
 main { flex:1; padding:40px; overflow-y:auto; background:var(--bg); }
 .slide { display:none; animation:fade .4s ease; }
@@ -128,6 +128,24 @@ ul { font-size:18px; line-height:1.6; }
 }
 
 /* MATCHING */
+.match-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+}
+@media (max-width: 768px) {
+  .match-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+}
+.match-pair {
+  flex: 1;
+  min-width: 280px;
+  max-width: 420px;
+}
 .match-item {
   cursor:pointer;
   padding:12px 16px;
@@ -145,12 +163,6 @@ ul { font-size:18px; line-height:1.6; }
   border-color:var(--correct);
   background:#e6fcf0;
   cursor:default;
-}
-.match-pair {
-  display:inline-block;
-  width:45%;
-  vertical-align:top;
-  margin:10px;
 }
 #match-feedback { margin-top:20px; font-weight:600; min-height:28px; }
 
@@ -190,7 +202,7 @@ ul { font-size:18px; line-height:1.6; }
 }
 .sentence-slot.filled {
   border-style:solid;
-  border-color:var(--green);
+  border-color:var(--correct);
   background:#e6fcf0;
 }
 .sentence-slot.correct {
@@ -239,7 +251,7 @@ ul { font-size:18px; line-height:1.6; }
   <button class="nav-btn match" onclick="showSlide('match')">Matching</button>
   <button class="nav-btn multi" onclick="showSlide('multi')">Multi-choice</button>
   <button class="nav-btn build" onclick="showSlide('build')">Sentence Builder</button>
-  <button class="nav-btn links" onclick="showSlide('links')">Links & Videos</button>
+  <button class="nav-btn links" onclick="showSlide('links')">Interactives</button>
 </nav>
 <main>
 <section id="flash" class="slide active">
@@ -263,11 +275,11 @@ ul { font-size:18px; line-height:1.6; }
 <section id="match" class="slide">
   <div class="card">
     <h1>Matching – Forces</h1>
-    <p>Click one from each column to make a pair.</p>
+    <p>Click one force and one description to make a pair.</p>
     <div class="activity">
-      <div style="text-align:center;">
+      <div class="match-container">
         <div class="match-pair">
-          <h3>Force</h3>
+          <h3>Forces</h3>
           <div class="match-item" data-pair="1" onclick="selectMatch(this)">Gravity</div>
           <div class="match-item" data-pair="2" onclick="selectMatch(this)">Friction</div>
           <div class="match-item" data-pair="3" onclick="selectMatch(this)">Magnetism</div>
@@ -275,21 +287,16 @@ ul { font-size:18px; line-height:1.6; }
           <div class="match-item" data-pair="5" onclick="selectMatch(this)">Pull</div>
           <div class="match-item" data-pair="6" onclick="selectMatch(this)">Air resistance</div>
         </div>
-        <div class="match-pair">
-          <h3>Description</h3>
-          <div class="match-item" data-pair="1" onclick="selectMatch(this)">Pulls objects down to Earth</div>
-          <div class="match-item" data-pair="2" onclick="selectMatch(this)">Slows moving objects on surfaces</div>
-          <div class="match-item" data-pair="3" onclick="selectMatch(this)">Attracts or repels magnetic things</div>
-          <div class="match-item" data-pair="4" onclick="selectMatch(this)">Contact force moving away</div>
-          <div class="match-item" data-pair="5" onclick="selectMatch(this)">Contact force moving closer</div>
-          <div class="match-item" data-pair="6" onclick="selectMatch(this)">Drag from air on moving objects</div>
+        <div class="match-pair" id="right-column">
+          <h3>Descriptions</h3>
+          <div id="desc-container"></div>
         </div>
       </div>
       <div id="match-feedback"></div>
       <button onclick="resetMatch()" style="margin-top:12px; padding:8px 16px; border:none; border-radius:8px; background:#495057; color:#fff; cursor:pointer;">Reset</button>
     </div>
     <div class="note">
-      Matching forces to examples builds strong understanding!
+      Matched pairs turn green – great job!
     </div>
   </div>
 </section>
@@ -354,9 +361,7 @@ ul { font-size:18px; line-height:1.6; }
       <div class="sentence">4. Balanced forces keep speed <span class="sentence-slot" data-answer="constant"></span>.</div>
       <div class="sentence">5. Unbalanced forces change <span class="sentence-slot" data-answer="motion"></span>.</div>
       <div class="sentence">6. Forces are measured in <span class="sentence-slot" data-answer="newtons"></span>.</div>
-      <div class="word-bank" id="wordBank">
-        <!-- Words inserted by JavaScript -->
-      </div>
+      <div class="word-bank" id="wordBank"></div>
       <div id="build-feedback"></div>
       <button class="hint-btn" onclick="showHints()">Stuck? Show answers</button>
       <button onclick="resetBuild()" style="margin-left:10px; padding:8px 16px; border:none; border-radius:8px; background:#495057; color:#fff; cursor:pointer;">Reset</button>
@@ -369,20 +374,23 @@ ul { font-size:18px; line-height:1.6; }
 
 <section id="links" class="slide">
   <div class="card">
-    <h1>Links & Videos – Forces</h1>
-    <p>Watch these fun videos about forces in action!</p>
+    <h1>Interactives – Forces</h1>
+    <p>Play these awesome hands-on simulations – click and explore!</p>
     <ul>
-      <li><a href="https://www.youtube.com/watch?v=8iKhLGK7i4A" target="_blank">BBC Bitesize – Forces Intro (short & clear)</a></li>
-      <li><a href="https://www.youtube.com/watch?v=tu6bI4e7tBM" target="_blank">Gravity & Friction Animation</a></li>
-      <li><a href="https://phet.colorado.edu/en/simulation/forces-and-motion-basics" target="_blank">PhET Forces & Motion Interactive (play!)</a></li>
-      <li><a href="https://www.youtube.com/watch?v=y8XvQNtyZpc" target="_blank">Balanced & Unbalanced Forces Demo</a></li>
+      <li><a href="https://phet.colorado.edu/en/simulation/forces-and-motion-basics" target="_blank">PhET Forces and Motion Basics – push/pull and friction</a></li>
+      <li><a href="https://phet.colorado.edu/en/simulation/gravity-force-lab" target="_blank">PhET Gravity Force Lab – change gravity strength</a></li>
+      <li><a href="https://phet.colorado.edu/en/simulation/forces-1d" target="_blank">PhET Forces in 1D – tug of war game!</a></li>
+      <li><a href="https://phet.colorado.edu/en/simulation/masses-and-springs" target="_blank">PhET Masses and Springs – gravity and stretch</a></li>
+      <li><a href="https://www.bbc.co.uk/bitesize/topics/z4brd2p" target="_blank">BBC Bitesize Forces – interactive diagrams and quizzes</a></li>
     </ul>
-    <div class="activity">
-      <h2>Fun Forces Demo</h2>
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/y8XvQNtyZpc" title="Forces Demo" frameborder="0" allowfullscreen></iframe>
-    </div>
+    <h2>Extra for Experts</h2>
+    <ul>
+      <li><a href="https://phet.colorado.edu/en/simulation/projectile-motion" target="_blank">PhET Projectile Motion – gravity and air resistance</a></li>
+      <li><a href="https://phet.colorado.edu/en/simulation/energy-skate-park-basics" target="_blank">PhET Energy Skate Park – forces and energy</a></li>
+      <li><a href="https://www.physicsclassroom.com/Physics-Interactives" target="_blank">Physics Classroom Interactives – many force games</a></li>
+    </ul>
     <div class="note">
-      Click and explore – forces make everything move!
+      Click any link and play – the best way to feel how forces work!
     </div>
   </div>
 </section>
@@ -392,60 +400,96 @@ ul { font-size:18px; line-height:1.6; }
 function showSlide(id) {
   document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  if (id === 'match') initMatching();
 }
+
 // Flashcards
 function flip(card) {
   card.classList.toggle('flipped');
 }
-// Matching
+
+// Matching – right column shuffled + green highlight
 let selectedLeft = null;
 let selectedRight = null;
 let matches = 0;
+
+const descriptions = [
+  {pair: "1", text: "Pulls objects down to Earth"},
+  {pair: "2", text: "Slows moving objects on surfaces"},
+  {pair: "3", text: "Attracts or repels magnetic things"},
+  {pair: "4", text: "Contact force moving away"},
+  {pair: "5", text: "Contact force moving closer"},
+  {pair: "6", text: "Drag from air on moving objects"}
+];
+
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function initMatching() {
+  const container = document.getElementById('desc-container');
+  container.innerHTML = '';
+  shuffleArray(descriptions).forEach(desc => {
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    div.dataset.pair = desc.pair;
+    div.textContent = desc.text;
+    div.onclick = () => selectMatch(div);
+    container.appendChild(div);
+  });
+  matches = 0;
+  document.getElementById('match-feedback').innerHTML = '';
+}
+
 function selectMatch(el) {
   if (el.classList.contains('matched')) return;
-  const pair = el.dataset.pair;
-  const isLeft = el.parentElement.querySelector('h3').textContent === 'Force';
-  el.parentElement.querySelectorAll('.match-item:not(.matched)').forEach(item => item.classList.remove('selected'));
+
+  const sideItems = el.parentElement.querySelectorAll('.match-item');
+  sideItems.forEach(item => item.classList.remove('selected'));
   el.classList.add('selected');
-  if (isLeft) {
-    selectedLeft = pair;
+
+  if (el.closest('.match-pair').querySelector('h3').textContent === 'Forces') {
+    selectedLeft = el;
   } else {
-    selectedRight = pair;
+    selectedRight = el;
   }
+
   if (selectedLeft && selectedRight) {
-    const leftEl = document.querySelector('.match-pair:nth-child(1) .selected');
-    const rightEl = document.querySelector('.match-pair:nth-child(2) .selected');
-    if (selectedLeft === selectedRight) {
+    if (selectedLeft.dataset.pair === selectedRight.dataset.pair) {
       matches++;
-      leftEl.classList.remove('selected');
-      rightEl.classList.remove('selected');
-      leftEl.classList.add('matched');
-      rightEl.classList.add('matched');
-      leftEl.onclick = null;
-      rightEl.onclick = null;
-      document.getElementById('match-feedback').innerHTML = '<span style="color:var(--correct);">Correct match! Keep going.</span>';
+      selectedLeft.classList.add('matched');
+      selectedRight.classList.add('matched');
+      selectedLeft.onclick = null;
+      selectedRight.onclick = null;
+      document.getElementById('match-feedback').innerHTML = '<span style="color:var(--correct);">Correct match! 🎉</span>';
       if (matches === 6) {
         document.getElementById('match-feedback').innerHTML = '<span style="color:var(--correct);font-size:1.2em;">🎉 All matched perfectly!</span>';
       }
     } else {
       document.getElementById('match-feedback').innerHTML = '<span style="color:var(--wrong);">Not quite – try again!</span>';
-      leftEl.classList.remove('selected');
-      rightEl.classList.remove('selected');
+      selectedLeft.classList.remove('selected');
+      selectedRight.classList.remove('selected');
     }
     selectedLeft = null;
     selectedRight = null;
   }
 }
+
 function resetMatch() {
   document.querySelectorAll('.match-item').forEach(item => {
     item.classList.remove('selected', 'matched');
-    item.onclick = function() { selectMatch(this); };
+    item.onclick = () => selectMatch(item);
   });
   selectedLeft = null;
   selectedRight = null;
-  matches = 0;
-  document.getElementById('match-feedback').innerHTML = '';
+  initMatching();
 }
+
 // Multiple Choice
 function checkMulti(el, qNum) {
   const question = el.closest('.question');
@@ -461,6 +505,7 @@ function checkMulti(el, qNum) {
     document.getElementById('multi-feedback').innerHTML = `<span style="color:var(--wrong);">Question ${qNum}: Not quite – see the correct answer.</span>`;
   }
 }
+
 // Sentence Builder
 let correctCount = 0;
 const wordList = [
@@ -471,13 +516,16 @@ const wordList = [
   {word: "motion", text: "motion"},
   {word: "newtons", text: "newtons"}
 ];
+
 function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return array;
+  return arr;
 }
+
 function initSentenceBuilder() {
   const bank = document.getElementById('wordBank');
   bank.innerHTML = '';
@@ -526,6 +574,7 @@ function initSentenceBuilder() {
     };
   });
 }
+
 function placeWord(slot, word) {
   slot.textContent = word;
   slot.classList.add('filled');
@@ -540,15 +589,18 @@ function placeWord(slot, word) {
     slot.classList.remove('correct');
   }
 }
+
 function returnWordToBank(wordText) {
   const wordEl = document.querySelector(`.word[data-word="${wordText}"]`);
   if (wordEl) wordEl.classList.remove('used');
 }
+
 function checkAllCorrect() {
   if (document.querySelectorAll('.sentence-slot.correct').length === 6) {
     document.getElementById('build-feedback').innerHTML = '<span style="color:var(--correct);font-size:1.5em;">🎉 Amazing! All sentences perfect!</span>';
   }
 }
+
 function showHints() {
   document.querySelectorAll('.sentence-slot').forEach(slot => {
     if (!slot.classList.contains('filled') || slot.classList.contains('wrong')) {
@@ -562,6 +614,7 @@ function showHints() {
   });
   document.getElementById('build-feedback').innerHTML = '<span style="color:var(--correct);">Here are all the answers – now you know!</span>';
 }
+
 function resetBuild() {
   document.querySelectorAll('.sentence-slot').forEach(slot => {
     slot.textContent = '';
@@ -572,7 +625,12 @@ function resetBuild() {
   document.getElementById('build-feedback').innerHTML = '';
   initSentenceBuilder();
 }
-initSentenceBuilder();
+
+// Initialise everything
+document.addEventListener('DOMContentLoaded', () => {
+  initMatching();
+  initSentenceBuilder();
+});
 </script>
 </body>
 </html>
