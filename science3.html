@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Forces Vibe – Year 7 Science</title>
+<title>Big Picture Science Timeline – Year 7</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -15,20 +15,16 @@
   --rainbow6: #a0c4ff; /* soft blue */
   --rainbow7: #bdb2ff; /* soft purple */
   --rainbow8: #ffc6ff; /* soft pink */
-  --bg: #f0f9ff;        /* very light sky blue background */
+  --bg: #f0f9ff;
   --card: #ffffff;
-  --correct: #51cf66;
-  --wrong: #ff6b6b;
-  --text: #2d3748;
 }
-* { box-sizing:border-box; }
+* { box-sizing: border-box; }
 body {
   margin:0;
   font-family:'Poppins', sans-serif;
   background:var(--bg);
   display:flex;
   height:100vh;
-  color:var(--text);
 }
 nav {
   width:240px;
@@ -38,8 +34,16 @@ nav {
   flex-direction:column;
   gap:10px;
 }
-nav h2 { color:#fff; font-size:18px; margin-bottom:6px; text-shadow:1px 1px 3px rgba(0,0,0,0.3); }
-nav p { color:#fff; font-size:13px; margin-bottom:10px; }
+nav h2 {
+  color:#fff;
+  font-size:18px;
+  margin-bottom:6px;
+}
+nav p {
+  color:#fff;
+  font-size:13px;
+  margin-bottom:10px;
+}
 .nav-btn {
   border:none;
   border-radius:14px;
@@ -48,588 +52,221 @@ nav p { color:#fff; font-size:13px; margin-bottom:10px; }
   cursor:pointer;
   text-align:left;
   transition:.2s;
-  color:#000000; /* Black text on light buttons */
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  color:#000000;
 }
 .nav-btn:hover { transform:translateY(-3px); box-shadow:0 8px 16px rgba(0,0,0,0.2); }
-.flash { background:var(--rainbow5); }
-.match { background:var(--rainbow7); }
-.multi { background:var(--rainbow2); }
-.build { background:var(--rainbow4); }
-.links { background:var(--rainbow8); }
+.btn-ancient { background:var(--rainbow2); }
+.btn-1600 { background:var(--rainbow3); }
+.btn-1700 { background:var(--rainbow4); }
+.btn-1800 { background:var(--rainbow5); }
+.btn-1900 { background:var(--rainbow6); }
+.btn-1950 { background:var(--rainbow7); }
+.btn-2000 { background:var(--rainbow8); }
+.btn-now { background:#e03131; color:#fff; }
 
-main { flex:1; padding:40px; overflow-y:auto; background:var(--bg); }
-.slide { display:none; animation:fade .4s ease; }
+main {
+  flex:1;
+  padding:40px;
+  overflow-y:auto;
+}
+.slide {
+  display:none;
+  animation:fade .3s ease;
+}
 .slide.active { display:block; }
-@keyframes fade { from{opacity:0; transform:scale(0.98);} to{opacity:1; transform:scale(1);} }
-
+@keyframes fade {
+  from { opacity:0; transform:translateY(10px);}
+  to { opacity:1; transform:translateY(0);}
+}
 .card {
   background:var(--card);
-  border-radius:24px;
-  padding:32px;
-  max-width:960px;
-  margin:0 auto;
-  box-shadow:0 12px 32px rgba(0,0,0,0.08);
+  border-radius:22px;
+  padding:30px;
+  max-width:950px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
-h1 { margin-top:0; font-size:34px; color:var(--rainbow6); }
-h2 { color:var(--text); }
+h1 { margin-top:0; font-size:32px; color:var(--rainbow6); }
+h2 { color:#495057; margin-top:24px; }
 p { font-size:18px; line-height:1.6; }
 ul { font-size:18px; line-height:1.6; }
-.activity {
-  margin-top:20px;
-  padding:20px;
-  background:#f8fdff;
-  border-radius:16px;
-}
-.note {
+.highlight {
   margin-top:20px;
   padding:16px;
   border-left:6px solid var(--rainbow6);
   background:#f0f9ff;
   border-radius:12px;
 }
-
-/* FLASHCARDS */
-.fc {
-  perspective:1000px;
-  cursor:pointer;
-}
-.fc-inner {
-  position:relative;
-  width:100%;
-  height:140px;
-  text-align:center;
-  transition:transform 0.6s;
-  transform-style:preserve-3d;
-}
-.fc.flipped .fc-inner {
-  transform:rotateY(180deg);
-}
-.fc-front, .fc-back {
-  position:absolute;
-  width:100%;
-  height:100%;
-  backface-visibility:hidden;
-  border-radius:16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:16px;
-  font-weight:600;
-}
-.fc-front {
-  background:#ffffff;
-  border:2px solid var(--rainbow6);
-}
-.fc-back {
-  background:var(--rainbow6);
-  color:#fff;
-  transform:rotateY(180deg);
-}
-
-/* MATCHING – responsive side-by-side layout */
-.match-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 40px;
-}
-@media (max-width: 768px) {
-  .match-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-}
-.match-pair {
-  flex: 1;
-  min-width: 280px;
-  max-width: 420px;
-}
-.match-item {
-  cursor:pointer;
-  padding:12px 16px;
-  margin:8px 0;
-  background:#fff;
-  border-radius:12px;
-  border:2px solid transparent;
-  transition:.2s;
-}
-.match-item.selected {
-  border-color:var(--rainbow7);
-  background:#f3f0ff;
-}
-.match-item.matched {
-  border-color:var(--correct);
-  background:#e6fcf0;
-  cursor:default;
-}
-#match-feedback { margin-top:20px; font-weight:600; min-height:28px; }
-
-/* MULTI CHOICE */
-.choice {
-  display:block;
-  padding:12px;
-  margin:8px 0;
-  background:#fff;
-  border-radius:12px;
-  cursor:pointer;
-  transition:.2s;
-}
-.choice:hover { background:#f0f0f0; }
-.correct { background:var(--correct) !important; color:#fff; }
-.wrong { background:var(--wrong) !important; color:#fff; }
-
-/* SENTENCE BUILDER */
-.sentence {
-  margin:20px 0;
-  padding:12px;
-  background:#fff;
-  border-radius:12px;
-  line-height:2;
-}
-.sentence-slot {
-  display:inline-block;
-  min-width:140px;
-  min-height:44px;
-  margin:0 4px;
-  padding:8px 12px;
-  background:#fff;
-  border-radius:10px;
-  border:2px dashed #adb5bd;
-  text-align:center;
-  vertical-align:middle;
-}
-.sentence-slot.filled {
-  border-style:solid;
-  border-color:var(--correct);
-  background:#e6fcf0;
-}
-.sentence-slot.correct {
-  background:var(--correct);
-  color:#fff;
-}
-.sentence-slot.wrong {
-  border-color:var(--wrong);
-  background:#ffe0e0;
-}
-.word-bank {
-  margin:30px 0;
-  text-align:center;
-}
-.word {
-  display:inline-block;
-  padding:10px 18px;
-  margin:8px;
-  background:#fff;
-  border-radius:12px;
-  border:2px solid #dee2e6;
-  cursor:pointer;
-  transition:.2s;
-}
-.word.used {
-  opacity:0.3;
-  cursor:not-allowed;
-}
-#build-feedback { margin-top:20px; font-weight:600; min-height:32px; }
-.hint-btn {
-  margin-top:12px;
-  padding:8px 16px;
-  border:none;
-  border-radius:8px;
-  background:#6c757d;
-  color:#fff;
-  cursor:pointer;
+.date {
+  font-weight:700;
+  font-size:20px;
+  color:#212529;
 }
 </style>
 </head>
 <body>
 <nav>
-  <h2>Forces Vibe</h2>
-  <p>Year 7 Science – try them all!</p>
-  <button class="nav-btn flash" onclick="showSlide('flash')">Flashcards</button>
-  <button class="nav-btn match" onclick="showSlide('match')">Matching</button>
-  <button class="nav-btn multi" onclick="showSlide('multi')">Multi-choice</button>
-  <button class="nav-btn build" onclick="showSlide('build')">Sentence Builder</button>
-  <button class="nav-btn links" onclick="showSlide('links')">Interactives</button>
+  <h2>Big Picture Science Timeline</h2>
+  <p>Key moments in science history</p>
+  <button class="nav-btn btn-ancient" onclick="showSlide('milestone-ancient')">Ancient Times</button>
+  <button class="nav-btn btn-1600" onclick="showSlide('milestone-1600')">1600s</button>
+  <button class="nav-btn btn-1700" onclick="showSlide('milestone-1700')">1700s</button>
+  <button class="nav-btn btn-1800" onclick="showSlide('milestone-1800')">1800s</button>
+  <button class="nav-btn btn-1900" onclick="showSlide('milestone-1900')">1900s Early</button>
+  <button class="nav-btn btn-1950" onclick="showSlide('milestone-1950')">1950–1980</button>
+  <button class="nav-btn btn-2000" onclick="showSlide('milestone-2000')">2000–2020</button>
+  <button class="nav-btn btn-now" onclick="showSlide('milestone-now')">Today & Future</button>
 </nav>
 <main>
-<section id="flash" class="slide active">
+<section id="milestone-ancient" class="slide active">
   <div class="card">
-    <h1>Flashcards – Forces</h1>
-    <p>Click any card to flip it and see the answer.</p>
-    <div class="activity" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px;">
-      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">What is a force?</div><div class="fc-back">A push or pull that can change motion or shape</div></div></div>
-      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">What is gravity?</div><div class="fc-back">Force that pulls objects toward Earth</div></div></div>
-      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">What is friction?</div><div class="fc-back">Force that slows things down when surfaces rub</div></div></div>
-      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">What are balanced forces?</div><div class="fc-back">Forces equal in size and opposite – object stays still or constant speed</div></div></div>
-      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">What are unbalanced forces?</div><div class="fc-back">One force bigger – object speeds up, slows down or changes direction</div></div></div>
-      <div class="fc" onclick="flip(this)"><div class="fc-inner"><div class="fc-front">Example of contact force?</div><div class="fc-back">Friction or push from your hand</div></div></div>
-    </div>
-    <div class="note">
-      Flip away – forces are everywhere!
-    </div>
-  </div>
-</section>
-
-<section id="match" class="slide">
-  <div class="card">
-    <h1>Matching – Forces</h1>
-    <p>Click one force and one description to make a pair.</p>
-    <div class="activity">
-      <div class="match-container">
-        <div class="match-pair">
-          <h3>Forces</h3>
-          <div class="match-item" data-pair="1" onclick="selectMatch(this)">Gravity</div>
-          <div class="match-item" data-pair="2" onclick="selectMatch(this)">Friction</div>
-          <div class="match-item" data-pair="3" onclick="selectMatch(this)">Magnetism</div>
-          <div class="match-item" data-pair="4" onclick="selectMatch(this)">Push</div>
-          <div class="match-item" data-pair="5" onclick="selectMatch(this)">Pull</div>
-          <div class="match-item" data-pair="6" onclick="selectMatch(this)">Air resistance</div>
-        </div>
-        <div class="match-pair" id="right-column">
-          <h3>Descriptions</h3>
-          <!-- Shuffled by JavaScript below -->
-        </div>
-      </div>
-      <div id="match-feedback"></div>
-      <button onclick="resetMatch()" style="margin-top:12px; padding:8px 16px; border:none; border-radius:8px; background:#495057; color:#fff; cursor:pointer;">Reset</button>
-    </div>
-    <div class="note">
-      Matched pairs turn green – great job!
-    </div>
-  </div>
-</section>
-
-<section id="multi" class="slide">
-  <div class="card">
-    <h1>Multiple Choice – Forces</h1>
-    <p>Choose the best answer and get instant feedback.</p>
-    <div class="activity">
-      <div class="question">
-        <p><strong>1. A force is measured in...</strong></p>
-        <label class="choice" onclick="checkMulti(this,1)">Kilograms</label>
-        <label class="choice" data-correct="true" onclick="checkMulti(this,1)">Newtons</label>
-        <label class="choice" onclick="checkMulti(this,1)">Metres</label>
-      </div>
-      <div class="question">
-        <p><strong>2. If forces are balanced, the object...</strong></p>
-        <label class="choice" onclick="checkMulti(this,2)">Speeds up</label>
-        <label class="choice" data-correct="true" onclick="checkMulti(this,2)">Stays still or constant speed</label>
-        <label class="choice" onclick="checkMulti(this,2)">Always stops</label>
-      </div>
-      <div class="question">
-        <p><strong>3. Gravity is a...</strong></p>
-        <label class="choice" onclick="checkMulti(this,3)">Contact force</label>
-        <label class="choice" data-correct="true" onclick="checkMulti(this,3)">Non-contact force</label>
-        <label class="choice" onclick="checkMulti(this,3)">Only on Earth</label>
-      </div>
-      <div class="question">
-        <p><strong>4. Friction helps us...</strong></p>
-        <label class="choice" onclick="checkMulti(this,4)">Fly easier</label>
-        <label class="choice" data-correct="true" onclick="checkMulti(this,4)">Walk without slipping</label>
-        <label class="choice" onclick="checkMulti(this,4)">Float in water</label>
-      </div>
-      <div class="question">
-        <p><strong>5. When you kick a ball, it speeds up because of...</strong></p>
-        <label class="choice" onclick="checkMulti(this,5)">Balanced forces</label>
-        <label class="choice" data-correct="true" onclick="checkMulti(this,5)">Unbalanced forces</label>
-        <label class="choice" onclick="checkMulti(this,5)">No forces</label>
-      </div>
-      <div class="question">
-        <p><strong>6. Air resistance acts...</strong></p>
-        <label class="choice" onclick="checkMulti(this,6)">Only on heavy things</label>
-        <label class="choice" onclick="checkMulti(this,6)">Only downwards</label>
-        <label class="choice" data-correct="true" onclick="checkMulti(this,6)">Opposite to motion</label>
-      </div>
-      <div id="multi-feedback" style="margin-top:16px; font-weight:600;"></div>
-    </div>
-    <div class="note">
-      Keep trying – forces are fun to understand!
-    </div>
-  </div>
-</section>
-
-<section id="build" class="slide">
-  <div class="card">
-    <h1>Sentence Builder – Forces</h1>
-    <p>Drag or click the correct word into each blank.</p>
-    <div class="activity">
-      <div class="sentence">1. A force is a push or <span class="sentence-slot" data-answer="pull"></span>.</div>
-      <div class="sentence">2. Gravity pulls things <span class="sentence-slot" data-answer="down"></span>.</div>
-      <div class="sentence">3. Friction <span class="sentence-slot" data-answer="slows"></span> moving objects.</div>
-      <div class="sentence">4. Balanced forces keep speed <span class="sentence-slot" data-answer="constant"></span>.</div>
-      <div class="sentence">5. Unbalanced forces change <span class="sentence-slot" data-answer="motion"></span>.</div>
-      <div class="sentence">6. Forces are measured in <span class="sentence-slot" data-answer="newtons"></span>.</div>
-      <div class="word-bank" id="wordBank"></div>
-      <div id="build-feedback"></div>
-      <button class="hint-btn" onclick="showHints()">Stuck? Show answers</button>
-      <button onclick="resetBuild()" style="margin-left:10px; padding:8px 16px; border:none; border-radius:8px; background:#495057; color:#fff; cursor:pointer;">Reset</button>
-    </div>
-    <div class="note">
-      Building sentences locks in the learning!
-    </div>
-  </div>
-</section>
-
-<section id="links" class="slide">
-  <div class="card">
-    <h1>Interactives – Forces</h1>
-    <p>Play these awesome hands-on simulations – click and explore!</p>
+    <h1>Ancient Times – First Scientists</h1>
+    <p class="date">Thousands of years ago</p>
+    <p>People started asking “Why?” and “How?”</p>
     <ul>
-      <li><a href="https://phet.colorado.edu/en/simulation/forces-and-motion-basics" target="_blank">PhET Forces and Motion Basics – push/pull and friction</a></li>
-      <li><a href="https://phet.colorado.edu/en/simulation/gravity-force-lab" target="_blank">PhET Gravity Force Lab – change gravity strength</a></li>
-      <li><a href="https://phet.colorado.edu/en/simulation/forces-1d" target="_blank">PhET Forces in 1D – tug of war game!</a></li>
-      <li><a href="https://phet.colorado.edu/en/simulation/masses-and-springs" target="_blank">PhET Masses and Springs – gravity and stretch</a></li>
-      <li><a href="https://www.bbc.co.uk/bitesize/topics/z4brd2p" target="_blank">BBC Bitesize Forces – interactive diagrams and quizzes</a></li>
+      <li>Ancient Greeks (Aristotle, ~350 BC) observed nature and asked questions</li>
+      <li>Early astronomers watched stars and planets</li>
+      <li>Inventions like the wheel and simple machines</li>
+      <li>Early medicine – learning how the body works</li>
     </ul>
-    <h2>Extra for Experts</h2>
-    <ul>
-      <li><a href="https://phet.colorado.edu/en/simulation/projectile-motion" target="_blank">PhET Projectile Motion – gravity and air resistance</a></li>
-      <li><a href="https://phet.colorado.edu/en/simulation/energy-skate-park-basics" target="_blank">PhET Energy Skate Park – forces and energy</a></li>
-      <li><a href="https://www.physicsclassroom.com/Physics-Interactives" target="_blank">Physics Classroom Interactives – many force games</a></li>
-    </ul>
-    <div class="note">
-      Click any link and play – the best way to feel how forces work!
+    <div class="highlight">
+      Science begins with curiosity – just like you in class!
     </div>
+  </div>
+</section>
+
+<section id="milestone-1600" class="slide">
+  <div class="card">
+    <h1>1600s – The Scientific Revolution</h1>
+    <p class="date">1600–1700</p>
+    <p>Scientists start using experiments and evidence.</p>
+    <ul>
+      <li>Galileo Galilei (1609) improves the telescope and studies space</li>
+      <li>Isaac Newton (1687) explains gravity and motion</li>
+      <li>First microscopes – discovering tiny cells</li>
+      <li>Scientific method begins to take shape</li>
+    </ul>
+    <div class="highlight">
+      Evidence over guessing – the birth of modern science.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-1700" class="slide">
+  <div class="card">
+    <h1>1700s – Age of Enlightenment</h1>
+    <p class="date">1700–1800</p>
+    <p>Science spreads and changes everyday life.</p>
+    <ul>
+      <li>Electricity experiments (Benjamin Franklin, 1752)</li>
+      <li>Oxygen discovered (Joseph Priestley, 1774)</li>
+      <li>Steam engine improved – start of machines</li>
+      <li>Classification of living things begins (Linnaeus)</li>
+    </ul>
+    <div class="highlight">
+      Science starts powering the world.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-1800" class="slide">
+  <div class="card">
+    <h1>1800s – Huge Discoveries</h1>
+    <p class="date">1800–1900</p>
+    <p>Science explains life and energy.</p>
+    <ul>
+      <li>Charles Darwin (1859) – theory of evolution</li>
+      <li>Cells discovered as building blocks of life (1839)</li>
+      <li>Electricity and magnetism linked (Faraday)</li>
+      <li>Periodic table created (Mendeleev, 1869)</li>
+    </ul>
+    <div class="highlight">
+      We start understanding life, matter, and energy.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-1900" class="slide">
+  <div class="card">
+    <h1>Early 1900s – New Ideas</h1>
+    <p class="date">1900–1950</p>
+    <p>Science changes how we see the universe.</p>
+    <ul>
+      <li>Albert Einstein (1905, 1915) – relativity</li>
+      <li>Quantum theory – tiny particles behave strangely</li>
+      <li>Penicillin discovered (1928) – first antibiotic</li>
+      <li>DNA structure begins to be understood</li>
+    </ul>
+    <div class="highlight">
+      The universe is weirder and more amazing than we thought!
+    </div>
+  </div>
+</section>
+
+<section id="milestone-1950" class="slide">
+  <div class="card">
+    <h1>1950–1980 – Space & DNA</h1>
+    <p class="date">1950–1980</p>
+    <p>Humans reach space and unlock life’s code.</p>
+    <ul>
+      <li>DNA double helix discovered (Watson & Crick, 1953)</li>
+      <li>First human in space (Yuri Gagarin, 1961)</li>
+      <li>Moon landing (Apollo 11, 1969)</li>
+      <li>First computers and internet beginnings</li>
+    </ul>
+    <div class="highlight">
+      We walk on the Moon and learn how life is built.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-2000" class="slide">
+  <div class="card">
+    <h1>2000–2020 – Modern Science</h1>
+    <p class="date">2000–2020</p>
+    <p>Technology and discovery speed up.</p>
+    <ul>
+      <li>Human Genome Project completed (2003)</li>
+      <li>Smartphones and internet everywhere</li>
+      <li>Higgs boson discovered (2012)</li>
+      <li>First image of a black hole (2019)</li>
+    </ul>
+    <div class="highlight">
+      We map all human genes and see the invisible.
+    </div>
+  </div>
+</section>
+
+<section id="milestone-now" class="slide">
+  <div class="card">
+    <h1>Today & The Future</h1>
+    <p class="date">2025 →</p>
+    <p>You are part of the next chapter!</p>
+    <ul>
+      <li>Climate science drives action</li>
+      <li>Space exploration: Mars rovers, private rockets</li>
+      <li>AI and robotics changing daily life</li>
+      <li>Gene editing and new medicines</li>
+      <li><strong>You</strong> asking questions and doing experiments</li>
+    </ul>
+    <div class="highlight">
+      <strong>Science is not finished – it needs curious minds like yours!</strong><br>
+      What will you discover?
+    </div>
+    <h2>Explore More (interactive links)</h2>
+    <ul>
+      <li><a href="https://phet.colorado.edu/" target="_blank">PhET Simulations – play with science!</a></li>
+      <li><a href="https://www.nasa.gov/kidsclub/index.html" target="_blank">NASA Kids – space missions</a></li>
+      <li><a href="https://www.sciencekids.co.nz/" target="_blank">Science Kids NZ – fun experiments</a></li>
+      <li><a href="https://www.bbc.co.uk/bitesize/subjects/zng4jxs" target="_blank">BBC Bitesize Science – Year 7 topics</a></li>
+    </ul>
   </div>
 </section>
 </main>
-
 <script>
 function showSlide(id) {
   document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-// Flashcards
-function flip(card) {
-  card.classList.toggle('flipped');
-}
-// Matching
-// Matching – shuffled right column + green highlight when matched
-let selectedLeft = null;
-let selectedRight = null;
-let matches = 0;
-
-const descriptions = [
-  {pair: "1", text: "Pulls objects down to Earth"},
-  {pair: "2", text: "Slows moving objects on surfaces"},
-  {pair: "3", text: "Attracts or repels magnetic things"},
-  {pair: "4", text: "Contact force moving away"},
-  {pair: "5", text: "Contact force moving closer"},
-  {pair: "6", text: "Drag from air on moving objects"}
-];
-
-function shuffleArray(array) {
-  const arr = [...array];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-function initMatching() {
-  const rightColumn = document.getElementById('right-column');
-  const container = rightColumn.querySelector('h3').nextSibling || document.createElement('div');
-  container.innerHTML = '';
-  shuffleArray(descriptions).forEach(desc => {
-    const div = document.createElement('div');
-    div.className = 'match-item';
-    div.dataset.pair = desc.pair;
-    div.textContent = desc.text;
-    div.onclick = () => selectMatch(div);
-    container.appendChild(div);
-  });
-  if (!rightColumn.lastElementChild || rightColumn.lastElementChild.tagName !== 'DIV') {
-    rightColumn.appendChild(container);
-  }
-  matches = 0;
-  document.getElementById('match-feedback').innerHTML = '';
-}
-
-function selectMatch(el) {
-  if (el.classList.contains('matched')) return;
-
-  // Clear previous selection on same side
-  const sideItems = el.parentElement.querySelectorAll('.match-item');
-  sideItems.forEach(item => item.classList.remove('selected'));
-  el.classList.add('selected');
-
-  if (el.closest('.match-pair').querySelector('h3').textContent === 'Forces') {
-    selectedLeft = el;
-  } else {
-    selectedRight = el;
-  }
-
-  if (selectedLeft && selectedRight) {
-    if (selectedLeft.dataset.pair === selectedRight.dataset.pair) {
-      matches++;
-      selectedLeft.classList.add('matched');
-      selectedRight.classList.add('matched');
-      selectedLeft.onclick = null;
-      selectedRight.onclick = null;
-      document.getElementById('match-feedback').innerHTML = '<span style="color:var(--correct);">Correct match! 🎉</span>';
-      if (matches === 6) {
-        document.getElementById('match-feedback').innerHTML = '<span style="color:var(--correct);font-size:1.2em;">🎉 All matched perfectly!</span>';
-      }
-    } else {
-      document.getElementById('match-feedback').innerHTML = '<span style="color:var(--wrong);">Not quite – try again!</span>';
-      selectedLeft.classList.remove('selected');
-      selectedRight.classList.remove('selected');
-    }
-    selectedLeft = null;
-    selectedRight = null;
-  }
-}
-
-function resetMatch() {
-  document.querySelectorAll('.match-item').forEach(item => {
-    item.classList.remove('selected', 'matched');
-    item.onclick = () => selectMatch(item);
-  });
-  selectedLeft = null;
-  selectedRight = null;
-  initMatching();
-}
-
-// Call on load and when switching to match tab
-document.addEventListener('DOMContentLoaded', () => {
-  initMatching();
-  initSentenceBuilder();
-});
-function showSlide(id) {
-  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  if (id === 'match') initMatching();
-}
-// Multiple Choice
-function checkMulti(el, qNum) {
-  const question = el.closest('.question');
-  question.querySelectorAll('.choice').forEach(c => {
-    c.classList.remove('correct', 'wrong');
-  });
-  if (el.dataset.correct) {
-    el.classList.add('correct');
-    document.getElementById('multi-feedback').innerHTML = `<span style="color:var(--correct);">Question ${qNum}: Correct! 🎉</span>`;
-  } else {
-    el.classList.add('wrong');
-    question.querySelector('.choice[data-correct]').classList.add('correct');
-    document.getElementById('multi-feedback').innerHTML = `<span style="color:var(--wrong);">Question ${qNum}: Not quite – see the correct answer.</span>`;
-  }
-}
-// Sentence Builder
-let correctCount = 0;
-const wordList = [
-  {word: "pull", text: "pull"},
-  {word: "down", text: "down"},
-  {word: "slows", text: "slows"},
-  {word: "constant", text: "constant"},
-  {word: "motion", text: "motion"},
-  {word: "newtons", text: "newtons"}
-];
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-function initSentenceBuilder() {
-  const bank = document.getElementById('wordBank');
-  bank.innerHTML = '';
-  const shuffled = shuffleArray([...wordList]);
-  shuffled.forEach(item => {
-    const span = document.createElement('span');
-    span.className = 'word';
-    span.dataset.word = item.word;
-    span.textContent = item.text;
-    span.draggable = true;
-    bank.appendChild(span);
-  });
-  const slots = document.querySelectorAll('.sentence-slot');
-  const words = document.querySelectorAll('.word');
-  slots.forEach(slot => {
-    slot.ondragover = e => e.preventDefault();
-    slot.ondrop = e => {
-      e.preventDefault();
-      const word = e.dataTransfer.getData("word");
-      if (word && !slot.classList.contains('filled')) {
-        placeWord(slot, word);
-      }
-    };
-    slot.onclick = () => {
-      if (slot.classList.contains('filled')) {
-        returnWordToBank(slot.textContent.trim());
-        slot.textContent = '';
-        slot.classList.remove('filled', 'correct', 'wrong');
-      }
-    };
-  });
-  words.forEach(word => {
-    word.ondragstart = e => {
-      if (!word.classList.contains('used')) {
-        e.dataTransfer.setData("word", word.dataset.word);
-      }
-    };
-    word.onclick = () => {
-      if (!word.classList.contains('used')) {
-        const emptySlot = document.querySelector('.sentence-slot:not(.filled)');
-        if (emptySlot) {
-          placeWord(emptySlot, word.dataset.word);
-          word.classList.add('used');
-        }
-      }
-    };
-  });
-}
-function placeWord(slot, word) {
-  slot.textContent = word;
-  slot.classList.add('filled');
-  document.querySelector(`.word[data-word="${word}"]`).classList.add('used');
-  if (word === slot.dataset.answer) {
-    slot.classList.add('correct');
-    slot.classList.remove('wrong');
-    correctCount++;
-    checkAllCorrect();
-  } else {
-    slot.classList.add('wrong');
-    slot.classList.remove('correct');
-  }
-}
-function returnWordToBank(wordText) {
-  const wordEl = document.querySelector(`.word[data-word="${wordText}"]`);
-  if (wordEl) wordEl.classList.remove('used');
-}
-function checkAllCorrect() {
-  if (document.querySelectorAll('.sentence-slot.correct').length === 6) {
-    document.getElementById('build-feedback').innerHTML = '<span style="color:var(--correct);font-size:1.5em;">🎉 Amazing! All sentences perfect!</span>';
-  }
-}
-function showHints() {
-  document.querySelectorAll('.sentence-slot').forEach(slot => {
-    if (!slot.classList.contains('filled') || slot.classList.contains('wrong')) {
-      const answer = slot.dataset.answer;
-      slot.textContent = answer;
-      slot.classList.add('filled', 'correct');
-      slot.classList.remove('wrong');
-      const wordEl = document.querySelector(`.word[data-word="${answer}"]`);
-      if (wordEl) wordEl.classList.add('used');
-    }
-  });
-  document.getElementById('build-feedback').innerHTML = '<span style="color:var(--correct);">Here are all the answers – now you know!</span>';
-}
-function resetBuild() {
-  document.querySelectorAll('.sentence-slot').forEach(slot => {
-    slot.textContent = '';
-    slot.classList.remove('filled', 'correct', 'wrong');
-  });
-  document.querySelectorAll('.word').forEach(w => w.classList.remove('used'));
-  correctCount = 0;
-  document.getElementById('build-feedback').innerHTML = '';
-  initSentenceBuilder();
-}
-initSentenceBuilder();
 </script>
 </body>
 </html>
