@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AI Vibe Quest - Explore AI Concepts</title>
+    <link href="tailwind.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        :root{ --tile-bg: rgba(255,255,255,0.2); } /* Kept the variable in case needed elsewhere, but not used on tiles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6b46c1 0%, #9f7aea 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #fff;
+            padding: 20px;
+            touch-action: none;
+            overflow-y: auto;
+            transition: background 600ms ease;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.09);
+            border-radius: 24px;
+            padding: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 980px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        .title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.35);
+        }
+        .score {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(0,0,0,0.28);
+            padding: 8px 16px;
+            border-radius: 9999px;
+        }
+        .instructions-btn {
+            background: rgba(0,0,0,0.28);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s;
+            border: none;
+        }
+        .instructions-btn:hover {
+            transform: translateY(-3px);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #fff;
+            color: #000;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .modal-content h2, .modal-content h3 {
+            font-weight: 700;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e5e7eb;
+            color: #000;
+            padding: 8px 12px;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-weight: 700;
+            border: none;
+        }
+        .progress-bar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 1rem;
+            width: 100%;
+            justify-content: center;
+        }
+        .progress-square {
+            width: 30px;
+            height: 30px;
+            background: #ffffff;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+        }
+        .level-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .level-indicator {
+            font-weight: 700;
+            padding: 6px 10px;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.12);
+        }
+        .main-content {
+            display: flex;
+            width: 100%;
+            gap: 18px;
+            flex-direction: column;
+        }
+        @media(min-width:768px) {
+            .main-content {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+        .game-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .word-builder {
+            display: flex;
+            justify-content: center;
+            min-height: 48px;
+            gap: 6px;
+            margin-bottom: 12px;
+            background-color: rgba(255, 255, 255, 0.14);
+            border-radius: 12px;
+            padding: 8px;
+            width: 100%;
+            text-transform: uppercase;
+        }
+        .built-letter {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            color: #000;
+            font-weight: 700;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            animation: popIn 0.18s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0 }
+            100% { transform: scale(1); opacity: 1 }
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            width: 100%;
+            max-width: 520px;
+            aspect-ratio: 6 / 5;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .tile {
+            position: relative;
+            color: black;
+            font-size: clamp(0.9rem, 3.5vw, 1.6rem);
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.18s, box-shadow 0.18s, opacity 0.25s, top 0.35s ease-out;
+            text-transform: uppercase;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+        }
+        .tile.hidden-tile {
+            opacity: 0;
+        }
+        .tile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.16);
+        }
+        .selected {
+            transform: scale(1.06);
+            outline: 3px solid white;
+            outline-offset: -4px;
+        }
+        .message-box {
+            background-color: rgba(0,0,0,0.32);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            width: 100%;
+        }
+        .win-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        .win-star {
+            width: 60%;
+            height: 60%;
+            background-color: rgba(255,255,255,0.2);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .win-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+            margin-top: 16px;
+        }
+        .win-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .win-button {
+            background-color: rgba(0,0,0,0.28);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-weight: 700;
+            transition: transform 0.15s;
+            border: none;
+        }
+        .win-button:hover {
+            transform: translateY(-3px);
+        }
+        .word-list-section {
+            width: 320px;
+            min-width: 240px;
+            max-width: 340px;
+            background-color: rgba(0,0,0,0.14);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .word-list-heading {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .word-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .word-item {
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .word-item-text {
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+        .word-item-count {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .tick {
+            font-size: 1.2rem;
+            margin-left: 6px;
+        }
+        .star-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 8.4px;
+            margin-top: 12px;
+            width: 100%;
+            max-width: 240px;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .star {
+            width: 32px;
+            height: 32px;
+            background-color: #ffffff;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            cursor: pointer;
+            transition: transform 0.18s, background-color 0.18s;
+            transform: scale(2);
+        }
+        .star.used {
+            background-color: #9ca3af;
+            transform: scale(1);
+            cursor: default;
+        }
+        .controls-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        button {
+            background-color: rgba(0,0,0,0.28);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 9999px;
+            font-weight: 700;
+            transition: transform 0.15s;
+            border: none;
+        }
+        button:hover {
+            transform: translateY(-3px);
+        }
+        .audit-trail-section {
+            width: 100%;
+            background-color: rgba(0,0,0,0.14);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            margin: 18px auto 0;
+        }
+        .audit-trail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .bg-level-1 { background: linear-gradient(135deg, #EFDDF8 0%, #9ca3af 100%); }
+        .bg-level-2 { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); }
+        .bg-level-3 { background: linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%); }
+        .bg-level-4 { background: linear-gradient(135deg, #22c55e 0%, #86efac 100%); }
+        .bg-level-5 { background: linear-gradient(135deg, #16a34a 0%, #4ade80 100%); }
+        .bg-level-6 { background: linear-gradient(135deg, #facc15 0%, #fef08a 100%); }
+        .bg-level-7 { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
+        .bg-level-8 { background: linear-gradient(135deg, #fb923c 0%, #f97316 100%); }
+        .bg-level-9 { background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); }
+        .bg-level-10 { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
+        .bg-level-11 { background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%); }
+        .bg-level-12 { background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); }
+        .bg-level-13 { background: linear-gradient(135deg, #db2777 0%, #ec4899 100%); }
+        .bg-level-14 { background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%); }
+        .bg-level-15 { background: linear-gradient(135deg, #7e22ce 0%, #a78bfa 100%); }
+        .bg-level-16 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 100%); }
+        .bg-level-17 { background: linear-gradient(135deg, #ff7f00 0%, #ffff00 100%); }
+        .bg-level-18 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 50%, #ffff00 100%); }
+        .bg-level-19 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 33%, #ffff00 66%, #00ff00 100%); }
+        .bg-level-20 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 20%, #ffff00 40%, #00ff00 60%, #0000ff 80%, #4b0082 100%); }
+        /* REMOVED the ::before overlay and span z-index – this was hiding the colors */
+    </style>
+</head>
+<body>
+    <!-- The rest of the HTML body and script is EXACTLY the same as the previous version I sent -->
+    <div class="container">
+        <div class="header">
+            <button class="instructions-btn" id="instructions-btn">Instructions</button>
+            <h1 class="title">AI Vibe Quest</h1>
+            <div class="score" id="score-display">Score: 0</div>
+        </div>
+        <div class="progress-bar" id="progress-bar"></div>
+        <div class="level-controls">
+            <div class="controls-row">
+                <button id="prev-level">◀ Prev</button>
+                <div class="level-indicator" id="level-indicator">Level 1 / 20</div>
+                <button id="next-level">Next ▶</button>
+            </div>
+        </div>
+        <div class="main-content">
+            <div id="game-container" class="game-section">
+                <div id="word-builder" class="word-builder"></div>
+                <div id="grid-container" class="grid"></div>
+                <div id="message-box" class="message-box opacity-0 transition-opacity duration-300"></div>
+                <div id="win-screen" class="hidden"></div>
+            </div>
+            <div class="word-list-section">
+                <div class="word-list-heading">Concepts to find</div>
+                <div id="word-list" class="word-list"></div>
+                <div class="star-container" id="star-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="instructions-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">Close</button>
+            <h2>How to Play AI Vibe Quest</h2>
+            <p>Connect letters to form key AI concepts hidden in the grid. Words can snake horizontally, vertically, or diagonally.</p>
+            <p>Find all the main concepts for each level to progress and learn about AI, prompting, and creative coding.</p>
+            <h3>Scoring</h3>
+            <p>+1 point per letter in main list concepts.</p>
+            <p>+5 points per letter in bonus concepts (from any level).</p>
+            <h3>Stars</h3>
+            <p>Click a star when stuck to refresh the board (15 total).</p>
+            <h3>Learning Log</h3>
+            <p>Tracks every concept you find, time taken, and points. Copy it at the end for reflection or sharing.</p>
+            <h3>Tips</h3>
+            <p>Bonus concepts hide among filler letters. Later levels get more challenging with advanced ideas.</p>
+            <p>Experiment with prompts in real life – change one word and see how the "vibe" shifts!</p>
+        </div>
+    </div>
+    <div class="audit-trail-section">
+        <button id="copy-trail" class="win-button">AI Vibe Quest: Learning Log [CC BY-NC] Click to COPY</button>
+        <div id="learning-log-list" class="word-list"></div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridContainer = document.getElementById('grid-container');
+            const messageBox = document.getElementById('message-box');
+            const winScreen = document.getElementById('win-screen');
+            const gameContainer = document.getElementById('game-container');
+            const wordListEl = document.getElementById('word-list');
+            const wordBuilderEl = document.getElementById('word-builder');
+            const starContainer = document.getElementById('star-container');
+            const prevLevelBtn = document.getElementById('prev-level');
+            const nextLevelBtn = document.getElementById('next-level');
+            const levelIndicator = document.getElementById('level-indicator');
+            const progressBar = document.getElementById('progress-bar');
+            const scoreDisplay = document.getElementById('score-display');
+            const instructionsBtn = document.getElementById('instructions-btn');
+            const instructionsModal = document.getElementById('instructions-modal');
+            const modalClose = document.getElementById('modal-close');
+            const learningLogList = document.getElementById('learning-log-list');
+            const copyTrailBtn = document.getElementById('copy-trail');
+            const GRID_SIZE = 6;
+            const FIND_COUNT_PER_WORD = 1;
+            const TOTAL_STARS = 15;
+            let gameBoard = [];
+            let selectedTiles = [];
+            let foundWordCounts = {};
+            let wordPlacementCounts = {};
+            let wordsToFind = [];
+            let wordInfo = {};
+            let isDragging = false;
+            let lastTile = null;
+            let stars = [];
+            let starsUsedCount = 0;
+            let completedLevels = new Set();
+            let score = 0;
+            let foundWordsTrail = [];
+            let normalizedDescriptions = {};
+            let selectionStartTime = null;
+            const letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+
+            const BONUS_WORDS = [
+                { w: 'bias', d: 'Prejudice in data or model decisions, often reflecting human biases' },
+                { w: 'ethics', d: 'Moral principles guiding AI development and use' },
+                { w: 'hallucination', d: 'When AI confidently generates false information' },
+                { w: 'token', d: 'Unit of text (word/part of word) that models process' },
+                { w: 'temperature', d: 'Controls randomness in AI output – low = focused, high = creative' },
+                { w: 'emergent', d: 'Complex abilities appearing unexpectedly in large models' },
+                { w: 'alignment', d: 'Ensuring AI goals match human values' },
+                { w: 'dataset', d: 'Collection of training examples for an AI model' },
+                { w: 'overfit', d: 'Model memorises training data instead of generalising' },
+                { w: 'chain', d: 'Technique linking multiple prompts/thoughts (e.g., chain-of-thought)' },
+                { w: 'jailbreak', d: 'Prompt bypassing AI safety restrictions' },
+                { w: 'rlhf', d: 'Reinforcement Learning from Human Feedback – key to modern chatbots' },
+                { w: 'diffusion', d: 'Generative method behind many image AIs (adds/removes noise)' },
+                { w: 'latent', d: 'Hidden compressed representation in AI models' },
+                { w: 'multimodal', d: 'AI handling multiple data types (text, image, audio)' }
+            ];
+
+            const LEVELS = [
+                { name: 'What is AI?', bg: 'linear-gradient(135deg, #a0e9ff 0%, #b3c6ff 100%)',
+                  words: [
+                      { w: 'ai', d: 'Artificial Intelligence – machines simulating human thinking', c: 'bg-[#6b7280] text-white' },
+                      { w: 'machine', d: 'Device that performs tasks automatically', c: 'bg-[#d1d5db] text-black' },
+                      { w: 'learning', d: 'Improving from data/experience without explicit programming', c: 'bg-[#EACBF9] text-black' },
+                      { w: 'neural', d: 'Inspired by brain structure – networks of connected nodes', c: 'bg-[#4b5563] text-white' },
+                      { w: 'model', d: 'Trained algorithm that makes predictions or generates output', c: 'bg-[#e5e7eb] text-black' }
+                  ]},
+                { name: 'Types of AI', bg: 'linear-gradient(135deg, #fcf879 0%, #c6e61c 100%)',
+                  words: [
+                      { w: 'narrow', d: 'AI excelling at one specific task (most current AI)', c: 'bg-[#6b7280] text-white' },
+                      { w: 'general', d: 'AGI – human-level intelligence across many tasks', c: 'bg-[#d1d5db] text-black' },
+                      { w: 'super', d: 'Hypothetical AI vastly surpassing human intelligence', c: 'bg-[#EACBF9] text-black' },
+                      { w: 'reactive', d: 'Responds to present without memory or learning', c: 'bg-[#4b5563] text-white' },
+                      { w: 'generative', d: 'Creates new content (text, images, code, music)', c: 'bg-[#e5e7eb] text-black' }
+                  ]},
+                { name: 'Core Ideas', bg: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
+                  words: [
+                      { w: 'data', d: 'Fuel for AI – the more quality data, the better it learns', c: 'bg-[#93c5fd] text-black' },
+                      { w: 'train', d: 'Process of teaching AI patterns from data', c: 'bg-[#60a5fa] text-white' },
+                      { w: 'predict', d: 'What AI does – guesses next word/image/etc.', c: 'bg-[#3b82f6] text-white' },
+                      { w: 'pattern', d: 'Relationships AI discovers in data', c: 'bg-[#2563eb] text-white' },
+                      { w: 'algorithm', d: 'Step-by-step recipe the AI follows', c: 'bg-[#1e40af] text-white' }
+                  ]},
+                { name: 'Prompt Basics', bg: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)',
+                  words: [
+                      { w: 'prompt', d: 'Your input/instruction to an AI', c: 'bg-[#facc15] text-black' },
+                      { w: 'clear', d: 'Good prompts are specific and unambiguous', c: 'bg-[#fef08a] text-black' },
+                      { w: 'context', d: 'Background info that helps AI understand task', c: 'bg-[#fbbf24] text-white' },
+                      { w: 'role', d: 'Assigning AI a persona (e.g., "Act as a teacher")', c: 'bg-[#f59e0b] text-white' },
+                      { w: 'example', d: 'Few-shot prompting – showing examples in prompt', c: 'bg-[#fde68a] text-black' }
+                  ]},
+                { name: 'Prompt Power', bg: 'linear-gradient(135deg, #22c55e 0%, #86efac 100%)',
+                  words: [
+                      { w: 'specific', d: 'Detailed prompts yield better, more targeted results', c: 'bg-[#4ade80] text-white' },
+                      { w: 'iterate', d: 'Refine prompts step-by-step for better output', c: 'bg-[#22c55e] text-white' },
+                      { w: 'vibe', d: 'Tone/style/feeling you want in the response', c: 'bg-[#86efac] text-black' },
+                      { w: 'format', d: 'Asking for specific output structure (list, table, code)', c: 'bg-[#16a34a] text-white' },
+                      { w: 'chain', d: 'Breaking complex tasks into sequential prompts', c: 'bg-[#4ade80] text-black' }
+                  ]},
+                { name: 'Creative Coding', bg: 'linear-gradient(135deg, #ec4899 0%, #f472b6 100%)',
+                  words: [
+                      { w: 'code', d: 'Instructions telling computers what to do', c: 'bg-[#ec4899] text-white' },
+                      { w: 'generate', d: 'AI writing code from natural language descriptions', c: 'bg-[#f472b6] text-black' },
+                      { w: 'debug', d: 'Finding and fixing errors – AI can help explain bugs', c: 'bg-[#db2777] text-white' },
+                      { w: 'remix', d: 'Taking existing code and creatively modifying it', c: 'bg-[#be185d] text-white' },
+                      { w: 'fork', d: 'Creating your own version of someone else’s project', c: 'bg-[#fce7f3] text-black' }
+                  ]},
+                { name: 'Change & Iteration', bg: 'linear-gradient(135deg, #7e22ce 0%, #a78bfa 100%)',
+                  words: [
+                      { w: 'version', d: 'Different iterations of code/AI output', c: 'bg-[#a78bfa] text-black' },
+                      { w: 'feedback', d: 'Your response guiding next improvement', c: 'bg-[#7e22ce] text-white' },
+                      { w: 'evolve', d: 'Gradually improving through small changes', c: 'bg-[#c084fc] text-black' },
+                      { w: 'experiment', d: 'Trying new ideas to see what works', c: 'bg-[#9333ea] text-white' },
+                      { w: 'adapt', d: 'Adjusting based on results or new needs', c: 'bg-[#d8b4fe] text-black' }
+                  ]},
+                { name: 'AI in Action', bg: 'linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%)',
+                  words: [
+                      { w: 'chatbot', d: 'Conversational AI like Grok or ChatGPT', c: 'bg-[#7dd3fc] text-black' },
+                      { w: 'image', d: 'AI generating pictures from text (e.g., DALL-E)', c: 'bg-[#06b6d4] text-white' },
+                      { w: 'music', d: 'AI composing songs or sounds', c: 'bg-[#7dd3fc] text-black' },
+                      { w: 'translate', d: 'Real-time language conversion', c: 'bg-[#22d3ee] text-white' },
+                      { w: 'summarise', d: 'Condensing long text into key points', c: 'bg-[#a5f3fc] text-black' }
+                  ]},
+                { name: 'Limitations', bg: 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)',
+                  words: [
+                      { w: 'bias', d: 'Inherited prejudices from training data', c: 'bg-[#fb923c] text-black' },
+                      { w: 'error', d: 'AI can confidently be wrong', c: 'bg-[#f97316] text-white' },
+                      { w: 'creativity', d: 'AI remixes patterns, doesn’t truly invent', c: 'bg-[#ea580c] text-white' },
+                      { w: 'context', d: 'Limited memory of conversation history', c: 'bg-[#fed7aa] text-black' },
+                      { w: 'energy', d: 'Training large models uses huge electricity', c: 'bg-[#ffedd5] text-black' }
+                  ]},
+                { name: 'Future & Ethics', bg: 'linear-gradient(135deg, #a855f7 0%, #c084fc 100%)',
+                  words: [
+                      { w: 'ethics', d: 'Doing the right thing with powerful tech', c: 'bg-[#c084fc] text-black' },
+                      { w: 'safety', d: 'Preventing harmful uses of AI', c: 'bg-[#a855f7] text-white' },
+                      { w: 'jobs', d: 'How AI changes work and employment', c: 'bg-[#9333ea] text-white' },
+                      { w: 'open', d: 'Sharing AI tech vs keeping it closed', c: 'bg-[#d8b4fe] text-black' },
+                      { w: 'human', d: 'Keeping people in control of important decisions', c: 'bg-[#e9d5ff] text-black' }
+                  ]},
+                { name: 'Prompt Engineering', bg: 'linear-gradient(135deg, #16a34a 0%, #4ade80 100%)',
+                  words: [
+                      { w: 'zero', d: 'Zero-shot – no examples, just instruction', c: 'bg-[#4ade80] text-black' },
+                      { w: 'few', d: 'Few-shot – include examples in prompt', c: 'bg-[#22c55e] text-white' },
+                      { w: 'system', d: 'Overall instructions setting AI behaviour', c: 'bg-[#16a34a] text-white' },
+                      { w: 'temperature', d: 'Creativity dial (0–1+)', c: 'bg-[#86efac] text-black' },
+                      { w: 'topp', d: 'Alternative randomness control', c: 'bg-[#4ade80] text-black' }
+                  ]},
+                { name: 'Advanced Concepts', bg: 'linear-gradient(135deg, #facc15 0%, #fef08a 100%)',
+                  words: [
+                      { w: 'transformer', d: 'Architecture behind most modern LLMs', c: 'bg-[#fef08a] text-black' },
+                      { w: 'attention', d: 'Mechanism letting model focus on relevant parts', c: 'bg-[#facc15] text-black' },
+                      { w: 'embedding', d: 'Numerical representation of meaning', c: 'bg-[#eab308] text-black' },
+                      { w: 'fine', d: 'Fine-tuning – adapting pre-trained model', c: 'bg-[#ca8a04] text-white' },
+                      { w: 'scaling', d: 'Bigger models + more data = better performance', c: 'bg-[#92400e] text-white' }
+                  ]},
+                { name: 'Tools & Workflow', bg: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)',
+                  words: [
+                      { w: 'grok', d: 'xAI’s helpful and truthful AI assistant', c: 'bg-[#f87171] text-black' },
+                      { w: 'github', d: 'Platform for sharing and collaborating on code', c: 'bg-[#ef4444] text-white' },
+                      { w: 'colab', d: 'Google’s free cloud coding environment', c: 'bg-[#f87171] text-black' },
+                      { w: 'repl', d: 'Online coding playground (like Replit)', c: 'bg-[#dc2626] text-white' },
+                      { w: 'api', d: 'Way programs talk to each other (AI services)', c: 'bg-[#b91c1c] text-white' }
+                  ]},
+                { name: 'Mindset', bg: 'linear-gradient(135deg, #db2777 0%, #ec4899 100%)',
+                  words: [
+                      { w: 'curious', d: 'Always asking questions and exploring', c: 'bg-[#ec4899] text-white' },
+                      { w: 'play', d: 'Experiment without fear of failure', c: 'bg-[#f472b6] text-black' },
+                      { w: 'share', d: 'Show your work – teach others', c: 'bg-[#db2777] text-white' },
+                      { w: 'remix', d: 'Build on others’ ideas creatively', c: 'bg-[#be185d] text-white' },
+                      { w: 'persist', d: 'Keep trying when first attempts fail', c: 'bg-[#fce7f3] text-black' }
+                  ]},
+                { name: 'Vibe Coding', bg: 'linear-gradient(135deg, #7e22ce 0%, #a78bfa 100%)',
+                  words: [
+                      { w: 'flow', d: 'Being fully immersed in creative coding', c: 'bg-[#a78bfa] text-black' },
+                      { w: 'aesthetic', d: 'Visual/style choices in your project', c: 'bg-[#7e22ce] text-white' },
+                      { w: 'voice', d: 'Your unique style shining through', c: 'bg-[#c084fc] text-black' },
+                      { w: 'iterate', d: 'Small tweaks leading to big improvements', c: 'bg-[#9333ea] text-white' },
+                      { w: 'magic', d: 'That moment when it suddenly works beautifully', c: 'bg-[#d8b4fe] text-black' }
+                  ]},
+                { name: 'AI & Creativity', bg: 'linear-gradient(135deg, #ff7f00 0%, #ffff00 100%)',
+                  words: [
+                      { w: 'co-create', d: 'Human + AI making together', c: 'bg-[#ffff00] text-black' },
+                      { w: 'inspire', d: 'AI sparking new ideas', c: 'bg-[#ffab00] text-white' },
+                      { w: 'augment', d: 'AI enhancing human abilities', c: 'bg-[#ff7f00] text-white' },
+                      { w: 'explore', d: 'Trying wild ideas quickly', c: 'bg-[#ffd700] text-black' },
+                      { w: 'hybrid', d: 'Best results from human + machine', c: 'bg-[#ffcc00] text-black' }
+                  ]},
+                { name: 'Responsible Use', bg: 'linear-gradient(135deg, #b91c1c 0%, #ef4444 100%)',
+                  words: [
+                      { w: 'verify', d: 'Check AI output for accuracy', c: 'bg-[#ef4444] text-white' },
+                      { w: 'credit', d: 'Acknowledge AI assistance', c: 'bg-[#dc2626] text-white' },
+                      { w: 'privacy', d: 'Be careful with personal data', c: 'bg-[#b91c1c] text-white' },
+                      { w: 'source', d: 'Know where training data came from', c: 'bg-[#f87171] text-black' },
+                      { w: 'balance', d: 'Use AI as tool, not replacement for thinking', c: 'bg-[#fecaca] text-black' }
+                  ]},
+                { name: 'Community', bg: 'linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%)',
+                  words: [
+                      { w: 'open', d: 'Open-source – sharing code freely', c: 'bg-[#7dd3fc] text-black' },
+                      { w: 'forum', d: 'Places to ask questions (Reddit, Discord)', c: 'bg-[#06b6d4] text-white' },
+                      { w: 'colab', d: 'Collaborative coding with others', c: 'bg-[#22d3ee] text-white' },
+                      { w: 'mentor', d: 'Learning from more experienced people', c: 'bg-[#a5f3fc] text-black' },
+                      { w: 'teach', d: 'Best way to learn – explain to others', c: 'bg-[#cffafe] text-black' }
+                  ]},
+                { name: 'Next Steps', bg: 'linear-gradient(135deg, #22c55e 0%, #86efac 100%)',
+                  words: [
+                      { w: 'build', d: 'Create your own projects', c: 'bg-[#86efac] text-black' },
+                      { w: 'share', d: 'Show the world what you made', c: 'bg-[#22c55e] text-white' },
+                      { w: 'learn', d: 'Keep exploring new tools/concepts', c: 'bg-[#4ade80] text-black' },
+                      { w: 'question', d: 'Stay critical and curious', c: 'bg-[#16a34a] text-white' },
+                      { w: 'enjoy', d: 'Have fun with AI and coding!', c: 'bg-[#bbf7d0] text-black' }
+                  ]},
+                { name: 'Mastery', bg: 'linear-gradient(135deg, #ff0000 0%, #ff7f00 33%, #ffff00 66%, #00ff00 100%)',
+                  words: [
+                      { w: 'master', d: 'Deep understanding through practice', c: 'bg-[#ff0000] text-white' },
+                      { w: 'create', d: 'Bring entirely new things into existence', c: 'bg-[#ff7f00] text-white' },
+                      { w: 'innovate', d: 'Combine ideas in novel ways', c: 'bg-[#ffff00] text-black' },
+                      { w: 'lead', d: 'Guide others in AI exploration', c: 'bg-[#00ff00] text-black' },
+                      { w: 'future', d: 'You are shaping what comes next', c: 'bg-[#0000ff] text-white' }
+                  ]}
+            ];
+
+            let currentLevel = 0;
+
+            const LEVEL_COMPLETION_MESSAGES = [
+                "Great start!", "Keep going!", "Nice progress!", "You're getting it!",
+                "Strong work!", "Halfway there!", "Impressive!", "Really solid!",
+                "Almost there!", "Fantastic effort!", "So close!", "Incredible!",
+                "Outstanding!", "Brilliant!", "Exceptional!", "Mind-blowing!",
+                "Legendary!", "Epic mastery!", "AI wizard!", "Future builder!"
+            ];
+
+            function shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            function createTile(row, col, letter, colorClass) {
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
+                if (colorClass) tile.classList.add(...colorClass.split(' '));
+                tile.dataset.row = row;
+                tile.dataset.col = col;
+                tile.dataset.letter = letter;
+                tile.innerHTML = `<span>${letter.toUpperCase()}</span>`;
+                return tile;
+            }
+
+            function createStar(index) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.dataset.index = index;
+                star.style.backgroundColor = starsUsedCount <= index ? '#ffffff' : '#9ca3af';
+                star.style.transform = starsUsedCount <= index ? 'scale(2)' : 'scale(1)';
+                if (starsUsedCount <= index) {
+                    star.addEventListener('click', () => handleStarClick(index));
+                } else {
+                    star.classList.add('used');
+                }
+                starContainer.appendChild(star);
+                return star;
+            }
+
+            function initStars() {
+                starContainer.innerHTML = '';
+                stars = [];
+                for (let i = 0; i < TOTAL_STARS; i++) {
+                    const star = createStar(i);
+                    stars.push({ element: star, used: starsUsedCount > i });
+                }
+            }
+
+            function initProgressBar() {
+                progressBar.innerHTML = '';
+                for (let i = 0; i < LEVELS.length; i++) {
+                    const square = document.createElement('div');
+                    square.classList.add('progress-square');
+                    square.textContent = i + 1;
+                    if (completedLevels.has(i)) {
+                        square.classList.add(`bg-level-${i + 1}`);
+                        square.style.color = '#ffffff';
+                    }
+                    progressBar.appendChild(square);
+                }
+            }
+
+            function updateScoreDisplay() {
+                scoreDisplay.textContent = `Score: ${score}`;
+            }
+
+            function displayWordList() {
+                wordListEl.innerHTML = '';
+                wordsToFind.forEach(word => {
+                    const count = foundWordCounts[word] || 0;
+                    const info = wordInfo[word];
+                    const wordItem = document.createElement('div');
+                    wordItem.classList.add('word-item');
+                    if (info && info.color) wordItem.classList.add(...info.color.split(' '));
+                    const left = document.createElement('div');
+                    left.style.display = 'flex';
+                    left.style.flexDirection = 'column';
+                    left.style.alignItems = 'flex-start';
+                    const wordText = document.createElement('span');
+                    wordText.classList.add('word-item-text');
+                    wordText.textContent = word.toUpperCase();
+                    const description = document.createElement('small');
+                    description.style.fontWeight = '600';
+                    description.style.marginTop = '4px';
+                    description.style.opacity = count > 0 ? '1' : '0.3';
+                    description.textContent = count > 0 ? info?.description || '' : '(hidden until found)';
+                    left.appendChild(wordText);
+                    left.appendChild(description);
+                    const wordCount = document.createElement('span');
+                    wordCount.classList.add('word-item-count');
+                    wordCount.innerHTML = count > 0 ? '<span class="tick">✓</span>' : '';
+                    wordItem.appendChild(left);
+                    wordItem.appendChild(wordCount);
+                    wordListEl.appendChild(wordItem);
+                });
+            }
+
+            function displayLearningLog() {
+                learningLogList.innerHTML = '';
+                foundWordsTrail.forEach(item => {
+                    const wordItem = document.createElement('div');
+                    wordItem.classList.add('word-item');
+                    wordItem.innerHTML = `
+                        <span>${item.time}</span> -
+                        <span>${item.level}</span> -
+                        <span>${item.type}</span> -
+                        <span>${item.word}</span> -
+                        <span>${item.description}</span> -
+                        <span>${item.timeTaken}s</span> -
+                        <span>${item.pointsGained}</span> -
+                        <span>${item.pointsTotal}</span>`;
+                    learningLogList.appendChild(wordItem);
+                });
+            }
+
+            function placeWord(wordObj, board) {
+                const word = wordObj.w;
+                const directions = [[0,1],[0,-1],[1,0],[-1,0]];
+                let placed = false;
+                let attempts = 0;
+                const maxAttempts = 100;
+                while (!placed && attempts < maxAttempts) {
+                    const startR = Math.floor(Math.random() * GRID_SIZE);
+                    const startC = Math.floor(Math.random() * GRID_SIZE);
+                    const path = [{r:startR,c:startC}];
+                    const visited = new Set([`${startR},${startC}`]);
+                    const findPath = (r,c,wordIndex) => {
+                        if (wordIndex === word.length) return true;
+                        shuffle(directions);
+                        for (const [dr,dc] of directions) {
+                            const newR = r + dr;
+                            const newC = c + dc;
+                            const key = `${newR},${newC}`;
+                            if (newR>=0 && newR<GRID_SIZE && newC>=0 && newC<GRID_SIZE && !visited.has(key)) {
+                                const cell = board[newR][newC];
+                                if (cell === null || cell.word === null) {
+                                    visited.add(key);
+                                    path.push({r:newR,c:newC});
+                                    if (findPath(newR,newC,wordIndex+1)) return true;
+                                    path.pop();
+                                    visited.delete(key);
+                                }
+                            }
+                        }
+                        return false;
+                    };
+                    if ((board[startR][startC] === null || board[startR][startC].word === null) && findPath(startR,startC,1)) {
+                        if (path.length === word.length) {
+                            for (let i=0;i<word.length;i++){
+                                const {r,c} = path[i];
+                                board[r][c] = { letter: word[i], word: word, color: wordObj.c };
+                            }
+                            placed = true;
+                            wordPlacementCounts[word] = (wordPlacementCounts[word] || 0) + 1;
+                        }
+                    }
+                    attempts++;
+                }
+                return placed;
+            }
+
+            function validateBoard(board) {
+                const wordsOnGrid = new Set();
+                const directions = [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
+                function checkPath(r, c, word, wordIndex, path, visited) {
+                    if (wordIndex === word.length) return true;
+                    for (const [dr, dc] of directions) {
+                        const newR = r + dr; const newC = c + dc;
+                        const key = `${newR},${newC}`;
+                        if (newR >= 0 && newR < GRID_SIZE && newC >= 0 && newC < GRID_SIZE && !visited.has(key)) {
+                            if (board[newR][newC] && board[newR][newC].letter === word[wordIndex]) {
+                                visited.add(key); path.push({r:newR,c:newC});
+                                if (checkPath(newR, newC, word, wordIndex + 1, path, visited)) return true;
+                                path.pop(); visited.delete(key);
+                            }
+                        }
+                    }
+                    return false;
+                }
+                for (const word of wordsToFind) {
+                    let found = false;
+                    for (let r = 0; r < GRID_SIZE && !found; r++) {
+                        for (let c = 0; c < GRID_SIZE && !found; c++) {
+                            if (board[r][c] && board[r][c].letter === word[0]) {
+                                const path = [{r,c}];
+                                const visited = new Set([`${r},${c}`]);
+                                if (checkPath(r, c, word, 1, path, visited) && path.length === word.length) {
+                                    wordsOnGrid.add(word);
+                                    found = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return wordsOnGrid.size === wordsToFind.length;
+            }
+
+            function getAllWords() {
+                return LEVELS.flatMap(level => level.words.map(w => w.w));
+            }
+
+            function getBonusWords() {
+                return BONUS_WORDS.map(w => ({ w: w.w, c: null }));
+            }
+
+            function initDescriptions() {
+                normalizedDescriptions = {};
+                LEVELS.forEach(level => {
+                    level.words.forEach(wObj => {
+                        const normalized = wObj.w.toLowerCase();
+                        normalizedDescriptions[normalized] = wObj.d;
+                    });
+                });
+                BONUS_WORDS.forEach(bObj => {
+                    const normalized = bObj.w.toLowerCase();
+                    normalizedDescriptions[normalized] = bObj.d;
+                });
+            }
+
+            function getDescription(word) {
+                return normalizedDescriptions[word.toLowerCase()] || 'bonus concept';
+            }
+
+            function refreshBoard() {
+                const MAX_OVERALL_ATTEMPTS = 50;
+                let overallAttempt = 0;
+                let success = false;
+                let words = wordsToFind.map(w => wordInfo[w].obj);
+                words.sort((a, b) => b.w.length - a.w.length);
+                while (!success && overallAttempt < MAX_OVERALL_ATTEMPTS) {
+                    const localBoard = Array.from({length:GRID_SIZE}, () => Array(GRID_SIZE).fill(null));
+                    let allPlaced = true;
+                    for (const wobj of words) {
+                        const placed = placeWord(wobj, localBoard);
+                        if (!placed) { allPlaced = false; break; }
+                    }
+                    if (allPlaced && validateBoard(localBoard)) {
+                        gameBoard = localBoard;
+                        success = true;
+                    }
+                    overallAttempt++;
+                }
+                if (!success) {
+                    showMessage('Board refresh failed – try a star.');
+                }
+                const purpleShades = ['bg-[#c084fc] text-black','bg-[#a855f7] text-white','bg-[#9333ea] text-white','bg-[#7e22ce] text-white','bg-[#6b21a8] text-white'];
+                let extraWords = shuffle([...getAllWords(), ...getBonusWords().map(b=>b.w)]).slice(0,8);
+                extraWords.forEach((ew,i) => {
+                    placeWord({w:ew, c:purpleShades[i%purpleShades.length]}, gameBoard);
+                });
+                for (let r = 0; r < GRID_SIZE; r++) {
+                    for (let c = 0; c < GRID_SIZE; c++) {
+                        if (gameBoard[r][c] === null) {
+                            const randLetter = letters[Math.floor(Math.random()*letters.length)];
+                            gameBoard[r][c] = { letter: randLetter, word: null, color: 'bg-[#d8b4fe] text-black' };
+                        }
+                    }
+                }
+                renderBoard();
+                displayWordList();
+            }
+
+            function initBoard() {
+                foundWordCounts = {};
+                wordPlacementCounts = {};
+                const level = LEVELS[currentLevel];
+                wordsToFind = level.words.map(o => o.w);
+                wordInfo = {};
+                level.words.forEach(o => {
+                    wordInfo[o.w] = { description: o.d, color: o.c, obj: o };
+                    foundWordCounts[o.w] = 0;
+                });
+                document.body.style.background = level.bg;
+                levelIndicator.textContent = `Level ${currentLevel + 1} / ${LEVELS.length} — ${level.name}`;
+                initStars();
+                initProgressBar();
+                updateScoreDisplay();
+                refreshBoard();
+            }
+
+            function renderBoard() {
+                gridContainer.innerHTML = '';
+                gameBoard.forEach((row, r) => {
+                    row.forEach((cell, c) => {
+                        const tile = createTile(r, c, cell.letter, cell.color);
+                        tile.addEventListener('click', () => handleTileClick(r, c));
+                        gridContainer.appendChild(tile);
+                        cell.element = tile;
+                    });
+                });
+            }
+
+            function getSelectedWord() {
+                return selectedTiles.map(t => gameBoard[t.row][t.col].letter).join('');
+            }
+
+            function isValidAdjacency(newTile) {
+                if (selectedTiles.length === 0) return true;
+                const last = selectedTiles[selectedTiles.length - 1];
+                const dx = Math.abs(newTile.row - last.row);
+                const dy = Math.abs(newTile.col - last.col);
+                return (dx <= 1 && dy <= 1 && (dx > 0 || dy > 0));
+            }
+
+            function showMessage(text, duration = 1400) {
+                messageBox.textContent = text;
+                messageBox.style.opacity = '1';
+                setTimeout(() => { messageBox.style.opacity = '0'; }, duration);
+            }
+
+            function clearHighlights() {
+                document.querySelectorAll('.tile.selected').forEach(t => t.classList.remove('selected'));
+                selectedTiles = [];
+                wordBuilderEl.innerHTML = '';
+            }
+
+            function handleStarClick(index) {
+                if (stars[index].used || isDragging) return;
+                stars[index].used = true;
+                stars[index].element.classList.add('used');
+                stars[index].element.style.backgroundColor = '#9ca3af';
+                stars[index].element.style.transform = 'scale(1)';
+                starsUsedCount++;
+                refreshBoard();
+                showMessage('Board refreshed!');
+            }
+
+            function handleTileClick(row, col) {
+                const newTile = { row, col };
+                const isAlready = selectedTiles.some(t => t.row === row && t.col === col);
+                if (isAlready) {
+                    const index = selectedTiles.findIndex(t => t.row === row && t.col === col);
+                    selectedTiles = selectedTiles.slice(0, index + 1);
+                    document.querySelectorAll('.tile.selected').forEach(t => t.classList.remove('selected'));
+                    selectedTiles.forEach(t => {
+                        const tile = document.querySelector(`.tile[data-row="${t.row}"][data-col="${t.col}"]`);
+                        if (tile) tile.classList.add('selected');
+                    });
+                    wordBuilderEl.innerHTML = '';
+                    selectedTiles.forEach(t => {
+                        const built = document.createElement('div');
+                        built.classList.add('built-letter');
+                        built.textContent = gameBoard[t.row][t.col].letter.toUpperCase();
+                        wordBuilderEl.appendChild(built);
+                    });
+                } else if (isValidAdjacency(newTile)) {
+                    if (selectedTiles.length === 0) selectionStartTime = Date.now();
+                    selectedTiles.push(newTile);
+                    const tile = document.querySelector(`.tile[data-row="${row}"][data-col="${col}"]`);
+                    tile.classList.add('selected');
+                    const built = document.createElement('div');
+                    built.classList.add('built-letter');
+                    built.textContent = gameBoard[row][col].letter.toUpperCase();
+                    wordBuilderEl.appendChild(built);
+                }
+            }
+
+            function handleStart(e) {
+                isDragging = true;
+                selectionStartTime = Date.now();
+                handleMove(e);
+            }
+
+            function handleMove(e) {
+                if (!isDragging) return;
+                const clientX = e.clientX || (e.touches?.[0]?.clientX);
+                const clientY = e.clientY || (e.touches?.[0]?.clientY);
+                const target = document.elementFromPoint(clientX, clientY);
+                const tile = target?.closest('.tile');
+                if (tile && tile !== lastTile) {
+                    const row = parseInt(tile.dataset.row);
+                    const col = parseInt(tile.dataset.col);
+                    const newTile = {row, col};
+                    const isAlready = selectedTiles.some(t => t.row === row && t.col === col);
+                    if (!isAlready && isValidAdjacency(newTile)) {
+                        selectedTiles.push(newTile);
+                        tile.classList.add('selected');
+                        lastTile = tile;
+                        const built = document.createElement('div');
+                        built.classList.add('built-letter');
+                        built.textContent = gameBoard[row][col].letter.toUpperCase();
+                        wordBuilderEl.appendChild(built);
+                    }
+                }
+            }
+
+            function handleEnd() {
+                if (!isDragging) return;
+                isDragging = false;
+                lastTile = null;
+                const timeTaken = Math.round((Date.now() - selectionStartTime) / 1000);
+                const word = getSelectedWord().toLowerCase();
+                const foundWord = wordsToFind.find(w => w === word);
+                const allWords = [...getAllWords(), ...BONUS_WORDS.map(b => b.w)];
+                const isBonusWord = !foundWord && allWords.includes(word);
+                const levelName = `Level ${currentLevel + 1} - ${LEVELS[currentLevel].name}`;
+                if (foundWord && word.length >= 3) {
+                    foundWordCounts[foundWord] = (foundWordCounts[foundWord] || 0) + 1;
+                    const pointsGained = word.length;
+                    score += pointsGained;
+                    showMessage('Found it!');
+                    dropLettersAndRefill(selectedTiles);
+                    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    const description = wordInfo[foundWord].description;
+                    foundWordsTrail.push({
+                        time, level: levelName, type: 'Main', word: word.toUpperCase(),
+                        description, timeTaken, pointsGained, pointsTotal: score
+                    });
+                    displayWordList();
+                    displayLearningLog();
+                    updateScoreDisplay();
+                } else if (isBonusWord && word.length >= 3) {
+                    const pointsGained = word.length * 5;
+                    score += pointsGained;
+                    showMessage('Bonus concept!');
+                    dropLettersAndRefill(selectedTiles);
+                    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    const description = getDescription(word);
+                    const type = getAllWords().includes(word) ? 'Bonus (list)' : 'Bonus (hidden)';
+                    foundWordsTrail.push({
+                        time, level: levelName, type, word: word.toUpperCase(),
+                        description, timeTaken, pointsGained, pointsTotal: score
+                    });
+                    displayLearningLog();
+                    updateScoreDisplay();
+                } else if (word.length > 2) {
+                    showMessage('Not a target concept');
+                }
+                clearHighlights();
+                checkWinCondition();
+            }
+
+            function dropLettersAndRefill(tilesToRemove) {
+                const removeSet = new Set(tilesToRemove.map(t => `${t.row},${t.col}`));
+                for (let c = 0; c < GRID_SIZE; c++) {
+                    let writeRow = GRID_SIZE - 1;
+                    for (let readRow = GRID_SIZE - 1; readRow >= 0; readRow--) {
+                        if (!removeSet.has(`${readRow},${c}`)) {
+                            if (writeRow !== readRow) {
+                                gameBoard[writeRow][c] = gameBoard[readRow][c];
+                            }
+                            writeRow--;
+                        }
+                    }
+                    for (let r = writeRow; r >= 0; r--) {
+                        const randLetter = letters[Math.floor(Math.random()*letters.length)];
+                        gameBoard[r][c] = { letter: randLetter, word: null, color: 'bg-[#d8b4fe] text-black' };
+                    }
+                }
+                renderBoard();
+            }
+
+            function checkWinCondition() {
+                const allFound = wordsToFind.every(word => foundWordCounts[word] >= FIND_COUNT_PER_WORD);
+                if (allFound) {
+                    completedLevels.add(currentLevel);
+                    winScreen.classList.remove('hidden');
+                    const winText = currentLevel < LEVELS.length - 1 ? LEVEL_COMPLETION_MESSAGES[currentLevel] : 'You mastered AI concepts!';
+                    const buttonsHTML = `
+                        <button class="win-button" id="replay-level-btn">Replay</button>
+                        ${currentLevel < LEVELS.length - 1 ? '<button class="win-button" id="next-level-btn">Next</button>' : ''}
+                    `;
+                    winScreen.innerHTML = `
+                        <div class="win-overlay">
+                            <div class="win-star"></div>
+                            <div class="win-text">${winText}</div>
+                            <div class="win-buttons">${buttonsHTML}</div>
+                        </div>`;
+                    foundWordsTrail.push({
+                        time: '', level: '', type: '', word: `Level ${currentLevel + 1} Complete!`,
+                        description: LEVEL_COMPLETION_MESSAGES[currentLevel], timeTaken: '', pointsGained: '', pointsTotal: score
+                    });
+                    displayLearningLog();
+                    document.getElementById('replay-level-btn').addEventListener('click', () => { winScreen.classList.add('hidden'); initBoard(); });
+                    if (currentLevel < LEVELS.length - 1) {
+                        document.getElementById('next-level-btn').addEventListener('click', () => { currentLevel++; winScreen.classList.add('hidden'); initBoard(); });
+                    }
+                    initProgressBar();
+                }
+            }
+
+            function prevLevel() {
+                if (currentLevel > 0) { currentLevel--; initBoard(); }
+            }
+
+            function nextLevel() {
+                if (currentLevel < LEVELS.length - 1) { currentLevel++; initBoard(); }
+            }
+
+            function attachEventListeners() {
+                gridContainer.addEventListener('mousedown', handleStart);
+                gridContainer.addEventListener('mousemove', handleMove);
+                gridContainer.addEventListener('mouseup', handleEnd);
+                gridContainer.addEventListener('mouseleave', handleEnd);
+                gridContainer.addEventListener('touchstart', e => { e.preventDefault(); handleStart(e.touches[0]); });
+                gridContainer.addEventListener('touchmove', e => { e.preventDefault(); handleMove(e.touches[0]); });
+                gridContainer.addEventListener('touchend', handleEnd);
+                prevLevelBtn.addEventListener('click', prevLevel);
+                nextLevelBtn.addEventListener('click', nextLevel);
+                instructionsBtn.addEventListener('click', () => instructionsModal.style.display = 'flex');
+                modalClose.addEventListener('click', () => instructionsModal.style.display = 'none');
+                copyTrailBtn.addEventListener('click', copyToClipboard);
+            }
+
+            function copyToClipboard() {
+                const now = new Date().toLocaleDateString('en-NZ', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+                const headers = ['Time','Level','Type','Concept','Description','Time Taken','Points Gained','Points Total'];
+                const rows = foundWordsTrail.flatMap(item => {
+                    if (item.type === '') {
+                        return [{spacer:true}, {special:true, message:item.word, pointsTotal:item.pointsTotal}, {spacer:true}];
+                    } else {
+                        return [{fields: [
+                            item.time || '',
+                            item.level || '',
+                            item.type || '',
+                            item.word || '',
+                            item.description || '',
+                            item.timeTaken ? item.timeTaken + 's' : '',
+                            item.pointsGained || '',
+                            item.pointsTotal || ''
+                        ]}];
+                    }
+                });
+                const colWidths = headers.map(h => h.length);
+                rows.forEach(r => {
+                    if (r.fields) r.fields.forEach((f,i) => colWidths[i] = Math.max(colWidths[i], String(f).length));
+                    if (r.special) colWidths[colWidths.length-1] = Math.max(colWidths[colWidths.length-1], String(r.pointsTotal).length);
+                });
+                const GAP = 3;
+                colWidths.forEach((w,i) => colWidths[i] = w + GAP);
+                const pad = (s,w) => String(s).padEnd(w);
+                const headerRow = headers.map((h,i) => pad(h, colWidths[i])).join('');
+                const underline = colWidths.map(w => '-'.repeat(w)).join('');
+                const bodyRows = rows.map(r => {
+                    if (r.spacer) return '';
+                    if (r.special) return pad('Level Complete: ' + r.message, colWidths.slice(0,-1).reduce((a,b)=>a+b,0)) + pad(r.pointsTotal, colWidths[colWidths.length-1]);
+                    return r.fields.map((f,i) => pad(f, colWidths[i])).join('');
+                }).join('\n');
+                const text = `AI Vibe Quest Learning Log – ${now}\n\n${headerRow}\n${underline}\n${bodyRows}`;
+                navigator.clipboard.writeText(text).then(() => alert('Learning log copied!')).catch(() => alert('Copy failed – select text manually'));
+            }
+
+            initDescriptions();
+            initBoard();
+            attachEventListeners();
+        });
+    </script>
+</body>
+</html>
