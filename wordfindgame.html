@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>AI Vibe Quest - Explore AI Concepts</title>
+    <title>AI VIBE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
@@ -387,23 +387,91 @@
         .bg-level-8 { background: linear-gradient(135deg, #fb923c 0%, #f97316 100%); }
         .bg-level-9 { background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); }
         .bg-level-10 { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
-        .bg-level-11 { background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%); }
-        .bg-level-12 { background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); }
-        .bg-level-13 { background: linear-gradient(135deg, #db2777 0%, #ec4899 100%); }
-        .bg-level-14 { background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%); }
+        .bg-level-11 { background: linear-gradient(135deg, #16a34a 0%, #4ade80 100%); }
+        .bg-level-12 { background: linear-gradient(135deg, #facc15 0%, #fef08a 100%); }
+        .bg-level-13 { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
+        .bg-level-14 { background: linear-gradient(135deg, #db2777 0%, #ec4899 100%); }
         .bg-level-15 { background: linear-gradient(135deg, #7e22ce 0%, #a78bfa 100%); }
-        .bg-level-16 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 100%); }
-        .bg-level-17 { background: linear-gradient(135deg, #ff7f00 0%, #ffff00 100%); }
-        .bg-level-18 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 50%, #ffff00 100%); }
-        .bg-level-19 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 33%, #ffff00 66%, #00ff00 100%); }
-        .bg-level-20 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 20%, #ffff00 40%, #00ff00 60%, #0000ff 80%, #4b0082 100%); }
+        .bg-level-16 { background: linear-gradient(135deg, #ff7f00 0%, #ffff00 100%); }
+        .bg-level-17 { background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%); }
+        .bg-level-18 { background: linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%); }
+        .bg-level-19 { background: linear-gradient(135deg, #22c55e 0%, #86efac 100%); }
+        .bg-level-20 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 33%, #ffff00 66%, #00ff00 100%); }
+        @media (max-width: 767px) {
+            .header {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 1rem;
+            }
+            .title {
+                width: 100%;
+                text-align: center;
+                order: -1;
+                font-size: 1.8rem;
+                margin-bottom: 0;
+            }
+            .instructions-btn, .score {
+                font-size: 1rem;
+                padding: 6px 12px;
+            }
+            .progress-bar {
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+            .progress-square {
+                width: calc(10% - 4px);
+                font-size: 0.75rem;
+            }
+            .grid {
+                aspect-ratio: 1 / 1;
+                max-width: 100%;
+                gap: 6px;
+            }
+            .tile {
+                border-radius: 8px;
+            }
+            .star {
+                width: 24px;
+                height: 24px;
+            }
+            .word-item-text {
+                font-size: 0.95rem;
+            }
+            .word-list-section {
+                width: 100%;
+                max-width: 100%;
+                gap: 12px;
+            }
+            .word-list-heading {
+                text-align: center;
+                margin-bottom: 0;
+            }
+            #word-list {
+                width: 100%;
+            }
+            #star-container {
+                max-width: 240px;
+                gap: 8px;
+                justify-content: center;
+                margin: 0 auto;
+            }
+            #learning-log-list {
+                display: none;
+            }
+            .audit-trail-section {
+                margin-bottom: 20px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <button class="instructions-btn" id="instructions-btn">Instructions</button>
-            <h1 class="title">AI Vibe Quest</h1>
+            <h1 class="title">AI VIBE</h1>
             <div class="score" id="score-display">Score: 0</div>
         </div>
         <div class="progress-bar" id="progress-bar"></div>
@@ -431,7 +499,7 @@
     <div class="modal" id="instructions-modal">
         <div class="modal-content">
             <button class="modal-close" id="modal-close">Close</button>
-            <h2>How to Play AI Vibe Quest</h2>
+            <h2>How to Play AI VIBE</h2>
             <p>Connect letters to form key AI concepts hidden in the grid. Words can snake horizontally, vertically, or diagonally.</p>
             <p>Find all the main concepts for each level to progress and learn about AI, prompting, and creative coding.</p>
             <h3>Scoring</h3>
@@ -447,7 +515,7 @@
         </div>
     </div>
     <div class="audit-trail-section">
-        <button id="copy-trail" class="win-button">AI Vibe Quest: Learning Log [CC BY-NC] Click to COPY</button>
+        <button id="copy-trail" class="win-button">AI VIBE: Learning Log [CC BY-NC] Click to COPY</button>
         <div id="learning-log-list" class="word-list"></div>
     </div>
     <script>
@@ -915,12 +983,10 @@
                     overallAttempt++;
                 }
                 if (!success) {
-                    messageBox.textContent = 'Board refresh failed – try a star.';
-                    messageBox.style.opacity = '1';
-                    setTimeout(() => messageBox.style.opacity = '0', 2000);
+                    showMessage('Board refresh failed – try a star.');
                 }
                 const purpleShades = ['bg-[#c084fc] text-black','bg-[#a855f7] text-white','bg-[#9333ea] text-white','bg-[#7e22ce] text-white','bg-[#6b21a8] text-white'];
-                let extraWords = shuffle([...getAllWords(), ...BONUS_WORDS.map(b=>b.w)]).slice(0,8);
+                let extraWords = shuffle([...getAllWords(), ...getBonusWords().map(b=>b.w)]).slice(0,8);
                 extraWords.forEach((ew,i) => {
                     placeWord({w:ew, c:purpleShades[i%purpleShades.length]}, gameBoard);
                 });
@@ -1070,7 +1136,7 @@
                 const allWords = [...getAllWords(), ...BONUS_WORDS.map(b => b.w)];
                 const isBonusWord = !foundWord && allWords.includes(word);
                 const levelName = `Level ${currentLevel + 1} - ${LEVELS[currentLevel].name}`;
-                if (foundWord && word.length >= 3) {
+                if (foundWord) {
                     foundWordCounts[foundWord] = (foundWordCounts[foundWord] || 0) + 1;
                     const pointsGained = word.length;
                     score += pointsGained;
@@ -1085,7 +1151,7 @@
                     displayWordList();
                     displayLearningLog();
                     updateScoreDisplay();
-                } else if (isBonusWord && word.length >= 3) {
+                } else if (isBonusWord && word.length >= 2) {
                     const pointsGained = word.length * 5;
                     score += pointsGained;
                     showMessage('Bonus concept!');
@@ -1099,7 +1165,7 @@
                     });
                     displayLearningLog();
                     updateScoreDisplay();
-                } else if (word.length > 2) {
+                } else if (word.length > 1) {
                     showMessage('Not a target concept');
                 }
                 clearHighlights();
@@ -1217,7 +1283,7 @@
                     if (r.special) return pad('Level Complete: ' + r.message, colWidths.slice(0,-1).reduce((a,b)=>a+b,0)) + pad(r.pointsTotal || '', colWidths[colWidths.length-1]);
                     return r.fields.map((f,i) => pad(f, colWidths[i])).join('');
                 }).join('\n');
-                const text = `AI Vibe Quest Learning Log – ${now}\n\n${headerRow}\n${underline}\n${bodyRows}`;
+                const text = `AI VIBE Learning Log – ${now}\n\n${headerRow}\n${underline}\n${bodyRows}`;
                 navigator.clipboard.writeText(text).then(() => alert('Learning log copied!')).catch(() => alert('Copy failed – select text manually'));
             }
 
