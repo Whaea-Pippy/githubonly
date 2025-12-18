@@ -377,26 +377,26 @@
             user-select: none;
             -webkit-user-drag: none;
         }
-        .bg-level-1 { background: linear-gradient(135deg, #EFDDF8 0%, #9ca3af 100%); }
-        .bg-level-2 { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); }
-        .bg-level-3 { background: linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%); }
-        .bg-level-4 { background: linear-gradient(135deg, #22c55e 0%, #86efac 100%); }
-        .bg-level-5 { background: linear-gradient(135deg, #16a34a 0%, #4ade80 100%); }
-        .bg-level-6 { background: linear-gradient(135deg, #facc15 0%, #fef08a 100%); }
-        .bg-level-7 { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
-        .bg-level-8 { background: linear-gradient(135deg, #fb923c 0%, #f97316 100%); }
+        .bg-level-1 { background: linear-gradient(135deg, #a0e9ff 0%, #b3c6ff 100%); }
+        .bg-level-2 { background: linear-gradient(135deg, #fcf879 0%, #c6e61c 100%); }
+        .bg-level-3 { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); }
+        .bg-level-4 { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
+        .bg-level-5 { background: linear-gradient(135deg, #22c55e 0%, #86efac 100%); }
+        .bg-level-6 { background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); }
+        .bg-level-7 { background: linear-gradient(135deg, #7e22ce 0%, #a78bfa 100%); }
+        .bg-level-8 { background: linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%); }
         .bg-level-9 { background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); }
-        .bg-level-10 { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
-        .bg-level-11 { background: linear-gradient(135deg, #16a34a 0%, #4ade80 100%); } /* Prompt Engineering - green */
-        .bg-level-12 { background: linear-gradient(135deg, #facc15 0%, #fef08a 100%); } /* Advanced Concepts - yellow */
-        .bg-level-13 { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); } /* Tools & Workflow - red */
-        .bg-level-14 { background: linear-gradient(135deg, #db2777 0%, #ec4899 100%); } /* Mindset - pink */
-        .bg-level-15 { background: linear-gradient(135deg, #7e22ce 0%, #a78bfa 100%); } /* Vibe Coding - purple */
-        .bg-level-16 { background: linear-gradient(135deg, #ff7f00 0%, #ffff00 100%); } /* AI & Creativity - orange→yellow */
-        .bg-level-17 { background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%); } /* Responsible Use - dark red */
-        .bg-level-18 { background: linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%); } /* Community - cyan */
-        .bg-level-19 { background: linear-gradient(135deg, #22c55e 0%, #86efac 100%); } /* Next Steps - light green */
-        .bg-level-20 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 33%, #ffff00 66%, #00ff00 100%); } /* Mastery - rainbow */
+        .bg-level-10 { background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%); }
+        .bg-level-11 { background: linear-gradient(135deg, #facc15 0%, #fef08a 100%); }
+        .bg-level-12 { background: linear-gradient(135deg, #16a34a 0%, #4ade80 100%); }
+        .bg-level-13 { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
+        .bg-level-14 { background: linear-gradient(135deg, #db2777 0%, #ec4899 100%); }
+        .bg-level-15 { background: linear-gradient(135deg, #7e22ce 0%, #a78bfa 100%); }
+        .bg-level-16 { background: linear-gradient(135deg, #ff7f00 0%, #ffff00 100%); }
+        .bg-level-17 { background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%); }
+        .bg-level-18 { background: linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%); }
+        .bg-level-19 { background: linear-gradient(135deg, #22c55e 0%, #86efac 100%); }
+        .bg-level-20 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 20%, #ffff00 40%, #00ff00 60%, #0000ff 80%, #4b0082 100%); }
         @media (max-width: 767px) {
             .header {
                 display: flex;
@@ -523,7 +523,6 @@
             const gridContainer = document.getElementById('grid-container');
             const messageBox = document.getElementById('message-box');
             const winScreen = document.getElementById('win-screen');
-            const gameContainer = document.getElementById('game-container');
             const wordListEl = document.getElementById('word-list');
             const wordBuilderEl = document.getElementById('word-builder');
             const starContainer = document.getElementById('star-container');
@@ -543,7 +542,6 @@
             let gameBoard = [];
             let selectedTiles = [];
             let foundWordCounts = {};
-            let wordPlacementCounts = {};
             let wordsToFind = [];
             let wordInfo = {};
             let isDragging = false;
@@ -656,14 +654,6 @@
                       { w: 'open', d: 'Sharing AI tech vs keeping it closed', c: 'bg-[#d8b4fe] text-black' },
                       { w: 'human', d: 'Keeping people in control of important decisions', c: 'bg-[#e9d5ff] text-black' }
                   ]},
-               { name: 'Prompt Engineering', bg: 'linear-gradient(135deg, #16a34a 0%, #4ade80 100%)',
-                  words: [
-                      { w: 'zero', d: 'Zero-shot – no examples, just instruction', c: 'bg-[#4ade80] text-black' },
-                      { w: 'few', d: 'Few-shot – include examples in prompt', c: 'bg-[#22c55e] text-white' },
-                      { w: 'system', d: 'Overall instructions setting AI behaviour', c: 'bg-[#16a34a] text-white' },
-                      { w: 'temperature', d: 'Creativity dial (0–1+)', c: 'bg-[#86efac] text-black' },
-                      { w: 'topp', d: 'Alternative randomness control', c: 'bg-[#4ade80] text-black' }
-                  ]},
                 { name: 'Advanced Concepts', bg: 'linear-gradient(135deg, #facc15 0%, #fef08a 100%)',
                   words: [
                       { w: 'transformer', d: 'Architecture behind most modern LLMs', c: 'bg-[#fef08a] text-black' },
@@ -671,6 +661,14 @@
                       { w: 'embedding', d: 'Numerical representation of meaning', c: 'bg-[#eab308] text-black' },
                       { w: 'fine', d: 'Fine-tuning – adapting pre-trained model', c: 'bg-[#ca8a04] text-white' },
                       { w: 'scaling', d: 'Bigger models + more data = better performance', c: 'bg-[#92400e] text-white' }
+                  ]},
+                { name: 'Prompt Engineering', bg: 'linear-gradient(135deg, #16a34a 0%, #4ade80 100%)',
+                  words: [
+                      { w: 'zero', d: 'Zero-shot – no examples, just instruction', c: 'bg-[#4ade80] text-black' },
+                      { w: 'few', d: 'Few-shot – include examples in prompt', c: 'bg-[#22c55e] text-white' },
+                      { w: 'system', d: 'Overall instructions setting AI behaviour', c: 'bg-[#16a34a] text-white' },
+                      { w: 'temperature', d: 'Creativity dial (0–1+)', c: 'bg-[#86efac] text-black' },
+                      { w: 'topp', d: 'Alternative randomness control', c: 'bg-[#4ade80] text-black' }
                   ]},
                 { name: 'Tools & Workflow', bg: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)',
                   words: [
@@ -751,7 +749,7 @@
             function shuffle(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
+                    [array[i], array[j]] = [array[j], array[i]];  // FIXED HERE
                 }
                 return array;
             }
@@ -964,40 +962,50 @@
             }
 
             function refreshBoard() {
-                const MAX_OVERALL_ATTEMPTS = 50;
-                let overallAttempt = 0;
+                let attempts = 0;
+                const maxAttempts = 100;
                 let success = false;
-                let words = wordsToFind.map(w => wordInfo[w].obj);
-                words.sort((a, b) => b.w.length - a.w.length);
-                while (!success && overallAttempt < MAX_OVERALL_ATTEMPTS) {
-                    const localBoard = Array.from({length:GRID_SIZE}, () => Array(GRID_SIZE).fill(null));
-                    let allPlaced = true;
-                    for (const wobj of words) {
-                        const placed = placeWord(wobj, localBoard);
-                        if (!placed) { allPlaced = false; break; }
+
+                const mainWords = wordsToFind.map(w => wordInfo[w].obj);
+                mainWords.sort((a, b) => b.w.length - a.w.length);
+
+                while (!success && attempts < maxAttempts) {
+                    const localBoard = Array.from({length: GRID_SIZE}, () => Array(GRID_SIZE).fill(null));
+                    let allMainPlaced = true;
+
+                    for (const wobj of mainWords) {
+                        if (!placeWord(wobj, localBoard)) {
+                            allMainPlaced = false;
+                            break;
+                        }
                     }
-                    if (allPlaced && validateBoard(localBoard)) {
+
+                    if (allMainPlaced && validateBoard(localBoard)) {
                         gameBoard = localBoard;
                         success = true;
                     }
-                    overallAttempt++;
+                    attempts++;
                 }
+
                 if (!success) {
-                    showMessage('Board refresh failed – try a star.');
+                    showMessage('Trying again to place words...', 1500);
+                    setTimeout(refreshBoard, 100);
+                    return;
                 }
+
                 const purpleShades = ['bg-[#c084fc] text-black','bg-[#a855f7] text-white','bg-[#9333ea] text-white','bg-[#7e22ce] text-white','bg-[#6b21a8] text-white'];
-                let extraWords = shuffle([...getAllWords(), ...getBonusWords().map(b=>b.w)]).slice(0,8);
-                extraWords.forEach((ew,i) => {
-                    placeWord({w:ew, c:purpleShades[i%purpleShades.length]}, gameBoard);
-                });
+                const extraWords = shuffle([...getAllWords(), ...BONUS_WORDS.map(b => b.w)]).slice(0, 8);
+                extraWords.forEach((ew, i) => placeWord({w: ew, c: purpleShades[i % purpleShades.length]}, gameBoard));
+
                 for (let r = 0; r < GRID_SIZE; r++) {
                     for (let c = 0; c < GRID_SIZE; c++) {
                         if (gameBoard[r][c] === null) {
-                            const randLetter = letters[Math.floor(Math.random()*letters.length)];
+                            const randLetter = letters[Math.floor(Math.random() * letters.length)];
                             gameBoard[r][c] = { letter: randLetter, word: null, color: 'bg-[#d8b4fe] text-black' };
                         }
                     }
                 }
+
                 renderBoard();
                 displayWordList();
             }
