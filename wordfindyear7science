@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SCI VIBE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #047857 0%, #10b981 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #fff;
+            padding: 20px;
+            touch-action: pan-y;
+            overflow-y: auto;
+            transition: background 600ms ease;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.09);
+            border-radius: 24px;
+            padding: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 980px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        .title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.35);
+        }
+        .score {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(0,0,0,0.28);
+            padding: 8px 16px;
+            border-radius: 9999px;
+        }
+        .instructions-btn {
+            background: rgba(0,0,0,0.28);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s;
+            border: none;
+        }
+        .instructions-btn:hover {
+            transform: translateY(-3px);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #fff;
+            color: #000;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .modal-content h2, .modal-content h3 {
+            font-weight: 700;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e5e7eb;
+            color: #000;
+            padding: 8px 12px;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-weight: 700;
+            border: none;
+        }
+        .progress-bar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 1rem;
+            width: 100%;
+            justify-content: center;
+        }
+        .progress-square {
+            width: 30px;
+            height: 30px;
+            background: #ffffff;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+        }
+        .level-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .level-indicator {
+            font-weight: 700;
+            padding: 6px 10px;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.12);
+        }
+        .main-content {
+            display: flex;
+            width: 100%;
+            gap: 18px;
+            flex-direction: column;
+        }
+        @media(min-width:768px) {
+            .main-content {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+        .game-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .word-builder {
+            display: flex;
+            justify-content: center;
+            min-height: 48px;
+            gap: 6px;
+            margin-bottom: 12px;
+            background-color: rgba(255, 255, 255, 0.14);
+            border-radius: 12px;
+            padding: 8px;
+            width: 100%;
+            text-transform: uppercase;
+        }
+        .built-letter {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            color: #000;
+            font-weight: 700;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            animation: popIn 0.18s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0 }
+            100% { transform: scale(1); opacity: 1 }
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            width: 100%;
+            max-width: 520px;
+            aspect-ratio: 6 / 5;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .tile {
+            color: black;
+            font-size: clamp(0.9rem, 3.5vw, 1.6rem);
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.18s, box-shadow 0.18s, opacity 0.25s, top 0.35s ease-out;
+            text-transform: uppercase;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+        }
+        .tile.hidden-tile {
+            opacity: 0;
+        }
+        .tile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.16);
+        }
+        .selected {
+            transform: scale(1.06);
+            outline: 3px solid white;
+            outline-offset: -4px;
+        }
+        .message-box {
+            background-color: rgba(0,0,0,0.32);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            width: 100%;
+        }
+        .win-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        .win-star {
+            width: 60%;
+            height: 60%;
+            background-color: rgba(255,255,255,0.2);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .win-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+            margin-top: 16px;
+        }
+        .win-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .win-button {
+            background-color: rgba(0,0,0,0.28);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-weight: 700;
+            transition: transform 0.15s;
+            border: none;
+        }
+        .win-button:hover {
+            transform: translateY(-3px);
+        }
+        .word-list-section {
+            width: 320px;
+            min-width: 240px;
+            max-width: 340px;
+            background-color: rgba(0,0,0,0.14);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .word-list-heading {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .word-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .word-item {
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .word-item-text {
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+        .word-item-count {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .tick {
+            font-size: 1.2rem;
+            margin-left: 6px;
+        }
+        .star-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 8.4px;
+            margin-top: 12px;
+            width: 100%;
+            max-width: 240px;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .star {
+            width: 32px;
+            height: 32px;
+            background-color: #ffffff;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            cursor: pointer;
+            transition: transform 0.18s, background-color 0.18s;
+            transform: scale(2);
+        }
+        .star.used {
+            background-color: #9ca3af;
+            transform: scale(1);
+            cursor: default;
+        }
+        .controls-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        button {
+            background-color: rgba(0,0,0,0.28);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 9999px;
+            font-weight: 700;
+            transition: transform 0.15s;
+            border: none;
+        }
+        button:hover {
+            transform: translateY(-3px);
+        }
+        .audit-trail-section {
+            width: 100%;
+            background-color: rgba(0,0,0,0.14);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            margin: 18px auto 0;
+        }
+        #grid-container {
+            touch-action: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        .bg-level-1 { background: linear-gradient(135deg, #a0e9ff 0%, #b3c6ff 100%); }
+        .bg-level-2 { background: linear-gradient(135deg, #fcf879 0%, #c6e61c 100%); }
+        .bg-level-3 { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); }
+        .bg-level-4 { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
+        .bg-level-5 { background: linear-gradient(135deg, #22c55e 0%, #86efac 100%); }
+        .bg-level-6 { background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); }
+        .bg-level-7 { background: linear-gradient(135deg, #7e22ce 0%, #a78bfa 100%); }
+        .bg-level-8 { background: linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%); }
+        .bg-level-9 { background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); }
+        .bg-level-10 { background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%); }
+        .bg-level-11 { background: linear-gradient(135deg, #facc15 0%, #fef08a 100%); }
+        .bg-level-12 { background: linear-gradient(135deg, #16a34a 0%, #4ade80 100%); }
+        .bg-level-13 { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
+        .bg-level-14 { background: linear-gradient(135deg, #db2777 0%, #ec4899 100%); }
+        .bg-level-15 { background: linear-gradient(135deg, #7e22ce 0%, #a78bfa 100%); }
+        .bg-level-16 { background: linear-gradient(135deg, #ff7f00 0%, #ffff00 100%); }
+        .bg-level-17 { background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%); }
+        .bg-level-18 { background: linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%); }
+        .bg-level-19 { background: linear-gradient(135deg, #22c55e 0%, #86efac 100%); }
+        .bg-level-20 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 20%, #ffff00 40%, #00ff00 60%, #0000ff 80%, #4b0082 100%); }
+        @media (max-width: 767px) {
+            .header {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 1rem;
+            }
+            .title {
+                width: 100%;
+                text-align: center;
+                order: -1;
+                font-size: 1.8rem;
+                margin-bottom: 0;
+            }
+            .instructions-btn, .score {
+                font-size: 1rem;
+                padding: 6px 12px;
+            }
+            .progress-bar {
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+            .progress-square {
+                width: calc(10% - 4px);
+                font-size: 0.75rem;
+            }
+            .grid {
+                aspect-ratio: 1 / 1;
+                max-width: 100%;
+                gap: 6px;
+            }
+            .tile {
+                border-radius: 8px;
+            }
+            .star {
+                width: 24px;
+                height: 24px;
+            }
+            .word-item-text {
+                font-size: 0.95rem;
+            }
+            .word-list-section {
+                width: 100%;
+                max-width: 100%;
+                gap: 12px;
+            }
+            .word-list-heading {
+                text-align: center;
+                margin-bottom: 0;
+            }
+            #word-list {
+                width: 100%;
+            }
+            #star-container {
+                max-width: 240px;
+                gap: 8px;
+                justify-content: center;
+                margin: 0 auto;
+            }
+            #learning-log-list {
+                display: none;
+            }
+            .audit-trail-section {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="instructions-btn" id="instructions-btn">Instructions</button>
+            <h1 class="title">SCI VIBE</h1>
+            <div class="score" id="score-display">Score: 0</div>
+        </div>
+        <div class="progress-bar" id="progress-bar"></div>
+        <div class="level-controls">
+            <div class="controls-row">
+                <button id="prev-level">◀ Prev</button>
+                <div class="level-indicator" id="level-indicator">Level 1 / 20</div>
+                <button id="next-level">Next ▶</button>
+            </div>
+        </div>
+        <div class="main-content">
+            <div id="game-container" class="game-section">
+                <div id="word-builder" class="word-builder"></div>
+                <div id="grid-container" class="grid"></div>
+                <div id="message-box" class="message-box opacity-0 transition-opacity duration-300"></div>
+                <div id="win-screen" class="hidden"></div>
+            </div>
+            <div class="word-list-section">
+                <div class="word-list-heading">Science words to find</div>
+                <div id="word-list" class="word-list"></div>
+                <div class="star-container" id="star-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="instructions-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">Close</button>
+            <h2>How to Play SCI VIBE</h2>
+            <p>Connect letters to form key science words hidden in the grid. Words can snake horizontally, vertically, or diagonally.</p>
+            <p>Find all 5 words in each level to move up and learn Year 7 & 8 science vocabulary.</p>
+            <h3>Scoring</h3>
+            <p>+1 point per letter in main list words.</p>
+            <p>+5 points per letter in bonus words (from any level).</p>
+            <h3>Stars</h3>
+            <p>Click a star when stuck to refresh the board (15 total).</p>
+            <h3>Learning Log</h3>
+            <p>Tracks every word you find, time taken, and points. Click “Copy” at the end, then paste into your Google Site – columns line up perfectly!</p>
+            <h3>Tips</h3>
+            <p>Bonus words hide among filler letters. Later levels get trickier with longer words.</p>
+            <p>Look for patterns – science words love to connect!</p>
+        </div>
+    </div>
+    <div class="audit-trail-section">
+        <button id="copy-trail" class="win-button">SCI VIBE: Learning Log [CC BY-NC] Click to COPY</button>
+        <div id="learning-log-list" class="word-list"></div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridContainer = document.getElementById('grid-container');
+            const messageBox = document.getElementById('message-box');
+            const winScreen = document.getElementById('win-screen');
+            const wordListEl = document.getElementById('word-list');
+            const wordBuilderEl = document.getElementById('word-builder');
+            const starContainer = document.getElementById('star-container');
+            const prevLevelBtn = document.getElementById('prev-level');
+            const nextLevelBtn = document.getElementById('next-level');
+            const levelIndicator = document.getElementById('level-indicator');
+            const progressBar = document.getElementById('progress-bar');
+            const scoreDisplay = document.getElementById('score-display');
+            const instructionsBtn = document.getElementById('instructions-btn');
+            const instructionsModal = document.getElementById('instructions-modal');
+            const modalClose = document.getElementById('modal-close');
+            const learningLogList = document.getElementById('learning-log-list');
+            const copyTrailBtn = document.getElementById('copy-trail');
+            const GRID_SIZE = 6;
+            const FIND_COUNT_PER_WORD = 1;
+            const TOTAL_STARS = 15;
+            let gameBoard = [];
+            let selectedTiles = [];
+            let foundWordCounts = {};
+            let wordsToFind = [];
+            let wordInfo = {};
+            let isDragging = false;
+            let lastTile = null;
+            let stars = [];
+            let starsUsedCount = 0;
+            let completedLevels = new Set();
+            let score = 0;
+            let foundWordsTrail = [];
+            let normalizedDescriptions = {};
+            let selectionStartTime = null;
+            const letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+
+            const BONUS_WORDS = [
+                { w: 'atom', d: 'Smallest unit of an element' },
+                { w: 'cell', d: 'Basic unit of life' },
+                { w: 'force', d: 'Push or pull that changes motion' },
+                { w: 'energy', d: 'Ability to do work' },
+                { w: 'planet', d: 'Large body orbiting a star' },
+                { w: 'gene', d: 'Unit of heredity' },
+                { w: 'react', d: 'Chemical change producing new substances' },
+                { w: 'habitat', d: 'Natural home of a living thing' },
+                { w: 'fossil', d: 'Preserved remains of ancient life' },
+                { w: 'current', d: 'Flow of electric charge' },
+                { w: 'vortex', d: 'Spinning mass of fluid' },
+                { w: 'cycle', d: 'Repeating series of events' },
+                { w: 'nerve', d: 'Cell that carries messages' },
+                { w: 'tissue', d: 'Group of similar cells' },
+                { w: 'crust', d: 'Outer layer of Earth' }
+            ];
+
+            const LEVELS = [
+                { name: 'Living Things', bg: 'linear-gradient(135deg, #a0e9ff 0%, #b3c6ff 100%)',
+                  words: [
+                      { w: 'cell', d: 'Basic building block of life', c: 'bg-[#6b7280] text-white' },
+                      { w: 'gene', d: 'Instructions for traits', c: 'bg-[#d1d5db] text-black' },
+                      { w: 'organ', d: 'Body part with a specific job', c: 'bg-[#EACBF9] text-black' },
+                      { w: 'habitat', d: 'Natural home of a living thing', c: 'bg-[#4b5563] text-white' },
+                      { w: 'species', d: 'Group of similar organisms', c: 'bg-[#e5e7eb] text-black' }
+                  ]},
+                { name: 'Plants', bg: 'linear-gradient(135deg, #22c55e 0%, #86efac 100%)',
+                  words: [
+                      { w: 'stem', d: 'Supports plant and carries water', c: 'bg-[#4ade80] text-black' },
+                      { w: 'root', d: 'Anchors plant and absorbs water', c: 'bg-[#22c55e] text-white' },
+                      { w: 'leaf', d: 'Makes food using sunlight', c: 'bg-[#86efac] text-black' },
+                      { w: 'flower', d: 'Reproductive part of plant', c: 'bg-[#16a34a] text-white' },
+                      { w: 'seed', d: 'Contains baby plant and food', c: 'bg-[#bbf7d0] text-black' }
+                  ]},
+                { name: 'Animals', bg: 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)',
+                  words: [
+                      { w: 'lung', d: 'Organ for breathing air', c: 'bg-[#fb923c] text-black' },
+                      { w: 'gill', d: 'Organ for breathing in water', c: 'bg-[#f97316] text-white' },
+                      { w: 'claw', d: 'Sharp nail for hunting or climbing', c: 'bg-[#ea580c] text-white' },
+                      { w: 'wing', d: 'For flying or gliding', c: 'bg-[#fed7aa] text-black' },
+                      { w: 'fin', d: 'For swimming', c: 'bg-[#ffedd5] text-black' }
+                  ]},
+                { name: 'Matter', bg: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)',
+                  words: [
+                      { w: 'atom', d: 'Smallest unit of an element', c: 'bg-[#f87171] text-black' },
+                      { w: 'molecule', d: 'Two or more atoms joined', c: 'bg-[#ef4444] text-white' },
+                      { w: 'solid', d: 'Fixed shape and volume', c: 'bg-[#dc2626] text-white' },
+                      { w: 'liquid', d: 'Flows and takes shape of container', c: 'bg-[#f87171] text-black' },
+                      { w: 'gas', d: 'Fills container and spreads out', c: 'bg-[#b91c1c] text-white' }
+                  ]},
+                { name: 'Forces', bg: 'linear-gradient(135deg, #facc15 0%, #fef08a 100%)',
+                  words: [
+                      { w: 'push', d: 'Force that moves something away', c: 'bg-[#fef08a] text-black' },
+                      { w: 'pull', d: 'Force that moves something closer', c: 'bg-[#facc15] text-black' },
+                      { w: 'friction', d: 'Force that slows moving objects', c: 'bg-[#eab308] text-black' },
+                      { w: 'gravity', d: 'Force that pulls toward Earth', c: 'bg-[#ca8a04] text-white' },
+                      { w: 'force', d: 'Push or pull that changes motion', c: 'bg-[#92400e] text-white' }
+                  ]},
+                { name: 'Energy', bg: 'linear-gradient(135deg, #a855f7 0%, #c084fc 100%)',
+                  words: [
+                      { w: 'heat', d: 'Energy from moving particles', c: 'bg-[#c084fc] text-black' },
+                      { w: 'light', d: 'Energy we can see', c: 'bg-[#a855f7] text-white' },
+                      { w: 'sound', d: 'Energy from vibrations', c: 'bg-[#9333ea] text-white' },
+                      { w: 'kinetic', d: 'Energy of moving objects', c: 'bg-[#d8b4fe] text-black' },
+                      { w: 'potential', d: 'Stored energy ready to be used', c: 'bg-[#e9d5ff] text-black' }
+                  ]},
+                { name: 'Earth & Space', bg: 'linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%)',
+                  words: [
+                      { w: 'planet', d: 'Large body orbiting a star', c: 'bg-[#7dd3fc] text-black' },
+                      { w: 'crust', d: 'Outer layer of Earth', c: 'bg-[#06b6d4] text-white' },
+                      { w: 'core', d: 'Hot centre of Earth', c: 'bg-[#22d3ee] text-white' },
+                      { w: 'mantle', d: 'Layer between crust and core', c: 'bg-[#a5f3fc] text-black' },
+                      { w: 'orbit', d: 'Path around a star or planet', c: 'bg-[#cffafe] text-black' }
+                  ]},
+                { name: 'Weather', bg: 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)',
+                  words: [
+                      { w: 'cloud', d: 'Mass of water droplets in sky', c: 'bg-[#fb923c] text-black' },
+                      { w: 'rain', d: 'Water falling from clouds', c: 'bg-[#f97316] text-white' },
+                      { w: 'wind', d: 'Moving air', c: 'bg-[#ea580c] text-white' },
+                      { w: 'storm', d: 'Severe weather with wind and rain', c: 'bg-[#fed7aa] text-black' },
+                      { w: 'cycle', d: 'Water moving between Earth and sky', c: 'bg-[#ffedd5] text-black' }
+                  ]},
+                { name: 'Human Body', bg: 'linear-gradient(135deg, #db2777 0%, #ec4899 100%)',
+                  words: [
+                      { w: 'heart', d: 'Pumps blood around body', c: 'bg-[#ec4899] text-white' },
+                      { w: 'lung', d: 'Organs for breathing', c: 'bg-[#db2777] text-white' },
+                      { w: 'brain', d: 'Controls body and thinking', c: 'bg-[#be185d] text-white' },
+                      { w: 'bone', d: 'Hard structure supporting body', c: 'bg-[#fce7f3] text-black' },
+                      { w: 'nerve', d: 'Cell that carries messages', c: 'bg-[#f9a8d4] text-black' }
+                  ]},
+                { name: 'Chemistry', bg: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)',
+                  words: [
+                      { w: 'react', d: 'Chemicals change to make new substances', c: 'bg-[#f87171] text-black' },
+                      { w: 'acid', d: 'Sour substance that turns litmus red', c: 'bg-[#ef4444] text-white' },
+                      { w: 'base', d: 'Slippery substance that turns litmus blue', c: 'bg-[#dc2626] text-white' },
+                      { w: 'salt', d: 'Product of acid + base reaction', c: 'bg-[#b91c1c] text-white' },
+                      { w: 'fuel', d: 'Substance that burns to release energy', c: 'bg-[#fecaca] text-black' }
+                  ]},
+                { name: 'Physics', bg: 'linear-gradient(135deg, #16a34a 0%, #4ade80 100%)',
+                  words: [
+                      { w: 'motion', d: 'Change in position over time', c: 'bg-[#4ade80] text-black' },
+                      { w: 'speed', d: 'How fast something moves', c: 'bg-[#22c55e] text-white' },
+                      { w: 'force', d: 'Push or pull that changes motion', c: 'bg-[#86efac] text-black' },
+                      { w: 'energy', d: 'Ability to do work', c: 'bg-[#16a34a] text-white' },
+                      { w: 'wave', d: 'Energy moving through a medium', c: 'bg-[#bbf7d0] text-black' }
+                  ]},
+                { name: 'Ecology', bg: 'linear-gradient(135deg, #facc15 0%, #fef08a 100%)',
+                  words: [
+                      { w: 'food', d: 'Chain of who eats who', c: 'bg-[#fef08a] text-black' },
+                      { w: 'web', d: 'Complex network of food chains', c: 'bg-[#facc15] text-black' },
+                      { w: 'predator', d: 'Animal that hunts others', c: 'bg-[#eab308] text-black' },
+                      { w: 'prey', d: 'Animal that is hunted', c: 'bg-[#ca8a04] text-white' },
+                      { w: 'decomposer', d: 'Breaks down dead matter', c: 'bg-[#92400e] text-white' }
+                  ]},
+                { name: 'Electricity', bg: 'linear-gradient(135deg, #a855f7 0%, #c084fc 100%)',
+                  words: [
+                      { w: 'current', d: 'Flow of electric charge', c: 'bg-[#c084fc] text-black' },
+                      { w: 'circuit', d: 'Closed path for electricity', c: 'bg-[#a855f7] text-white' },
+                      { w: 'wire', d: 'Conducts electricity', c: 'bg-[#9333ea] text-white' },
+                      { w: 'battery', d: 'Provides electrical energy', c: 'bg-[#d8b4fe] text-black' },
+                      { w: 'switch', d: 'Opens or closes circuit', c: 'bg-[#e9d5ff] text-black' }
+                  ]},
+                { name: 'Earth Science', bg: 'linear-gradient(135deg, #06b6d4 0%, #7dd3fc 100%)',
+                  words: [
+                      { w: 'volcano', d: 'Mountain that erupts lava', c: 'bg-[#7dd3fc] text-black' },
+                      { w: 'fossil', d: 'Preserved remains of ancient life', c: 'bg-[#06b6d4] text-white' },
+                      { w: 'rock', d: 'Solid mineral material', c: 'bg-[#22d3ee] text-white' },
+                      { w: 'erosion', d: 'Wearing away of land', c: 'bg-[#a5f3fc] text-black' },
+                      { w: 'crust', d: 'Outer layer of Earth', c: 'bg-[#cffafe] text-black' }
+                  ]},
+                { name: 'Light & Sound', bg: 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)',
+                  words: [
+                      { w: 'reflect', d: 'Light bounces off surface', c: 'bg-[#fb923c] text-black' },
+                      { w: 'refract', d: 'Light bends when passing through', c: 'bg-[#f97316] text-white' },
+                      { w: 'vibrate', d: 'Causes sound waves', c: 'bg-[#ea580c] text-white' },
+                      { w: 'echo', d: 'Sound reflected back', c: 'bg-[#fed7aa] text-black' },
+                      { w: 'pitch', d: 'High or low of a sound', c: 'bg-[#ffedd5] text-black' }
+                  ]},
+                { name: 'Body Systems', bg: 'linear-gradient(135deg, #db2777 0%, #ec4899 100%)',
+                  words: [
+                      { w: 'digest', d: 'Breaks down food', c: 'bg-[#ec4899] text-white' },
+                      { w: 'circulate', d: 'Moves blood around body', c: 'bg-[#db2777] text-white' },
+                      { w: 'breathe', d: 'Takes in oxygen', c: 'bg-[#be185d] text-white' },
+                      { w: 'skeleton', d: 'Framework of bones', c: 'bg-[#fce7f3] text-black' },
+                      { w: 'muscle', d: 'Tissue that moves bones', c: 'bg-[#f9a8d4] text-black' }
+                  ]},
+                { name: 'Space', bg: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)',
+                  words: [
+                      { w: 'star', d: 'Huge ball of hot gas', c: 'bg-[#f87171] text-black' },
+                      { w: 'planet', d: 'Large body orbiting a star', c: 'bg-[#ef4444] text-white' },
+                      { w: 'moon', d: 'Natural satellite of a planet', c: 'bg-[#dc2626] text-white' },
+                      { w: 'galaxy', d: 'Huge collection of stars', c: 'bg-[#b91c1c] text-white' },
+                      { w: 'orbit', d: 'Path around a star or planet', c: 'bg-[#fecaca] text-black' }
+                  ]},
+                { name: 'Science Tools', bg: 'linear-gradient(135deg, #16a34a 0%, #4ade80 100%)',
+                  words: [
+                      { w: 'beaker', d: 'Container for mixing liquids', c: 'bg-[#4ade80] text-black' },
+                      { w: 'microscope', d: 'Magnifies tiny things', c: 'bg-[#22c55e] text-white' },
+                      { w: 'thermometer', d: 'Measures temperature', c: 'bg-[#86efac] text-black' },
+                      { w: 'balance', d: 'Measures mass', c: 'bg-[#16a34a] text-white' },
+                      { w: 'tongs', d: 'Tool for holding hot objects', c: 'bg-[#bbf7d0] text-black' }
+                  ]},
+                { name: 'Mastery', bg: 'linear-gradient(135deg, #ff0000 0%, #ff7f00 33%, #ffff00 66%, #00ff00 100%)',
+                  words: [
+                      { w: 'observe', d: 'Look carefully and record', c: 'bg-[#ff0000] text-white' },
+                      { w: 'hypothesis', d: 'Testable explanation', c: 'bg-[#ff7f00] text-white' },
+                      { w: 'experiment', d: 'Test to find out something', c: 'bg-[#ffff00] text-black' },
+                      { w: 'conclude', d: 'Decide based on evidence', c: 'bg-[#00ff00] text-black' },
+                      { w: 'science', d: 'Way of understanding the world', c: 'bg-[#0000ff] text-white' }
+                  ]}
+            ];
+
+            let currentLevel = 0;
+
+            const LEVEL_COMPLETION_MESSAGES = [
+                "Great start!", "Keep going!", "Nice progress!", "You're getting it!",
+                "Strong work!", "Halfway there!", "Impressive!", "Really solid!",
+                "Almost there!", "Fantastic effort!", "So close!", "Incredible!",
+                "Outstanding!", "Brilliant!", "Exceptional!", "Mind-blowing!",
+                "Legendary!", "Epic mastery!", "Science star!", "Future scientist!"
+            ];
+
+            function shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            function createTile(row, col, letter, colorClass) {
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
+                if (colorClass) tile.classList.add(...colorClass.split(' '));
+                tile.dataset.row = row;
+                tile.dataset.col = col;
+                tile.dataset.letter = letter;
+                tile.innerHTML = `<span>${letter.toUpperCase()}</span>`;
+                return tile;
+            }
+
+            function createStar(index) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.dataset.index = index;
+                star.style.backgroundColor = starsUsedCount <= index ? '#ffffff' : '#9ca3af';
+                star.style.transform = starsUsedCount <= index ? 'scale(2)' : 'scale(1)';
+                if (starsUsedCount <= index) {
+                    star.addEventListener('click', () => handleStarClick(index));
+                } else {
+                    star.classList.add('used');
+                }
+                starContainer.appendChild(star);
+                return star;
+            }
+
+            function initStars() {
+                starContainer.innerHTML = '';
+                stars = [];
+                for (let i = 0; i < TOTAL_STARS; i++) {
+                    const star = createStar(i);
+                    stars.push({ element: star, used: starsUsedCount > i });
+                }
+            }
+
+            function initProgressBar() {
+                progressBar.innerHTML = '';
+                for (let i = 0; i < LEVELS.length; i++) {
+                    const square = document.createElement('div');
+                    square.classList.add('progress-square');
+                    square.textContent = i + 1;
+                    if (completedLevels.has(i)) {
+                        square.classList.add(`bg-level-${i + 1}`);
+                        square.style.color = '#ffffff';
+                    }
+                    progressBar.appendChild(square);
+                }
+            }
+
+            function updateScoreDisplay() {
+                scoreDisplay.textContent = `Score: ${score}`;
+            }
+
+            function displayWordList() {
+                wordListEl.innerHTML = '';
+                wordsToFind.forEach(word => {
+                    const count = foundWordCounts[word] || 0;
+                    const info = wordInfo[word];
+                    const wordItem = document.createElement('div');
+                    wordItem.classList.add('word-item');
+                    if (info && info.color) wordItem.classList.add(...info.color.split(' '));
+                    const left = document.createElement('div');
+                    left.style.display = 'flex';
+                    left.style.flexDirection = 'column';
+                    left.style.alignItems = 'flex-start';
+                    const wordText = document.createElement('span');
+                    wordText.classList.add('word-item-text');
+                    wordText.textContent = word.toUpperCase();
+                    const description = document.createElement('small');
+                    description.style.fontWeight = '600';
+                    description.style.marginTop = '4px';
+                    description.style.opacity = count > 0 ? '1' : '0.3';
+                    description.textContent = count > 0 ? info?.d || '' : '(hidden until found)';
+                    left.appendChild(wordText);
+                    left.appendChild(description);
+                    const wordCount = document.createElement('span');
+                    wordCount.classList.add('word-item-count');
+                    wordCount.innerHTML = count > 0 ? '<span class="tick">✓</span>' : '';
+                    wordItem.appendChild(left);
+                    wordItem.appendChild(wordCount);
+                    wordListEl.appendChild(wordItem);
+                });
+            }
+
+            function displayLearningLog() {
+                learningLogList.innerHTML = '';
+                foundWordsTrail.forEach(item => {
+                    const wordItem = document.createElement('div');
+                    wordItem.classList.add('word-item');
+                    wordItem.innerHTML = `
+                        <span>${item.time}</span> -
+                        <span>${item.level}</span> -
+                        <span>${item.type}</span> -
+                        <span>${item.word}</span> -
+                        <span>${item.d}</span> -
+                        <span>${item.timeTaken}s</span> -
+                        <span>${item.pointsGained}</span> -
+                        <span>${item.pointsTotal}</span>`;
+                    learningLogList.appendChild(wordItem);
+                });
+            }
+
+            function placeWord(wordObj, board) {
+                const word = wordObj.w;
+                const directions = [[0,1],[0,-1],[1,0],[-1,0]];
+                let placed = false;
+                let attempts = 0;
+                const maxAttempts = 100;
+                while (!placed && attempts < maxAttempts) {
+                    const startR = Math.floor(Math.random() * GRID_SIZE);
+                    const startC = Math.floor(Math.random() * GRID_SIZE);
+                    const path = [{r:startR,c:startC}];
+                    const visited = new Set([`${startR},${startC}`]);
+                    const findPath = (r,c,wordIndex) => {
+                        if (wordIndex === word.length) return true;
+                        shuffle(directions);
+                        for (const [dr,dc] of directions) {
+                            const newR = r + dr;
+                            const newC = c + dc;
+                            const key = `${newR},${newC}`;
+                            if (newR>=0 && newR<GRID_SIZE && newC>=0 && newC<GRID_SIZE && !visited.has(key)) {
+                                const cell = board[newR][newC];
+                                if (cell === null || cell.word === null) {
+                                    visited.add(key);
+                                    path.push({r:newR,c:newC});
+                                    if (findPath(newR,newC,wordIndex+1)) return true;
+                                    path.pop();
+                                    visited.delete(key);
+                                }
+                            }
+                        }
+                        return false;
+                    };
+                    if ((board[startR][startC] === null || board[startR][startC].word === null) && findPath(startR,startC,1)) {
+                        if (path.length === word.length) {
+                            for (let i=0;i<word.length;i++){
+                                const {r,c} = path[i];
+                                board[r][c] = { letter: word[i], word: word, color: wordObj.c };
+                            }
+                            placed = true;
+                        }
+                    }
+                    attempts++;
+                }
+                return placed;
+            }
+
+            function validateBoard(board) {
+                const wordsOnGrid = new Set();
+                const directions = [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
+                function checkPath(r, c, word, wordIndex, path, visited) {
+                    if (wordIndex === word.length) return true;
+                    for (const [dr, dc] of directions) {
+                        const newR = r + dr; const newC = c + dc;
+                        const key = `${newR},${newC}`;
+                        if (newR >= 0 && newR < GRID_SIZE && newC >= 0 && newC < GRID_SIZE && !visited.has(key)) {
+                            if (board[newR][newC] && board[newR][newC].letter === word[wordIndex]) {
+                                visited.add(key); path.push({r:newR,c:newC});
+                                if (checkPath(newR, newC, word, wordIndex + 1, path, visited)) return true;
+                                path.pop(); visited.delete(key);
+                            }
+                        }
+                    }
+                    return false;
+                }
+                for (const word of wordsToFind) {
+                    let found = false;
+                    for (let r = 0; r < GRID_SIZE && !found; r++) {
+                        for (let c = 0; c < GRID_SIZE && !found; c++) {
+                            if (board[r][c] && board[r][c].letter === word[0]) {
+                                const path = [{r,c}];
+                                const visited = new Set([`${r},${c}`]);
+                                if (checkPath(r, c, word, 1, path, visited) && path.length === word.length) {
+                                    wordsOnGrid.add(word);
+                                    found = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return wordsOnGrid.size === wordsToFind.length;
+            }
+
+            function getAllWords() {
+                return LEVELS.flatMap(level => level.words.map(w => w.w));
+            }
+
+            function getBonusWords() {
+                return BONUS_WORDS.map(w => ({ w: w.w, c: null }));
+            }
+
+            function initDescriptions() {
+                normalizedDescriptions = {};
+                LEVELS.forEach(level => {
+                    level.words.forEach(wObj => {
+                        normalizedDescriptions[wObj.w.toLowerCase()] = wObj.d;
+                    });
+                });
+                BONUS_WORDS.forEach(bObj => {
+                    normalizedDescriptions[bObj.w.toLowerCase()] = bObj.d;
+                });
+            }
+
+            function getDescription(word) {
+                return normalizedDescriptions[word.toLowerCase()] || 'bonus word';
+            }
+
+            function refreshBoard() {
+                let attempts = 0;
+                const maxAttempts = 100;
+                let success = false;
+
+                const mainWords = wordsToFind.map(w => wordInfo[w].obj);
+                mainWords.sort((a, b) => b.w.length - a.w.length);
+
+                while (!success && attempts < maxAttempts) {
+                    const localBoard = Array.from({length: GRID_SIZE}, () => Array(GRID_SIZE).fill(null));
+                    let allMainPlaced = true;
+
+                    for (const wobj of mainWords) {
+                        if (!placeWord(wobj, localBoard)) {
+                            allMainPlaced = false;
+                            break;
+                        }
+                    }
+
+                    if (allMainPlaced && validateBoard(localBoard)) {
+                        gameBoard = localBoard;
+                        success = true;
+                    }
+                    attempts++;
+                }
+
+                if (!success) {
+                    showMessage('Trying again to place words...', 1500);
+                    setTimeout(refreshBoard, 100);
+                    return;
+                }
+
+                const purpleShades = ['bg-[#c084fc] text-black','bg-[#a855f7] text-white','bg-[#9333ea] text-white','bg-[#7e22ce] text-white','bg-[#6b21a8] text-white'];
+                const extraWords = shuffle([...getAllWords(), ...BONUS_WORDS.map(b => b.w)]).slice(0, 8);
+                extraWords.forEach((ew, i) => placeWord({w: ew, c: purpleShades[i % purpleShades.length]}, gameBoard));
+
+                for (let r = 0; r < GRID_SIZE; r++) {
+                    for (let c = 0; c < GRID_SIZE; c++) {
+                        if (gameBoard[r][c] === null) {
+                            const randLetter = letters[Math.floor(Math.random() * letters.length)];
+                            gameBoard[r][c] = { letter: randLetter, word: null, color: 'bg-[#d8b4fe] text-black' };
+                        }
+                    }
+                }
+
+                renderBoard();
+                displayWordList();
+            }
+
+            function initBoard() {
+                foundWordCounts = {};
+                const level = LEVELS[currentLevel];
+                wordsToFind = level.words.map(o => o.w);
+                wordInfo = {};
+                level.words.forEach(o => {
+                    wordInfo[o.w] = { d: o.d, color: o.c, obj: o };
+                    foundWordCounts[o.w] = 0;
+                });
+                document.body.style.background = level.bg;
+                levelIndicator.textContent = `Level ${currentLevel + 1} / ${LEVELS.length} — ${level.name}`;
+                initStars();
+                initProgressBar();
+                updateScoreDisplay();
+                refreshBoard();
+            }
+
+            function renderBoard() {
+                gridContainer.innerHTML = '';
+                gameBoard.forEach((row, r) => {
+                    row.forEach((cell, c) => {
+                        const tile = createTile(r, c, cell.letter, cell.color);
+                        tile.addEventListener('click', () => handleTileClick(r, c));
+                        gridContainer.appendChild(tile);
+                        cell.element = tile;
+                    });
+                });
+            }
+
+            function getSelectedWord() {
+                return selectedTiles.map(t => gameBoard[t.row][t.col].letter).join('');
+            }
+
+            function isValidAdjacency(newTile) {
+                if (selectedTiles.length === 0) return true;
+                const last = selectedTiles[selectedTiles.length - 1];
+                const dx = Math.abs(newTile.row - last.row);
+                const dy = Math.abs(newTile.col - last.col);
+                return (dx <= 1 && dy <= 1 && (dx > 0 || dy > 0));
+            }
+
+            function showMessage(text, duration = 1400) {
+                messageBox.textContent = text;
+                messageBox.style.opacity = '1';
+                setTimeout(() => { messageBox.style.opacity = '0'; }, duration);
+            }
+
+            function clearHighlights() {
+                document.querySelectorAll('.tile.selected').forEach(t => t.classList.remove('selected'));
+                selectedTiles = [];
+                wordBuilderEl.innerHTML = '';
+            }
+
+            function handleStarClick(index) {
+                if (stars[index].used || isDragging) return;
+                stars[index].used = true;
+                stars[index].element.classList.add('used');
+                stars[index].element.style.backgroundColor = '#9ca3af';
+                stars[index].element.style.transform = 'scale(1)';
+                starsUsedCount++;
+                refreshBoard();
+                showMessage('Board refreshed!');
+            }
+
+            function handleTileClick(row, col) {
+                const newTile = { row, col };
+                const isAlready = selectedTiles.some(t => t.row === row && t.col === col);
+                if (isAlready) {
+                    const index = selectedTiles.findIndex(t => t.row === row && t.col === col);
+                    selectedTiles = selectedTiles.slice(0, index + 1);
+                    document.querySelectorAll('.tile.selected').forEach(t => t.classList.remove('selected'));
+                    selectedTiles.forEach(t => {
+                        const tile = document.querySelector(`.tile[data-row="${t.row}"][data-col="${t.col}"]`);
+                        if (tile) tile.classList.add('selected');
+                    });
+                    wordBuilderEl.innerHTML = '';
+                    selectedTiles.forEach(t => {
+                        const built = document.createElement('div');
+                        built.classList.add('built-letter');
+                        built.textContent = gameBoard[t.row][t.col].letter.toUpperCase();
+                        wordBuilderEl.appendChild(built);
+                    });
+                } else if (isValidAdjacency(newTile)) {
+                    if (selectedTiles.length === 0) selectionStartTime = Date.now();
+                    selectedTiles.push(newTile);
+                    const tile = document.querySelector(`.tile[data-row="${row}"][data-col="${col}"]`);
+                    tile.classList.add('selected');
+                    const built = document.createElement('div');
+                    built.classList.add('built-letter');
+                    built.textContent = gameBoard[row][col].letter.toUpperCase();
+                    wordBuilderEl.appendChild(built);
+                }
+            }
+
+            function handleStart(e) {
+                if (e.preventDefault) e.preventDefault();
+                isDragging = true;
+                selectionStartTime = Date.now();
+                handleMove(e);
+            }
+
+            function handleMove(e) {
+                if (!isDragging) return;
+                const clientX = e.clientX || (e.touches?.[0]?.clientX);
+                const clientY = e.clientY || (e.touches?.[0]?.clientY);
+                const target = document.elementFromPoint(clientX, clientY);
+                const tile = target?.closest('.tile');
+                if (tile && tile !== lastTile) {
+                    const row = parseInt(tile.dataset.row);
+                    const col = parseInt(tile.dataset.col);
+                    const newTile = {row, col};
+                    const isAlready = selectedTiles.some(t => t.row === row && t.col === col);
+                    if (!isAlready && isValidAdjacency(newTile)) {
+                        selectedTiles.push(newTile);
+                        tile.classList.add('selected');
+                        lastTile = tile;
+                        const built = document.createElement('div');
+                        built.classList.add('built-letter');
+                        built.textContent = gameBoard[row][col].letter.toUpperCase();
+                        wordBuilderEl.appendChild(built);
+                    }
+                }
+            }
+
+            function handleEnd() {
+                if (!isDragging) return;
+                isDragging = false;
+                lastTile = null;
+                const timeTaken = Math.round((Date.now() - selectionStartTime) / 1000);
+                const word = getSelectedWord().toLowerCase();
+                const foundWord = wordsToFind.find(w => w === word);
+                const allWords = [...getAllWords(), ...BONUS_WORDS.map(b => b.w)];
+                const isBonusWord = !foundWord && allWords.includes(word);
+                const levelName = `Level ${currentLevel + 1} - ${LEVELS[currentLevel].name}`;
+                if (foundWord) {
+                    foundWordCounts[foundWord] = (foundWordCounts[foundWord] || 0) + 1;
+                    const pointsGained = word.length;
+                    score += pointsGained;
+                    showMessage('Found it!');
+                    dropLettersAndRefill(selectedTiles);
+                    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    const d = wordInfo[foundWord].d;
+                    foundWordsTrail.push({
+                        time, level: levelName, type: 'Main', word: word.toUpperCase(),
+                        d, timeTaken, pointsGained, pointsTotal: score
+                    });
+                    displayWordList();
+                    displayLearningLog();
+                    updateScoreDisplay();
+                } else if (isBonusWord && word.length >= 2) {
+                    const pointsGained = word.length * 5;
+                    score += pointsGained;
+                    showMessage('Bonus word!');
+                    dropLettersAndRefill(selectedTiles);
+                    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    const d = getDescription(word);
+                    const type = getAllWords().includes(word) ? 'Bonus (list)' : 'Bonus (hidden)';
+                    foundWordsTrail.push({
+                        time, level: levelName, type, word: word.toUpperCase(),
+                        d, timeTaken, pointsGained, pointsTotal: score
+                    });
+                    displayLearningLog();
+                    updateScoreDisplay();
+                } else if (word.length > 1) {
+                    showMessage('Not a target word');
+                }
+                clearHighlights();
+                checkWinCondition();
+            }
+
+            function dropLettersAndRefill(tilesToRemove) {
+                const removeSet = new Set(tilesToRemove.map(t => `${t.row},${t.col}`));
+                for (let c = 0; c < GRID_SIZE; c++) {
+                    let writeRow = GRID_SIZE - 1;
+                    for (let readRow = GRID_SIZE - 1; readRow >= 0; readRow--) {
+                        if (!removeSet.has(`${readRow},${c}`)) {
+                            if (writeRow !== readRow) {
+                                gameBoard[writeRow][c] = gameBoard[readRow][c];
+                            }
+                            writeRow--;
+                        }
+                    }
+                    for (let r = writeRow; r >= 0; r--) {
+                        const randLetter = letters[Math.floor(Math.random()*letters.length)];
+                        gameBoard[r][c] = { letter: randLetter, word: null, color: 'bg-[#d8b4fe] text-black' };
+                    }
+                }
+                renderBoard();
+            }
+
+            function checkWinCondition() {
+                const allFound = wordsToFind.every(word => foundWordCounts[word] >= FIND_COUNT_PER_WORD);
+                if (allFound) {
+                    completedLevels.add(currentLevel);
+                    winScreen.classList.remove('hidden');
+                    const winText = currentLevel < LEVELS.length - 1 ? LEVEL_COMPLETION_MESSAGES[currentLevel] : 'Science Master!';
+                    const buttonsHTML = `
+                        <button class="win-button" id="replay-level-btn">Replay</button>
+                        ${currentLevel < LEVELS.length - 1 ? '<button class="win-button" id="next-level-btn">Next</button>' : ''}
+                    `;
+                    winScreen.innerHTML = `
+                        <div class="win-overlay">
+                            <div class="win-star"></div>
+                            <div class="win-text">${winText}</div>
+                            <div class="win-buttons">${buttonsHTML}</div>
+                        </div>`;
+                    foundWordsTrail.push({
+                        time: '', level: '', type: '', word: `Level ${currentLevel + 1} Complete!`,
+                        d: LEVEL_COMPLETION_MESSAGES[currentLevel], timeTaken: '', pointsGained: '', pointsTotal: score
+                    });
+                    displayLearningLog();
+                    document.getElementById('replay-level-btn').addEventListener('click', () => { winScreen.classList.add('hidden'); initBoard(); });
+                    if (currentLevel < LEVELS.length - 1) {
+                        document.getElementById('next-level-btn').addEventListener('click', () => { currentLevel++; winScreen.classList.add('hidden'); initBoard(); });
+                    }
+                    initProgressBar();
+                }
+            }
+
+            function prevLevel() {
+                if (currentLevel > 0) { currentLevel--; initBoard(); }
+            }
+
+            function nextLevel() {
+                if (currentLevel < LEVELS.length - 1) { currentLevel++; initBoard(); }
+            }
+
+            function attachEventListeners() {
+                gridContainer.addEventListener('mousedown', handleStart);
+                gridContainer.addEventListener('mousemove', handleMove);
+                gridContainer.addEventListener('mouseup', handleEnd);
+                gridContainer.addEventListener('mouseleave', handleEnd);
+                gridContainer.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    handleStart(e.touches[0]);
+                }, { passive: false });
+                gridContainer.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    handleMove(e.touches[0]);
+                }, { passive: false });
+                gridContainer.addEventListener('touchend', handleEnd);
+                prevLevelBtn.addEventListener('click', prevLevel);
+                nextLevelBtn.addEventListener('click', nextLevel);
+                instructionsBtn.addEventListener('click', () => instructionsModal.style.display = 'flex');
+                modalClose.addEventListener('click', () => instructionsModal.style.display = 'none');
+                copyTrailBtn.addEventListener('click', copyToClipboard);
+            }
+
+            function copyToClipboard() {
+                const now = new Date().toLocaleDateString('en-NZ', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+                const headers = ['Time','Level','Type','Word','Description','Time Taken','Points Gained','Points Total'];
+                const rows = foundWordsTrail.flatMap(item => {
+                    if (item.type === '') {
+                        return [{spacer:true}, {special:true, message:item.word, pointsTotal:item.pointsTotal}, {spacer:true}];
+                    } else {
+                        return [{fields: [
+                            item.time || '',
+                            item.level || '',
+                            item.type || '',
+                            item.word || '',
+                            item.d || '',
+                            item.timeTaken ? item.timeTaken + 's' : '',
+                            item.pointsGained || '',
+                            item.pointsTotal || ''
+                        ]}];
+                    }
+                });
+                const colWidths = headers.map(h => h.length);
+                rows.forEach(r => {
+                    if (r.fields) r.fields.forEach((f,i) => colWidths[i] = Math.max(colWidths[i], String(f).length));
+                    if (r.special) colWidths[colWidths.length-1] = Math.max(colWidths[colWidths.length-1], String(r.pointsTotal).length);
+                });
+                colWidths.forEach((w,i) => colWidths[i] += 3);
+                const pad = (s,w) => String(s).padEnd(w);
+                const headerRow = headers.map((h,i) => pad(h, colWidths[i])).join('');
+                const underline = colWidths.map(w => '-'.repeat(w)).join('');
+                const bodyRows = rows.map(r => {
+                    if (r.spacer) return '';
+                    if (r.special) return pad('Level Complete: ' + r.message, colWidths.slice(0,-1).reduce((a,b)=>a+b,0)) + pad(r.pointsTotal || '', colWidths[colWidths.length-1]);
+                    return r.fields.map((f,i) => pad(f, colWidths[i])).join('');
+                }).join('\n');
+                const text = `SCI VIBE Learning Log – ${now}\n\n${headerRow}\n${underline}\n${bodyRows}`;
+                navigator.clipboard.writeText(text).then(() => alert('Learning log copied! Paste into Google Site – columns will line up perfectly!')).catch(() => alert('Copy failed – select text manually'));
+            }
+
+            initDescriptions();
+            initBoard();
+            attachEventListeners();
+        });
+    </script>
+</body>
+</html>
