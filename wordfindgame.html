@@ -4,10 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>AI Vibe Quest - Explore AI Concepts</title>
-    <link href="tailwind.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-        :root{ --tile-bg: rgba(255,255,255,0.2); } /* Kept the variable in case needed elsewhere, but not used on tiles */
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #6b46c1 0%, #9f7aea 100%);
@@ -18,7 +17,7 @@
             flex-direction: column;
             color: #fff;
             padding: 20px;
-            touch-action: none;
+            touch-action: pan-y;
             overflow-y: auto;
             transition: background 600ms ease;
         }
@@ -197,7 +196,6 @@
             position: relative;
         }
         .tile {
-            position: relative;
             color: black;
             font-size: clamp(0.9rem, 3.5vw, 1.6rem);
             font-weight: 700;
@@ -374,11 +372,10 @@
             align-items: stretch;
             margin: 18px auto 0;
         }
-        .audit-trail-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
+        #grid-container {
+            touch-action: none;
+            user-select: none;
+            -webkit-user-drag: none;
         }
         .bg-level-1 { background: linear-gradient(135deg, #EFDDF8 0%, #9ca3af 100%); }
         .bg-level-2 { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); }
@@ -400,11 +397,9 @@
         .bg-level-18 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 50%, #ffff00 100%); }
         .bg-level-19 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 33%, #ffff00 66%, #00ff00 100%); }
         .bg-level-20 { background: linear-gradient(135deg, #ff0000 0%, #ff7f00 20%, #ffff00 40%, #00ff00 60%, #0000ff 80%, #4b0082 100%); }
-        /* REMOVED the ::before overlay and span z-index – this was hiding the colors */
     </style>
 </head>
 <body>
-    <!-- The rest of the HTML body and script is EXACTLY the same as the previous version I sent -->
     <div class="container">
         <div class="header">
             <button class="instructions-btn" id="instructions-btn">Instructions</button>
@@ -765,7 +760,7 @@
                     description.style.fontWeight = '600';
                     description.style.marginTop = '4px';
                     description.style.opacity = count > 0 ? '1' : '0.3';
-                    description.textContent = count > 0 ? info?.description || '' : '(hidden until found)';
+                    description.textContent = count > 0 ? info?.d || '' : '(hidden until found)';
                     left.appendChild(wordText);
                     left.appendChild(description);
                     const wordCount = document.createElement('span');
@@ -787,7 +782,7 @@
                         <span>${item.level}</span> -
                         <span>${item.type}</span> -
                         <span>${item.word}</span> -
-                        <span>${item.description}</span> -
+                        <span>${item.d}</span> -
                         <span>${item.timeTaken}s</span> -
                         <span>${item.pointsGained}</span> -
                         <span>${item.pointsTotal}</span>`;
@@ -833,7 +828,6 @@
                                 board[r][c] = { letter: word[i], word: word, color: wordObj.c };
                             }
                             placed = true;
-                            wordPlacementCounts[word] = (wordPlacementCounts[word] || 0) + 1;
                         }
                     }
                     attempts++;
@@ -889,13 +883,11 @@
                 normalizedDescriptions = {};
                 LEVELS.forEach(level => {
                     level.words.forEach(wObj => {
-                        const normalized = wObj.w.toLowerCase();
-                        normalizedDescriptions[normalized] = wObj.d;
+                        normalizedDescriptions[wObj.w.toLowerCase()] = wObj.d;
                     });
                 });
                 BONUS_WORDS.forEach(bObj => {
-                    const normalized = bObj.w.toLowerCase();
-                    normalizedDescriptions[normalized] = bObj.d;
+                    normalizedDescriptions[bObj.w.toLowerCase()] = bObj.d;
                 });
             }
 
@@ -923,10 +915,12 @@
                     overallAttempt++;
                 }
                 if (!success) {
-                    showMessage('Board refresh failed – try a star.');
+                    messageBox.textContent = 'Board refresh failed – try a star.';
+                    messageBox.style.opacity = '1';
+                    setTimeout(() => messageBox.style.opacity = '0', 2000);
                 }
                 const purpleShades = ['bg-[#c084fc] text-black','bg-[#a855f7] text-white','bg-[#9333ea] text-white','bg-[#7e22ce] text-white','bg-[#6b21a8] text-white'];
-                let extraWords = shuffle([...getAllWords(), ...getBonusWords().map(b=>b.w)]).slice(0,8);
+                let extraWords = shuffle([...getAllWords(), ...BONUS_WORDS.map(b=>b.w)]).slice(0,8);
                 extraWords.forEach((ew,i) => {
                     placeWord({w:ew, c:purpleShades[i%purpleShades.length]}, gameBoard);
                 });
@@ -944,12 +938,11 @@
 
             function initBoard() {
                 foundWordCounts = {};
-                wordPlacementCounts = {};
                 const level = LEVELS[currentLevel];
                 wordsToFind = level.words.map(o => o.w);
                 wordInfo = {};
                 level.words.forEach(o => {
-                    wordInfo[o.w] = { description: o.d, color: o.c, obj: o };
+                    wordInfo[o.w] = { d: o.d, color: o.c, obj: o };
                     foundWordCounts[o.w] = 0;
                 });
                 document.body.style.background = level.bg;
@@ -1038,6 +1031,7 @@
             }
 
             function handleStart(e) {
+                if (e.preventDefault) e.preventDefault();
                 isDragging = true;
                 selectionStartTime = Date.now();
                 handleMove(e);
@@ -1083,10 +1077,10 @@
                     showMessage('Found it!');
                     dropLettersAndRefill(selectedTiles);
                     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                    const description = wordInfo[foundWord].description;
+                    const d = wordInfo[foundWord].d;
                     foundWordsTrail.push({
                         time, level: levelName, type: 'Main', word: word.toUpperCase(),
-                        description, timeTaken, pointsGained, pointsTotal: score
+                        d, timeTaken, pointsGained, pointsTotal: score
                     });
                     displayWordList();
                     displayLearningLog();
@@ -1097,11 +1091,11 @@
                     showMessage('Bonus concept!');
                     dropLettersAndRefill(selectedTiles);
                     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                    const description = getDescription(word);
+                    const d = getDescription(word);
                     const type = getAllWords().includes(word) ? 'Bonus (list)' : 'Bonus (hidden)';
                     foundWordsTrail.push({
                         time, level: levelName, type, word: word.toUpperCase(),
-                        description, timeTaken, pointsGained, pointsTotal: score
+                        d, timeTaken, pointsGained, pointsTotal: score
                     });
                     displayLearningLog();
                     updateScoreDisplay();
@@ -1150,7 +1144,7 @@
                         </div>`;
                     foundWordsTrail.push({
                         time: '', level: '', type: '', word: `Level ${currentLevel + 1} Complete!`,
-                        description: LEVEL_COMPLETION_MESSAGES[currentLevel], timeTaken: '', pointsGained: '', pointsTotal: score
+                        d: LEVEL_COMPLETION_MESSAGES[currentLevel], timeTaken: '', pointsGained: '', pointsTotal: score
                     });
                     displayLearningLog();
                     document.getElementById('replay-level-btn').addEventListener('click', () => { winScreen.classList.add('hidden'); initBoard(); });
@@ -1174,8 +1168,14 @@
                 gridContainer.addEventListener('mousemove', handleMove);
                 gridContainer.addEventListener('mouseup', handleEnd);
                 gridContainer.addEventListener('mouseleave', handleEnd);
-                gridContainer.addEventListener('touchstart', e => { e.preventDefault(); handleStart(e.touches[0]); });
-                gridContainer.addEventListener('touchmove', e => { e.preventDefault(); handleMove(e.touches[0]); });
+                gridContainer.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    handleStart(e.touches[0]);
+                }, { passive: false });
+                gridContainer.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    handleMove(e.touches[0]);
+                }, { passive: false });
                 gridContainer.addEventListener('touchend', handleEnd);
                 prevLevelBtn.addEventListener('click', prevLevel);
                 nextLevelBtn.addEventListener('click', nextLevel);
@@ -1196,7 +1196,7 @@
                             item.level || '',
                             item.type || '',
                             item.word || '',
-                            item.description || '',
+                            item.d || '',
                             item.timeTaken ? item.timeTaken + 's' : '',
                             item.pointsGained || '',
                             item.pointsTotal || ''
@@ -1208,14 +1208,13 @@
                     if (r.fields) r.fields.forEach((f,i) => colWidths[i] = Math.max(colWidths[i], String(f).length));
                     if (r.special) colWidths[colWidths.length-1] = Math.max(colWidths[colWidths.length-1], String(r.pointsTotal).length);
                 });
-                const GAP = 3;
-                colWidths.forEach((w,i) => colWidths[i] = w + GAP);
+                colWidths.forEach((w,i) => colWidths[i] += 3);
                 const pad = (s,w) => String(s).padEnd(w);
                 const headerRow = headers.map((h,i) => pad(h, colWidths[i])).join('');
                 const underline = colWidths.map(w => '-'.repeat(w)).join('');
                 const bodyRows = rows.map(r => {
                     if (r.spacer) return '';
-                    if (r.special) return pad('Level Complete: ' + r.message, colWidths.slice(0,-1).reduce((a,b)=>a+b,0)) + pad(r.pointsTotal, colWidths[colWidths.length-1]);
+                    if (r.special) return pad('Level Complete: ' + r.message, colWidths.slice(0,-1).reduce((a,b)=>a+b,0)) + pad(r.pointsTotal || '', colWidths[colWidths.length-1]);
                     return r.fields.map((f,i) => pad(f, colWidths[i])).join('');
                 }).join('\n');
                 const text = `AI Vibe Quest Learning Log – ${now}\n\n${headerRow}\n${underline}\n${bodyRows}`;
