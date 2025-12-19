@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Count the Cars & Trucks!</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body { margin: 0; height: 100vh; width: 100vw; }
+    .vehicle {
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      animation: float 4s ease-in-out infinite alternate;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.3));
+    }
+    .vehicle:hover { transform: scale(1.25) rotate(4deg); }
+    .vehicle.counted { opacity: 0.5; animation: none; cursor: default; }
+
+    @keyframes float {
+      from { transform: translateY(0); }
+      to { transform: translateY(-8px); }
+    }
+
+    .count-badge {
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: white;
+      font-size: 3rem;
+      font-weight: bold;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: 6px solid #FBBF24;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .game-background {
+      background: linear-gradient(135deg,#87CEEB,#B8E6F2,#D4F4DD,#F0F8D4);
+      height: 100%;
+    }
+
+    .play-area {
+      border: 10px dashed white;
+      border-radius: 2rem;
+      height: 100%;
+      position: relative;
+      backdrop-filter: blur(4px);
+      background: rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+
+<body class="game-background flex flex-col">
+
+<header class="text-center py-6">
+  <h1 id="title" class="text-5xl md:text-7xl font-black text-white drop-shadow-xl">
+    Count the cars & trucks!
+  </h1>
+
+  <div id="counter-header" class="text-3xl md:text-5xl text-yellow-300 font-bold mt-4">
+    0 / 5
+  </div>
+
+  <button id="langToggle"
+    class="mt-6 bg-white/30 hover:bg-white/50 px-8 py-3 rounded-full text-2xl font-bold text-white">
+    🌿 Te Reo Māori
+  </button>
+</header>
+
+<main class="flex-1 px-4 pb-4">
+  <div class="play-area">
+    <div id="vehicles-container"></div>
+  </div>
+</main>
+
+<div id="completion-modal"
+  class="fixed inset-0 flex items-center justify-center hidden z-50">
+  <div class="bg-gradient-to-br from-green-500 to-emerald-600 px-12 py-16 rounded-3xl text-white text-center shadow-2xl border-8 border-white/40">
+    <p id="doneTitle" class="text-5xl font-black mb-8">Awesome!</p>
+    <p id="completion-text" class="text-4xl mb-12"></p>
+    <button id="restart"
+      class="bg-white/30 hover:bg-white/50 px-12 py-6 rounded-full text-4xl font-black">
+      Play Again!
+    </button>
+  </div>
+</div>
+
+<script>
+/* ---------- LANGUAGE DATA ---------- */
+let language = "en";
+
+const reoNumbers = {
+  1:"tahi",2:"rua",3:"toru",4:"whā",5:"rima",
+  6:"ono",7:"whitu",8:"waru",9:"iwa",10:"tekau"
+};
+
+function speakNumber(n) {
+  const text = language === "mi" ? reoNumbers[n] : n.toString();
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+}
+
+/* ---------- GAME SETUP ---------- */
+let countedVehicles = new Set();
+let totalVehicles = Math.floor(Math.random()*9)+2;
+
+const colors = ['#FF6B6B','#FFD93D','#6BCF7F','#4ECDC4','#54A0FF','#FF9FF3'];
+
+const templates = [
+  (a,b,c)=>`<rect x="10" y="25" width="80" height="20" rx="8" fill="${a}"/>
+  <circle cx="25" cy="50" r="10" fill="#333"/><circle cx="75" cy="50" r="10" fill="#333"/>`
+];
+
+document.getElementById("counter-header").textContent = `0 / ${totalVehicles}`;
+
+function createVehicles() {
+  const container = document.getElementById("vehicles-container");
+  container.innerHTML = "";
+  countedVehicles.clear();
+
+  const play = document.querySelector(".play-area").getBoundingClientRect();
+  const SAFE = 240;
+  const positions = [];
+
+  for(let i=0;i<totalVehicles;i++){
+    let pos,tries=0;
+    do{
+      pos={x:Math.random()*(play.width-200),y:Math.random()*(play.height-120)};
+      tries++;
+    } while(positions.some(p=>Math.hypot(p.x-pos.x,p.y-pos.y)<SAFE)&&tries<500);
+
+    positions.push(pos);
+
+    const v=document.createElement("div");
+    v.className="vehicle";
+    v.style.left=pos.x+"px";
+    v.style.top=pos.y+"px";
+    v.dataset.id=i;
+
+    const c=[...colors].sort(()=>Math.random()-0.5);
+    v.innerHTML=`
+      <svg width="200" height="120" viewBox="0 0 100 60">
+        ${templates[0](c[0],c[1],c[2])}
+      </svg>
+      <div class="count-badge"></div>
+    `;
+
+    v.onclick=()=>{
+      if(countedVehicles.has(i))return;
+      countedVehicles.add(i);
+      v.classList.add("counted");
+
+      const b=v.querySelector(".count-badge");
+      b.textContent=countedVehicles.size;
+      b.style.display="flex";
+
+      document.getElementById("counter-header").textContent=
+        `${countedVehicles.size} / ${totalVehicles}`;
+
+      speakNumber(countedVehicles.size);
+
+      if(countedVehicles.size===totalVehicles){
+        setTimeout(()=>{
+          document.getElementById("completion-text").textContent =
+            language==="mi"
+              ? `E ${reoNumbers[totalVehicles]} ngā waka katoa!`
+              : `There are ${totalVehicles} vehicles!`;
+          document.getElementById("completion-modal").classList.remove("hidden");
+          speakNumber(totalVehicles);
+        },800);
+      }
+    };
+
+    container.appendChild(v);
+  }
+}
+
+/* ---------- LANGUAGE TOGGLE ---------- */
+document.getElementById("langToggle").onclick=()=>{
+  language = language==="en" ? "mi" : "en";
+
+  document.getElementById("title").textContent =
+    language==="mi" ? "Tatauhia ngā waka!" : "Count the cars & trucks!";
+
+  document.getElementById("doneTitle").textContent =
+    language==="mi" ? "Ka pai!" : "Awesome!";
+
+  document.getElementById("langToggle").textContent =
+    language==="mi" ? "🇬🇧 English" : "🌿 Te Reo Māori";
+};
+
+/* ---------- RESET ---------- */
+document.getElementById("restart").onclick=()=>{
+  totalVehicles=Math.floor(Math.random()*9)+2;
+  document.getElementById("counter-header").textContent=`0 / ${totalVehicles}`;
+  document.getElementById("completion-modal").classList.add("hidden");
+  createVehicles();
+};
+
+createVehicles();
+</script>
+
+</body>
+</html>
