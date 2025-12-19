@@ -18,10 +18,11 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* Butterfly visuals */
 .butterfly svg {
-  width: clamp(80px, 18vw, 140px);
+  width: clamp(80px, 16vw, 140px);
   height: auto;
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease;
 }
 
 .butterfly:hover svg {
@@ -33,29 +34,21 @@ body {
   pointer-events: none;
 }
 
+/* Count badge */
 .count-badge {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 48px;
-  height: 48px;
+  top: -8px;
+  right: -8px;
+  width: 44px;
+  height: 44px;
   background: white;
   border-radius: 999px;
   display: none;
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-}
-
-#completion {
-  animation: drop 0.4s ease-out;
-}
-
-@keyframes drop {
-  from { transform: translate(-50%, -30px); opacity: 0; }
-  to   { transform: translate(-50%, 0); opacity: 1; }
 }
 </style>
 </head>
@@ -72,21 +65,34 @@ body {
   </div>
 
   <!-- Play Area -->
-  <div id="play-area" class="flex-1 grid place-items-center overflow-hidden">
-    <div id="grid" class="grid gap-6 w-full h-full place-items-center"></div>
+  <div id="play-area"
+       class="flex-1 border-8 border-white/70 rounded-3xl bg-white/20 shadow-inner
+              grid place-items-center overflow-hidden">
+
+    <div id="grid"
+         class="w-full h-full grid place-items-center gap-6 px-4 py-4">
+    </div>
+
   </div>
 </div>
 
-<!-- Completion -->
-<div id="completion" class="hidden fixed top-6 left-1/2 bg-emerald-500 text-white px-10 py-6 rounded-3xl shadow-2xl text-center">
-  <p id="completion-text" class="text-2xl md:text-3xl font-black mb-4"></p>
-  <button onclick="resetGame()" class="bg-white/20 px-8 py-3 rounded-full font-black hover:bg-white/30">
-    Play again
-  </button>
+<!-- Completion Modal -->
+<div id="completion"
+     class="hidden fixed inset-0 flex items-center justify-center bg-black/30 z-50">
+
+  <div class="bg-emerald-500 text-white px-12 py-10 rounded-3xl shadow-2xl text-center max-w-md w-full mx-4">
+    <p id="completion-text" class="text-2xl md:text-3xl font-black mb-6"></p>
+    <button onclick="resetGame()"
+            class="bg-white/20 px-8 py-3 rounded-full font-black hover:bg-white/30 transition">
+      Play again
+    </button>
+  </div>
+
 </div>
 
 <script>
-let total = Math.floor(Math.random()*7)+4;
+let total = 0;
+let lastTotal = null;
 let counted = new Set();
 
 const colors = [
@@ -97,40 +103,43 @@ const colors = [
 function speak(n){
   if(!("speechSynthesis" in window)) return;
   speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(n.toString());
-  u.rate=0.85;
-  u.pitch=1.2;
+  const u = new SpeechSynthesisUtterance(n.toString());
+  u.rate = 0.85;
+  u.pitch = 1.2;
   speechSynthesis.speak(u);
 }
 
-function calculateFit(){
-  const area=document.getElementById("play-area").getBoundingClientRect();
-  const size=Math.min(Math.max(window.innerWidth*0.18,80),140);
-  const cols=Math.floor(area.width/(size+24));
-  const rows=Math.floor(area.height/(size+24));
-  return Math.max(1,cols*rows);
+function pickTotal(){
+  let n;
+  do {
+    n = Math.floor(Math.random()*7)+4; // 4–10
+  } while (n === lastTotal);
+  lastTotal = n;
+  return n;
 }
 
 function render(){
   counted.clear();
-  const grid=document.getElementById("grid");
-  grid.innerHTML="";
+  total = pickTotal();
 
-  const maxFit=calculateFit();
-  total=Math.min(total,maxFit);
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
 
-  document.getElementById("counter").textContent=`0 / ${total}`;
+  document.getElementById("counter").textContent = `0 / ${total}`;
 
-  const cols=Math.ceil(Math.sqrt(total));
-  grid.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+  const area = document.getElementById("play-area").getBoundingClientRect();
+  const size = Math.min(Math.max(window.innerWidth * 0.16, 80), 140);
+  const cols = Math.max(1, Math.floor(area.width / (size + 24)));
+
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
   for(let i=0;i<total;i++){
-    const b=document.createElement("div");
-    b.className="butterfly relative cursor-pointer";
+    const b = document.createElement("div");
+    b.className = "butterfly relative cursor-pointer";
 
-    const c=[...colors].sort(()=>Math.random()-0.5);
+    const c = [...colors].sort(()=>Math.random()-0.5);
 
-    b.innerHTML=`
+    b.innerHTML = `
       <svg viewBox="0 0 100 100">
         <path d="M50 50 Q20 10 10 30 Q5 50 20 60 Q35 75 50 50Z" fill="${c[0]}"/>
         <path d="M50 50 Q20 90 10 70 Q5 50 20 40 Q35 25 50 50Z" fill="${c[1]}"/>
@@ -141,27 +150,22 @@ function render(){
       <div class="count-badge"></div>
     `;
 
-    b.onclick=()=>{
+    b.onclick = () => {
       if(counted.has(i)) return;
       counted.add(i);
       b.classList.add("counted");
 
-      const badge=b.querySelector(".count-badge");
-      badge.textContent=counted.size;
-      badge.style.display="flex";
+      const badge = b.querySelector(".count-badge");
+      badge.textContent = counted.size;
+      badge.style.display = "flex";
 
-      document.getElementById("counter").textContent=
+      document.getElementById("counter").textContent =
         `${counted.size} / ${total}`;
 
       speak(counted.size);
 
-      if(counted.size===total){
-        setTimeout(()=>{
-          document.getElementById("completion-text").textContent=
-            `Great job! There are ${total} butterflies!`;
-          document.getElementById("completion").classList.remove("hidden");
-          speak(total);
-        },600);
+      if(counted.size === total){
+        setTimeout(showCompletion, 600);
       }
     };
 
@@ -169,13 +173,19 @@ function render(){
   }
 }
 
+function showCompletion(){
+  document.getElementById("completion-text").textContent =
+    `Great job! There are ${total} butterflies!`;
+  document.getElementById("completion").classList.remove("hidden");
+  speak(total);
+}
+
 function resetGame(){
   document.getElementById("completion").classList.add("hidden");
-  total=Math.floor(Math.random()*7)+4;
   render();
 }
 
-window.addEventListener("resize",render);
+window.addEventListener("resize", render);
 render();
 </script>
 </body>
