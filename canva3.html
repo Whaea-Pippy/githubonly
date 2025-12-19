@@ -3,45 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Count the Cars & Trucks!</title>
+  <title>Count the Butterflies!</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
     }
 
-    .vehicle {
+    .butterfly {
       cursor: pointer;
       transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.25));
-      animation: gentleDrive 4s ease-in-out infinite alternate;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+      animation: gentleFloat 3s ease-in-out infinite alternate;
     }
 
-    @keyframes gentleDrive {
-      0% { transform: translateX(0) translateY(0); }
-      100% { transform: translateX(8px) translateY(-6px); }
+    @keyframes gentleFloat {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-8px); }
     }
 
-    .vehicle:hover {
-      transform: scale(1.25) translateY(-15px) rotate(4deg) !important;
-      filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4));
+    .butterfly:hover {
+      transform: scale(1.2) rotate(10deg) translateY(-10px) !important;
+      filter: drop-shadow(0 8px 20px rgba(0,0,0,0.3));
     }
 
-    .vehicle:active {
-      animation: bounce 0.3s ease-out;
+    .butterfly:active {
+      animation: wingFlap 0.2s ease-out;
     }
 
-    @keyframes bounce {
-      0%, 100% { transform: scale(1.1); }
-      50% { transform: scale(1.2); }
+    @keyframes wingFlap {
+      0%, 100% { transform: scale(1.1) rotate(5deg); }
+      50% { transform: scale(1.15) rotate(15deg); }
     }
 
-    .vehicle.counted {
-      opacity: 0.5;
+    .butterfly.counted {
+      opacity: 0.4;
       cursor: default;
-      animation: none !important;
+      animation: none;
+    }
+
+    .butterfly.counted:hover {
+      transform: none !important;
     }
 
     .count-badge {
@@ -50,13 +54,22 @@
 
     @keyframes popIn {
       0% { transform: scale(0) rotate(-180deg); opacity: 0; }
-      100% { transform: scale(1) rotate(0); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .completion-modal {
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      0% { transform: translateY(-100%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
     }
 
     .game-background {
-      background: linear-gradient(135deg, #87CEEB 0%, #B8E6F2 30%, #D4F4DD 60%, #F0F8D4 100%);
+      background: linear-gradient(135deg, #a8e6cf, #dcedc1, #f4e1d2, #ffe0b5, #ffd4b3);
       background-size: 400% 400%;
-      animation: softGradientShift 30s ease infinite;
+      animation: softGradientShift 25s ease infinite;
     }
 
     @keyframes softGradientShift {
@@ -65,189 +78,213 @@
       100% { background-position: 0% 50%; }
     }
 
-    .play-area {
-      border: 8px dashed #FFFFFF;
-      border-radius: 2rem;
-      box-shadow: inset 0 0 40px rgba(255,255,255,0.4), 0 0 30px rgba(0,0,0,0.1);
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(4px);
+    /* Keep butterflies fully visible on all screens */
+    @media (max-width: 768px) {
+      .butterfly svg { width: 130px !important; height: 130px !important; }
+      #counter { font-size: 2rem !important; padding: 1rem 2rem !important; }
+      .play-area { min-height: 60vh !important; }
     }
 
-    @media (max-width: 640px) {
-      .vehicle svg { width: 140px !important; height: 90px !important; }
-    }
-    @media (min-width: 641px) and (max-width: 1024px) {
-      .vehicle svg { width: 180px !important; height: 110px !important; }
-    }
-    @media (min-width: 1025px) {
-      .vehicle svg { width: 220px !important; height: 135px !important; }
+    @media (max-width: 480px) {
+      .butterfly svg { width: 110px !important; height: 110px !important; }
+      .play-area { min-height: 55vh !important; }
     }
   </style>
 </head>
-<body class="h-screen w-screen overflow-hidden game-background flex flex-col">
-  <header class="w-full text-center py-4 md:py-6 px-4 flex-shrink-0">
-    <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white drop-shadow-2xl" style="font-family: 'Arial Black', Arial, sans-serif; text-shadow: 3px 3px 8px rgba(0,0,0,0.5);">
-      Count the cars & trucks!
-      <span id="counter-header" class="block text-2xl md:text-4xl lg:text-5xl mt-2 text-yellow-300 font-bold drop-shadow-lg">0 / 8</span>
-    </h1>
-  </header>
-
-  <main class="flex-1 px-4 pb-4 md:px-8 md:pb-8">
-    <div class="play-area relative h-full w-full">
-      <div id="vehicles-container" class="absolute inset-0"></div>
-    </div>
-  </main>
-
-  <div id="completion-modal" class="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-    <div class="px-10 py-12 md:px-16 md:py-16 rounded-3xl shadow-2xl text-white text-center pointer-events-auto backdrop-blur-lg border-8 border-white/30 hidden" style="background: linear-gradient(135deg, #10B981, #059669); max-width: 90vw;">
-      <p class="text-4xl md:text-6xl font-black mb-8 drop-shadow-2xl">Awesome!</p>
-      <p id="completion-text" class="text-3xl md:text-5xl font-bold mb-10"></p>
-      <button class="bg-white/30 hover:bg-white/50 backdrop-blur px-12 py-6 rounded-full text-3xl md:text-4xl font-black transition-all hover:scale-110 shadow-2xl">
-        Play Again!
-      </button>
-    </div>
+<body class="h-screen overflow-hidden game-background">
+  <div id="app" class="w-full h-full flex flex-col items-center justify-start px-4 pt-8 pb-4 md:px-12 md:pt-12">
+    <!-- Content injected by JS -->
   </div>
 
   <script>
     const config = {
-      completion_message: "There are {count} vehicles!"
+      game_title: "Count the butterflies!",
+      completion_message: "Great job! There are {count} butterflies!",
+      counter_bg_color: "#FFFFFF",
+      counter_text_color: "#1F2937",
+      completion_bg_color: "#10B981",
+      font_family: "'Arial Black', Arial, system-ui, sans-serif",
+      font_size: 18
     };
 
-    let countedVehicles = new Set();
-    let totalVehicles = Math.floor(Math.random() * 9) + 2; // Strictly 2 to 10
+    let countedButterflies = new Set();
+    let totalButterflies = Math.floor(Math.random() * 7) + 4; // 4–10
 
-    const vibrantColors = ['#FF6B6B', '#FF8E53', '#FFD93D', '#6BCF7F', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF9FF3', '#54A0FF', '#48DBFB', '#A0E7E5', '#F7DC6F'];
-
-    const vehicleTemplates = [
-      (c1, c2, c3) => `<path d="M12 35 Q8 30 18 25 Q45 18 78 25 Q92 30 88 35 Q78 40 55 45 Q28 48 18 43 L12 35 Z" fill="${c1}"/>
-        <path d="M38 20 Q48 15 58 20 L62 32 L52 32 Z" fill="${c2}"/>
-        <g fill="#333" stroke="#fff" stroke-width="1.5"><circle cx="28" cy="52" r="7"/><circle cx="72" cy="52" r="7"/></g>
-        <rect x="42" y="22" width="16" height="7" rx="2" fill="#87CEEB" opacity="0.7"/>
-        <circle cx="82" cy="37" r="2.5" fill="${c3}"/>`,
-      (c1, c2, c3) => `<path d="M10 32 Q6 29 16 26 Q55 20 84 26 Q94 29 90 33 Q80 37 55 42 Q25 45 16 41 L10 32 Z" fill="${c1}"/>
-        <path d="M42 17 Q52 13 62 17 L67 31 L57 31 Z" fill="${c2}"/>
-        <g fill="#333" stroke="#fff" stroke-width="1.5"><circle cx="25" cy="49" r="8"/><circle cx="75" cy="49" r="8"/></g>
-        <rect x="46" y="19" width="18" height="8" rx="3" fill="#87CEEB" opacity="0.7"/>
-        <circle cx="80" cy="34" r="3" fill="${c3}"/>`,
-      (c1, c2, c3) => `<path d="M18 30 Q15 28 22 26 L78 26 Q82 28 78 30 L78 38 Q82 40 78 42 L22 42 Q18 40 22 38 Z" fill="${c1}"/>
-        <path d="M25 15 Q38 10 52 15 L62 30 L52 30 Z" fill="${c2}"/>
-        <g fill="#333" stroke="#fff" stroke-width="1.5"><circle cx="32" cy="50" r="8"/><circle cx="68" cy="50" r="8"/></g>
-        <rect x="36" y="18" width="20" height="8" rx="2" fill="#87CEEB" opacity="0.7"/>
-        <circle cx="72" cy="32" r="3" fill="${c3}"/>`,
-      (c1, c2, c3) => `<rect x="12" y="25" width="76" height="22" rx="8" fill="${c1}"/>
-        <path d="M20 12 Q32 6 48 12 L58 28 L48 28 Z" fill="${c2}"/>
-        <g fill="#333" stroke="#fff" stroke-width="1.5"><circle cx="30" cy="50" r="8"/><circle cx="70" cy="50" r="8"/></g>
-        <rect x="34" y="15" width="22" height="9" rx="3" fill="#87CEEB" opacity="0.7"/>
-        <circle cx="75" cy="29" r="3" fill="${c3}"/>`
+    const vibrantColors = [
+      '#FF6B6B', '#FF8E53', '#FFD93D', '#6BCF7F', '#4ECDC4', '#45B7D1',
+      '#96CEB4', '#FECA57', '#FF9FF3', '#54A0FF', '#48DBFB', '#A0E7E5', '#F7DC6F'
     ];
 
-    function generateVehicles() {
-      const container = document.getElementById('vehicles-container');
-      container.innerHTML = '';
-      countedVehicles.clear();
+    const butterflyTemplates = [
+      (c1, c2, c3, c4) =>
+        '<path d="M50 50 Q20 10, 10 30 Q5 50, 20 60 Q35 75, 50 50 Z" fill="' + c1 + '"/>' +
+        '<path d="M50 50 Q20 90, 10 70 Q5 50, 20 40 Q35 25, 50 50 Z" fill="' + c2 + '"/>' +
+        '<path d="M50 50 Q80 10, 90 30 Q95 50, 80 60 Q65 75, 50 50 Z" fill="' + c3 + '"/>' +
+        '<path d="M50 50 Q80 90, 90 70 Q95 50, 80 40 Q65 25, 50 50 Z" fill="' + c4 + '"/>',
+      (c1, c2, c3, c4) =>
+        '<path d="M50 50 Q25 15, 12 35 Q8 50, 22 65 Q32 80, 50 50 Z" fill="' + c1 + '"/>' +
+        '<path d="M50 50 Q25 85, 12 65 Q8 50, 22 35 Q32 20, 50 50 Z" fill="' + c2 + '"/>' +
+        '<path d="M50 50 Q75 15, 88 35 Q92 50, 78 65 Q68 80, 50 50 Z" fill="' + c3 + '"/>' +
+        '<path d="M50 50 Q75 85, 88 65 Q92 50, 78 35 Q68 20, 50 50 Z" fill="' + c4 + '"/>'
+    ];
 
-      const positions = [];
-      const minDistance = 60;
-      const safeMarginPercent = 12;
+    function renderGame() {
+      const app = document.getElementById('app');
 
-      for (let i = 0; i < totalVehicles; i++) {
-        let attempts = 0;
-        let pos;
-        do {
-          pos = {
-            top: safeMarginPercent + Math.random() * (100 - 2 * safeMarginPercent),
-            left: safeMarginPercent + Math.random() * (100 - 2 * safeMarginPercent),
-            rotation: Math.random() * 16 - 8
-          };
-          const tooClose = positions.some(p => Math.hypot(pos.top - p.top, pos.left - p.left) < minDistance);
-          attempts++;
-        } while (tooClose && attempts < 300);
-        positions.push(pos);
+      app.innerHTML = `
+        <h1 id="game-title" class="text-5xl md:text-6xl font-black mb-8 md:mb-12 text-center drop-shadow-lg" style="color: ${config.counter_text_color}; font-family: ${config.font_family}; font-size: ${config.font_size * 2.5}px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
+          ${config.game_title}
+        </h1>
 
-        const templateIdx = Math.floor(Math.random() * vehicleTemplates.length);
-        const colors = [...vibrantColors].sort(() => 0.5 - Math.random()).slice(0, 3);
-        const svgContent = vehicleTemplates[templateIdx](...colors);
+        <div id="counter" class="px-10 py-5 md:px-12 md:py-6 rounded-full shadow-2xl font-black mb-10 md:mb-14 text-3xl md:text-4xl tracking-wide" style="background: ${config.counter_bg_color}; color: ${config.counter_text_color}; font-family: ${config.font_family}; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+          0 / ${totalButterflies}
+        </div>
 
-        const vehicleEl = document.createElement('div');
-        vehicleEl.className = 'vehicle absolute';
-        vehicleEl.dataset.id = i;
-        vehicleEl.style.top = `${pos.top}%`;
-        vehicleEl.style.left = `${pos.left}%`;
-        vehicleEl.style.transform = `translate(-50%, -50%) rotate(${pos.rotation}deg)`;
-        vehicleEl.style.animationDelay = `${i * 0.4}s`;
+        <!-- Safe play area that keeps butterflies fully visible -->
+        <div class="play-area relative w-full flex-1 max-w-6xl mx-auto overflow-hidden">
+          ${generateButterflies()}
+        </div>
 
-        vehicleEl.innerHTML = `
-          <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
-            <g>${svgContent}</g>
-          </svg>
-          <div class="count-badge absolute -top-8 -right-8 bg-white text-gray-800 rounded-full w-24 h-24 flex items-center justify-center text-4xl font-black shadow-2xl border-8 border-yellow-400" style="display:none;"></div>
-        `;
-
-        container.appendChild(vehicleEl);
-      }
+        <div id="completion-modal" class="fixed top-16 md:top-20 left-1/2 transform -translate-x-1/2 z-50 px-12 md:px-16 py-10 md:py-12 rounded-3xl shadow-2xl text-white text-center hidden backdrop-blur-md border-4 border-white/20">
+          <p class="text-3xl md:text-4xl lg:text-5xl font-black mb-8 drop-shadow-lg"></p>
+          <button class="bg-white/20 hover:bg-white/40 backdrop-blur-sm px-10 md:px-12 py-4 md:py-5 rounded-full text-xl md:text-2xl font-black transition-all duration-300 shadow-2xl hover:scale-105">
+            🎉 Play Again 🎉
+          </button>
+        </div>
+      `;
 
       updateCounter();
       attachEventListeners();
     }
 
-    function updateCounter() {
-      document.getElementById('counter-header').textContent = `${countedVehicles.size} / ${totalVehicles}`;
+    function generateButterflies() {
+      const positions = [];
+      const minDistance = 50;
+
+      // Butterfly size is ~170px on desktop, smaller on mobile → safe margins
+      const safeMarginPercent = 15; // Keep at least 15% away from edges
+
+      for (let i = 0; i < totalButterflies; i++) {
+        let attempts = 0;
+        let newPos;
+        let tooClose;
+
+        do {
+          newPos = {
+            top: Math.random() * (100 - 2 * safeMarginPercent) + safeMarginPercent,
+            left: Math.random() * (100 - 2 * safeMarginPercent) + safeMarginPercent,
+            rotation: Math.random() * 80 - 40
+          };
+
+          tooClose = positions.some(pos => {
+            const dx = newPos.top - pos.top;
+            const dy = newPos.left - pos.left;
+            return Math.sqrt(dx * dx + dy * dy) < minDistance;
+          });
+
+          attempts++;
+          if (attempts > 200) break;
+        } while (tooClose);
+
+        positions.push(newPos);
+      }
+
+      return positions.map((pos, index) => {
+        const templateIdx = Math.floor(Math.random() * butterflyTemplates.length);
+        const colors = [...vibrantColors].sort(() => 0.5 - Math.random()).slice(0, 4);
+        const wings = butterflyTemplates[templateIdx](colors[0], colors[1], colors[2], colors[3]);
+        const delay = (index * 0.4) + 's';
+
+        return `
+          <div class="butterfly absolute" data-id="${index}" style="top: ${pos.top}%; left: ${pos.left}%; transform: translate(-50%, -50%) rotate(${pos.rotation}deg); animation-delay: ${delay};">
+            <svg width="170" height="170" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-2xl">
+              <g>
+                ${wings}
+                <ellipse cx="50" cy="50" rx="4" ry="20" fill="#2D3436"/>
+                <path d="M45 30 Q40 20, 38 12" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M55 30 Q60 20, 62 12" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <circle cx="38" cy="10" r="3" fill="#2D3436"/>
+                <circle cx="62" cy="10" r="3" fill="#2D3436"/>
+              </g>
+            </svg>
+            <div class="count-badge absolute -top-6 -right-6 bg-gradient-to-br from-white to-gray-100 text-gray-800 rounded-full w-20 h-20 flex items-center justify-center text-3xl font-black shadow-2xl border-4 border-white/50" style="display: none;"></div>
+          </div>
+        `;
+      }).join('');
     }
 
     function attachEventListeners() {
-      document.querySelectorAll('.vehicle').forEach(v => {
-        v.onclick = () => {
-          if (countedVehicles.has(v.dataset.id)) return;
-
-          countedVehicles.add(v.dataset.id);
-          v.classList.add('counted');
-
-          const badge = v.querySelector('.count-badge');
-          badge.textContent = countedVehicles.size;
-          badge.style.display = 'flex';
-
-          speakNumber(countedVehicles.size);
-
-          updateCounter();
-
-          if (countedVehicles.size === totalVehicles) {
-            setTimeout(showCompletion, 900);
-          }
-        };
+      document.querySelectorAll('.butterfly').forEach(butterfly => {
+        butterfly.addEventListener('click', handleButterflyClick);
       });
 
-      document.querySelector('#completion-modal button').onclick = resetGame;
+      const resetBtn = document.querySelector('#completion-modal button');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', resetGame);
+      }
+    }
+
+    function handleButterflyClick(e) {
+      const butterfly = e.currentTarget;
+      const id = butterfly.dataset.id;
+
+      if (countedButterflies.has(id)) return;
+
+      countedButterflies.add(id);
+      butterfly.classList.add('counted');
+
+      const badge = butterfly.querySelector('.count-badge');
+      const currentCount = countedButterflies.size;
+      badge.textContent = currentCount;
+      badge.style.display = 'flex';
+
+      speakNumber(currentCount);
+
+      updateCounter();
+
+      if (countedButterflies.size === totalButterflies) {
+        setTimeout(showCompletion, 800);
+      }
     }
 
     function speakNumber(num) {
       if ('speechSynthesis' in window) {
-        speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(num.toString());
-        utter.lang = 'en-US';
-        utter.rate = 0.8;
-        utter.pitch = 1.1;
-        utter.volume = 1;
-        speechSynthesis.speak(utter);
+        const utterance = new SpeechSynthesisUtterance(num.toString());
+        utterance.lang = 'en-US';
+        utterance.rate = 0.8;
+        utterance.pitch = 1.2;
+        utterance.volume = 0.9;
+        speechSynthesis.cancel(); // Clear queue for smooth counting
+        speechSynthesis.speak(utterance);
+      }
+    }
+
+    function updateCounter() {
+      const counter = document.getElementById('counter');
+      if (counter) {
+        counter.innerHTML = `<span class="text-4xl md:text-5xl">${countedButterflies.size}</span> / ${totalButterflies}`;
       }
     }
 
     function showCompletion() {
-      document.getElementById('completion-text').textContent = config.completion_message.replace('{count}', totalVehicles);
-      document.querySelector('#completion-modal > div').classList.remove('hidden');
-      speakNumber(totalVehicles);
+      const modal = document.getElementById('completion-modal');
+      const message = config.completion_message.replace('{count}', totalButterflies);
+      modal.querySelector('p').textContent = message;
+      modal.style.background = `linear-gradient(135deg, ${config.completion_bg_color}, ${config.completion_bg_color}cc)`;
+      modal.classList.remove('hidden');
+      speakNumber(totalButterflies);
     }
 
     function resetGame() {
-      totalVehicles = Math.floor(Math.random() * 9) + 2; // 2–10 again
-      document.querySelector('#completion-modal > div').classList.add('hidden');
+      countedButterflies.clear();
+      totalButterflies = Math.floor(Math.random() * 7) + 4;
+      document.getElementById('completion-modal').classList.add('hidden');
       speechSynthesis.cancel();
-      generateVehicles();
+      renderGame();
     }
 
-    generateVehicles();
-
-    window.addEventListener('resize', generateVehicles);
-    window.addEventListener('orientationchange', () => setTimeout(generateVehicles, 300));
+    // Start the game
+    renderGame();
   </script>
 </body>
 </html>
