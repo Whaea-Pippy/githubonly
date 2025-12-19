@@ -78,20 +78,25 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Responsive adjustments */
+    /* Keep butterflies fully visible on all screens */
     @media (max-width: 768px) {
-      .butterfly svg { width: 120px !important; height: 120px !important; }
+      .butterfly svg { width: 130px !important; height: 130px !important; }
       #counter { font-size: 2rem !important; padding: 1rem 2rem !important; }
+      .play-area { min-height: 60vh !important; }
+    }
+
+    @media (max-width: 480px) {
+      .butterfly svg { width: 110px !important; height: 110px !important; }
+      .play-area { min-height: 55vh !important; }
     }
   </style>
 </head>
 <body class="h-screen overflow-hidden game-background">
-  <div id="app" class="w-full h-full flex flex-col items-center justify-start p-8 md:p-12">
+  <div id="app" class="w-full h-full flex flex-col items-center justify-start px-4 pt-8 pb-4 md:px-12 md:pt-12">
     <!-- Content injected by JS -->
   </div>
 
   <script>
-    // Config - easy to customize
     const config = {
       game_title: "Count the butterflies!",
       completion_message: "Great job! There are {count} butterflies!",
@@ -103,7 +108,7 @@
     };
 
     let countedButterflies = new Set();
-    let totalButterflies = Math.floor(Math.random() * 7) + 4; // 4–10 for better spread
+    let totalButterflies = Math.floor(Math.random() * 7) + 4; // 4–10
 
     const vibrantColors = [
       '#FF6B6B', '#FF8E53', '#FFD93D', '#6BCF7F', '#4ECDC4', '#45B7D1',
@@ -111,13 +116,11 @@
     ];
 
     const butterflyTemplates = [
-      // Template 1
       (c1, c2, c3, c4) =>
         '<path d="M50 50 Q20 10, 10 30 Q5 50, 20 60 Q35 75, 50 50 Z" fill="' + c1 + '"/>' +
         '<path d="M50 50 Q20 90, 10 70 Q5 50, 20 40 Q35 25, 50 50 Z" fill="' + c2 + '"/>' +
         '<path d="M50 50 Q80 10, 90 30 Q95 50, 80 60 Q65 75, 50 50 Z" fill="' + c3 + '"/>' +
         '<path d="M50 50 Q80 90, 90 70 Q95 50, 80 40 Q65 25, 50 50 Z" fill="' + c4 + '"/>',
-      // Template 2
       (c1, c2, c3, c4) =>
         '<path d="M50 50 Q25 15, 12 35 Q8 50, 22 65 Q32 80, 50 50 Z" fill="' + c1 + '"/>' +
         '<path d="M50 50 Q25 85, 12 65 Q8 50, 22 35 Q32 20, 50 50 Z" fill="' + c2 + '"/>' +
@@ -129,21 +132,22 @@
       const app = document.getElementById('app');
 
       app.innerHTML = `
-        <h1 id="game-title" class="text-5xl md:text-6xl font-black mb-10 md:mb-12 text-center drop-shadow-lg" style="color: ${config.counter_text_color}; font-family: ${config.font_family}; font-size: ${config.font_size * 2.5}px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
+        <h1 id="game-title" class="text-5xl md:text-6xl font-black mb-8 md:mb-12 text-center drop-shadow-lg" style="color: ${config.counter_text_color}; font-family: ${config.font_family}; font-size: ${config.font_size * 2.5}px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
           ${config.game_title}
         </h1>
 
-        <div id="counter" class="px-10 py-5 md:px-12 md:py-6 rounded-full shadow-2xl font-black mb-12 md:mb-16 text-3xl md:text-4xl tracking-wide" style="background: ${config.counter_bg_color}; color: ${config.counter_text_color}; font-family: ${config.font_family}; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        <div id="counter" class="px-10 py-5 md:px-12 md:py-6 rounded-full shadow-2xl font-black mb-10 md:mb-14 text-3xl md:text-4xl tracking-wide" style="background: ${config.counter_bg_color}; color: ${config.counter_text_color}; font-family: ${config.font_family}; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
           0 / ${totalButterflies}
         </div>
 
-        <div class="relative w-full max-w-6xl mx-auto" style="min-height: 70vh; max-height: 75vh;">
+        <!-- Safe play area that keeps butterflies fully visible -->
+        <div class="play-area relative w-full flex-1 max-w-6xl mx-auto overflow-hidden">
           ${generateButterflies()}
         </div>
 
         <div id="completion-modal" class="fixed top-16 md:top-20 left-1/2 transform -translate-x-1/2 z-50 px-12 md:px-16 py-10 md:py-12 rounded-3xl shadow-2xl text-white text-center hidden backdrop-blur-md border-4 border-white/20">
           <p class="text-3xl md:text-4xl lg:text-5xl font-black mb-8 drop-shadow-lg"></p>
-          <button class="bg-white/20 hover:bg-white/40 backdrop-blur-sm px-10 md:px-12 py-4 md:py-5 rounded-full text-xl md:text-2xl font-black transition-all duration-300 shadow-2xl hover:scale-105 hover:shadow-3xl">
+          <button class="bg-white/20 hover:bg-white/40 backdrop-blur-sm px-10 md:px-12 py-4 md:py-5 rounded-full text-xl md:text-2xl font-black transition-all duration-300 shadow-2xl hover:scale-105">
             🎉 Play Again 🎉
           </button>
         </div>
@@ -155,7 +159,10 @@
 
     function generateButterflies() {
       const positions = [];
-      const minDistance = 50; // Increased for no touching
+      const minDistance = 50;
+
+      // Butterfly size is ~170px on desktop, smaller on mobile → safe margins
+      const safeMarginPercent = 15; // Keep at least 15% away from edges
 
       for (let i = 0; i < totalButterflies; i++) {
         let attempts = 0;
@@ -164,9 +171,9 @@
 
         do {
           newPos = {
-            top: Math.random() * 70 + 8,  // Wider vertical spread: 8-78%
-            left: Math.random() * 82 + 6, // Wider horizontal: 6-88%
-            rotation: Math.random() * 80 - 40 // More natural rotation range
+            top: Math.random() * (100 - 2 * safeMarginPercent) + safeMarginPercent,
+            left: Math.random() * (100 - 2 * safeMarginPercent) + safeMarginPercent,
+            rotation: Math.random() * 80 - 40
           };
 
           tooClose = positions.some(pos => {
@@ -176,7 +183,7 @@
           });
 
           attempts++;
-          if (attempts > 200) break; // Prevent infinite loop
+          if (attempts > 200) break;
         } while (tooClose);
 
         positions.push(newPos);
@@ -186,26 +193,21 @@
         const templateIdx = Math.floor(Math.random() * butterflyTemplates.length);
         const colors = [...vibrantColors].sort(() => 0.5 - Math.random()).slice(0, 4);
         const wings = butterflyTemplates[templateIdx](colors[0], colors[1], colors[2], colors[3]);
-        const delay = (index * 0.5) + 's'; // Staggered float animation start
+        const delay = (index * 0.4) + 's';
 
         return `
-          <div class="butterfly absolute" data-id="${index}" style="top: ${pos.top}%; left: ${pos.left}%; transform: rotate(${pos.rotation}deg); animation-delay: ${delay};">
-            <svg width="170" height="170" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <div class="butterfly absolute" data-id="${index}" style="top: ${pos.top}%; left: ${pos.left}%; transform: translate(-50%, -50%) rotate(${pos.rotation}deg); animation-delay: ${delay};">
+            <svg width="170" height="170" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-2xl">
               <g>
                 ${wings}
-                <ellipse cx="50" cy="50" rx="4" ry="20" fill="#2D3436" filter="url(#bodyGlow)"/>
-                <path d="M45 30 Q40 20, 38 12" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M55 30 Q60 20, 62 12" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <ellipse cx="50" cy="50" rx="4" ry="20" fill="#2D3436"/>
+                <path d="M45 30 Q40 20, 38 12" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M55 30 Q60 20, 62 12" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round"/>
                 <circle cx="38" cy="10" r="3" fill="#2D3436"/>
                 <circle cx="62" cy="10" r="3" fill="#2D3436"/>
               </g>
-              <defs>
-                <filter id="bodyGlow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#fff" flood-opacity="0.3"/>
-                </filter>
-              </defs>
             </svg>
-            <div class="count-badge absolute -top-6 -right-6 bg-gradient-to-br from-white to-gray-100 text-gray-800 rounded-full w-20 h-20 flex items-center justify-center text-3xl font-black shadow-2xl border-4 border-white/50" style="display: none; box-shadow: 0 8px 25px rgba(0,0,0,0.3);"></div>
+            <div class="count-badge absolute -top-6 -right-6 bg-gradient-to-br from-white to-gray-100 text-gray-800 rounded-full w-20 h-20 flex items-center justify-center text-3xl font-black shadow-2xl border-4 border-white/50" style="display: none;"></div>
           </div>
         `;
       }).join('');
@@ -236,7 +238,6 @@
       badge.textContent = currentCount;
       badge.style.display = 'flex';
 
-      // Sound: Speak the number with natural voice
       speakNumber(currentCount);
 
       updateCounter();
@@ -253,6 +254,7 @@
         utterance.rate = 0.8;
         utterance.pitch = 1.2;
         utterance.volume = 0.9;
+        speechSynthesis.cancel(); // Clear queue for smooth counting
         speechSynthesis.speak(utterance);
       }
     }
@@ -270,21 +272,19 @@
       modal.querySelector('p').textContent = message;
       modal.style.background = `linear-gradient(135deg, ${config.completion_bg_color}, ${config.completion_bg_color}cc)`;
       modal.classList.remove('hidden');
-      speakNumber(totalButterflies); // Celebrate with final count!
+      speakNumber(totalButterflies);
     }
 
     function resetGame() {
       countedButterflies.clear();
       totalButterflies = Math.floor(Math.random() * 7) + 4;
       document.getElementById('completion-modal').classList.add('hidden');
-      speechSynthesis.cancel(); // Stop any ongoing speech
+      speechSynthesis.cancel();
       renderGame();
     }
 
-    // Auto-start & handle resize/orientation
+    // Start the game
     renderGame();
-    window.addEventListener('resize', renderGame);
-    window.addEventListener('orientationchange', () => setTimeout(renderGame, 300));
   </script>
 </body>
 </html>
