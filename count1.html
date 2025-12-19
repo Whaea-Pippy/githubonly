@@ -5,254 +5,169 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Count the Cars & Trucks!</title>
 <script src="https://cdn.tailwindcss.com"></script>
-
 <style>
 html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  font-family: system-ui, sans-serif;
 }
-
 body {
-  background: linear-gradient(135deg,#87CEEB,#B8E6F2,#D4F4DD,#F0F8D4);
-  display: flex;
-  flex-direction: column;
+  background: linear-gradient(135deg, #87CEEB, #B8E6F2, #D4F4DD, #F0E8D4);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
-
-header {
-  text-align: center;
-  padding: 0.5rem;
-}
-
-#counter {
-  margin-top: 0.5rem;
-  font-weight: bold;
-  color: #FBBF24;
-}
-
-.play-area {
-  flex: 1;
-  border: 10px dashed white;
-  border-radius: 2rem;
-  margin: 0.5rem;
-  position: relative;
-  overflow: hidden;
-  background: rgba(255,255,255,0.1);
-}
-
-.vehicle {
-  position: absolute;
-  cursor: pointer;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.3));
-}
-
-.vehicle-inner {
-  width: 100%;
-  height: 100%;
-  animation: float 4s ease-in-out infinite alternate;
+/* Vehicle visuals */
+.vehicle svg {
+  width: clamp(90px, 18vw, 160px);
+  height: auto;
   transition: transform 0.25s ease;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
 }
-
-.vehicle:hover .vehicle-inner {
-  transform: scale(1.15);
+.vehicle:hover svg {
+  transform: scale(1.15) translateY(-6px);
 }
-
 .vehicle.counted {
-  opacity: 0.5;
+  opacity: 0.4;
   pointer-events: none;
 }
-
-.vehicle.counted .vehicle-inner {
-  animation: none;
-}
-
-@keyframes float {
-  from { transform: translateY(0); }
-  to { transform: translateY(-8px); }
-}
-
+/* Count badge */
 .count-badge {
   position: absolute;
-  top: -28px;
-  right: -28px;
-  width: 60px;
-  height: 60px;
-  border-radius: 999px;
+  top: -12px;
+  right: -12px;
+  width: 50px;
+  height: 50px;
   background: white;
+  border-radius: 999px;
   display: none;
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 2rem;
-  border: 5px solid #FBBF24;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  pointer-events: none;
-}
-
-#completion-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#completion-modal .modal-content {
-  background: linear-gradient(to bottom right, #10B981, #059669);
-  padding: 3rem;
-  border-radius: 2rem;
-  text-align: center;
-  color: white;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-#completion-modal button {
-  margin-top: 1.5rem;
-  padding: 0.75rem 2rem;
-  font-size: 1.5rem;
-  font-weight: 900;
-  border-radius: 1.5rem;
-  background: rgba(255,255,255,0.3);
-  border: none;
-  cursor: pointer;
+  font-size: 1.4rem;
+  border: 4px solid #FBBF24;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
 }
 </style>
 </head>
-
 <body>
-
-<header>
-  <h1 class="text-4xl md:text-5xl font-black text-white drop-shadow-xl">Count the Cars & Trucks!</h1>
-  <div id="counter" class="text-3xl md:text-4xl">0 / 0</div>
-</header>
-
-<main class="flex-1">
-  <div class="play-area">
-    <div id="vehicles-container" class="absolute inset-0"></div>
+<div class="h-full flex flex-col px-4 pt-4">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-3">
+    <h1 class="text-3xl md:text-4xl font-black text-white drop-shadow-lg">Count the Cars & Trucks!</h1>
+    <div id="counter" class="text-2xl md:text-3xl font-black bg-white px-6 py-3 rounded-full shadow-lg">
+      0 / 0
+    </div>
   </div>
-</main>
-
-<div id="completion-modal">
-  <div class="modal-content">
-    <p id="completion-text" class="text-3xl font-black mb-6"></p>
-    <button id="next-btn">Next ▶</button>
+  <!-- Play Area -->
+  <div id="play-area"
+       class="flex-1 border-8 border-white/70 rounded-3xl bg-white/20 shadow-inner
+              grid place-items-center overflow-hidden">
+    <div id="grid"
+         class="w-full h-full grid place-items-center gap-8 px-6 py-6">
+    </div>
   </div>
 </div>
-
+<!-- Completion Modal -->
+<div id="completion"
+     class="hidden fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+  <div class="bg-gradient-to-br from-emerald-500 to-green-600 text-white px-12 py-12 rounded-3xl shadow-2xl text-center max-w-md w-full mx-4">
+    <p id="completion-text" class="text-3xl md:text-4xl font-black mb-8"></p>
+    <button onclick="resetGame()"
+            class="bg-white/30 hover:bg-white/40 px-10 py-4 rounded-full text-xl font-black transition transform hover:scale-105">
+      Play Again ▶
+    </button>
+  </div>
+</div>
 <script>
-const colors = ['#FF6B6B','#FFD93D','#6BCF7F','#4ECDC4','#54A0FF','#FF9FF3'];
-
-let counted = new Set();
-let lastTotal = null;
 let total = 0;
+let lastTotal = null;
+let counted = new Set();
+const colors = [
+  "#FF6B6B","#FFD93D","#6BCF7F","#4ECDC4",
+  "#54A0FF","#FF9FF3","#FF8A65","#7FDBFF"
+];
 
-function speakNumber(n){
-  if('speechSynthesis' in window){
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(n.toString());
-    u.lang = 'en-US';
-    u.rate = 0.8;
-    speechSynthesis.speak(u);
-  }
+function speak(n){
+  if(!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(n.toString());
+  u.rate = 0.85;
+  u.pitch = 1.1;
+  speechSynthesis.speak(u);
 }
 
 function pickTotal(){
   let n;
-  do { n = Math.floor(Math.random()*6)+3 } while(n===lastTotal);
+  do {
+    n = Math.floor(Math.random()*7)+4; // 4–10 vehicles
+  } while (n === lastTotal);
   lastTotal = n;
   return n;
 }
 
-function boxesOverlap(a,b,margin=20){
-  return !(
-    a.x + a.w + margin < b.x ||
-    a.x > b.x + b.w + margin ||
-    a.y + a.h + margin < b.y ||
-    a.y > b.y + b.h + margin
-  );
-}
-
-function createVehicles(){
+function render(){
   counted.clear();
   total = pickTotal();
-  document.getElementById('counter').textContent = `0 / ${total}`;
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  document.getElementById("counter").textContent = `0 / ${total}`;
 
-  const container = document.getElementById('vehicles-container');
-  container.innerHTML = '';
-  const bounds = container.getBoundingClientRect();
-  const W = Math.min(Math.max(bounds.width*0.18,120),200);
-  const H = W*0.6;
-  const placed = [];
+  const area = document.getElementById("play-area").getBoundingClientRect();
+  const size = Math.min(Math.max(window.innerWidth * 0.18, 90), 160);
+  const cols = Math.max(2, Math.floor(area.width / (size + 40)));
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
-  for(let i=0;i<total;i++){
-    let box, tries=0;
-    do {
-      box = {x:Math.random()*(bounds.width-W), y:Math.random()*(bounds.height-H), w: W, h: H};
-      tries++;
-    } while(placed.some(p=>boxesOverlap(p,box)) && tries<800);
-    placed.push(box);
-
-    const v = document.createElement('div');
-    v.className = 'vehicle';
-    v.style.left = box.x+'px';
-    v.style.top = box.y+'px';
-    v.style.width = W+'px';
-    v.style.height = H+'px';
-
-    const c = [...colors].sort(()=>0.5-Math.random());
+  for(let i = 0; i < total; i++){
+    const v = document.createElement("div");
+    v.className = "vehicle relative cursor-pointer";
+    const color = colors[Math.floor(Math.random() * colors.length)];
 
     v.innerHTML = `
-      <div class="vehicle-inner">
-        <svg viewBox="0 0 100 60" width="100%" height="100%">
-          <rect x="10" y="25" width="80" height="20" rx="8" fill="${c[0]}"/>
-          <circle cx="25" cy="50" r="10" fill="#333"/>
-          <circle cx="75" cy="50" r="10" fill="#333"/>
-        </svg>
-      </div>
+      <svg viewBox="0 0 120 70">
+        <!-- Car body -->
+        <rect x="15" y="20" width="90" height="30" rx="12" fill="${color}"/>
+        <!-- Cab window (for trucks sometimes) -->
+        <rect x="80" y="12" width="30" height="20" rx="6" fill="${color}" opacity="0.7"/>
+        <!-- Wheels -->
+        <circle cx="30" cy="55" r="12" fill="#212529"/>
+        <circle cx="90" cy="55" r="12" fill="#212529"/>
+        <!-- Windows -->
+        <rect x="25" y="25" width="35" height="18" rx="4" fill="#1E293B" opacity="0.6"/>
+        <rect x="65" y="25" width="35" height="18" rx="4" fill="#1E293B" opacity="0.6"/>
+      </svg>
       <div class="count-badge"></div>
     `;
 
     v.onclick = () => {
       if(counted.has(i)) return;
       counted.add(i);
-      v.classList.add('counted');
-
-      const badge = v.querySelector('.count-badge');
+      v.classList.add("counted");
+      const badge = v.querySelector(".count-badge");
       badge.textContent = counted.size;
-      badge.style.display = 'flex';
-
-      document.getElementById('counter').textContent = `${counted.size} / ${total}`;
-      speakNumber(counted.size);
+      badge.style.display = "flex";
+      document.getElementById("counter").textContent = `${counted.size} / ${total}`;
+      speak(counted.size);
 
       if(counted.size === total){
-        setTimeout(showCompletion,600);
+        setTimeout(showCompletion, 600);
       }
     };
-
-    container.appendChild(v);
+    grid.appendChild(v);
   }
 }
 
 function showCompletion(){
-  const modal = document.getElementById('completion-modal');
-  document.getElementById('completion-text').textContent = `Great job! There are ${total} cars!`;
-  modal.style.display = 'flex';
-  speakNumber(total);
+  document.getElementById("completion-text").textContent = `Great job! There are ${total} vehicles!`;
+  document.getElementById("completion").classList.remove("hidden");
+  speak(total);
 }
 
-document.getElementById('next-btn').onclick = () => {
-  document.getElementById('completion-modal').style.display = 'none';
-  createVehicles();
-};
+function resetGame(){
+  document.getElementById("completion").classList.add("hidden");
+  render();
+}
 
-window.addEventListener('resize', createVehicles);
-createVehicles();
+window.addEventListener("resize", render);
+render();
 </script>
 </body>
 </html>
