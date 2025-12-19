@@ -3,74 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Count the Butterflies!</title>
+<title>Count the Butterflies</title>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
 html, body {
-  height: 100%;
   margin: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
-  overflow: hidden; /* 🚫 no scrolling */
+  background: linear-gradient(135deg, #a8e6cf, #dcedc1, #ffe0b5);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* ---------- BACKGROUND ---------- */
-.game-background {
-  background: linear-gradient(135deg, #a8e6cf, #dcedc1, #f4e1d2, #ffe0b5, #ffd4b3);
-  background-size: 400% 400%;
-  animation: softGradientShift 25s ease infinite;
+.butterfly svg {
+  width: clamp(80px, 18vw, 140px);
+  height: auto;
+  transition: transform 0.3s ease;
 }
 
-@keyframes softGradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* ---------- HEADER ---------- */
-.game-header {
-  height: 96px; /* fixed, compact */
-}
-
-/* ---------- PLAY AREA ---------- */
-.play-area {
-  border: 10px dashed rgba(255,255,255,0.9);
-  border-radius: 2rem;
-  padding: 1.75rem;
-  background: rgba(255,255,255,0.15);
-  height: 100%;
-}
-
-/* ---------- GRID ---------- */
-#butterfly-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 2.5rem;
-  height: 100%;
-}
-
-/* ---------- CELL ---------- */
-.butterfly-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ---------- BUTTERFLY ---------- */
-.butterfly {
-  position: relative;
-  cursor: pointer;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
-}
-
-.butterfly-inner {
-  animation: gentleFloat 3s ease-in-out infinite alternate;
-  transition: transform 0.35s cubic-bezier(0.68,-0.55,0.265,1.55);
-}
-
-.butterfly:hover .butterfly-inner {
+.butterfly:hover svg {
   transform: scale(1.15) rotate(8deg);
 }
 
@@ -79,109 +33,111 @@ body {
   pointer-events: none;
 }
 
-.butterfly.counted .butterfly-inner {
-  animation: none;
-}
-
-/* ---------- ANIMATIONS ---------- */
-@keyframes gentleFloat {
-  from { transform: translateY(0); }
-  to { transform: translateY(-8px); }
-}
-
-/* ---------- BADGE ---------- */
 .count-badge {
   position: absolute;
-  top: -22px;
-  right: -22px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
+  top: -10px;
+  right: -10px;
+  width: 48px;
+  height: 48px;
   background: white;
+  border-radius: 999px;
   display: none;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
   font-weight: 900;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  border: 4px solid #FDE68A;
+  font-size: 1.25rem;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
 }
 
-/* ---------- MODAL ---------- */
-#completion-modal {
-  background: rgba(0,0,0,0.45);
+#completion {
+  animation: drop 0.4s ease-out;
+}
+
+@keyframes drop {
+  from { transform: translate(-50%, -30px); opacity: 0; }
+  to   { transform: translate(-50%, 0); opacity: 1; }
 }
 </style>
 </head>
 
-<body class="game-background flex flex-col">
+<body>
+<div class="h-full flex flex-col px-4 pt-4">
 
-<!-- HEADER -->
-<header class="game-header px-6 flex items-center justify-between">
-  <h1 class="text-4xl md:text-5xl font-black drop-shadow-lg">
-    Count the butterflies!
-  </h1>
-
-  <div id="counter"
-    class="px-8 py-3 rounded-full bg-white text-gray-800 text-3xl md:text-4xl font-black shadow-2xl">
-    0 / 0
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-3">
+    <h1 class="text-3xl md:text-4xl font-black">Count the butterflies!</h1>
+    <div id="counter" class="text-2xl md:text-3xl font-black bg-white px-5 py-2 rounded-full shadow">
+      0 / 0
+    </div>
   </div>
-</header>
 
-<!-- PLAY AREA -->
-<main class="flex-1 px-4 pb-4">
-  <div class="play-area max-w-6xl mx-auto h-full">
-    <div id="butterfly-grid"></div>
-  </div>
-</main>
-
-<!-- COMPLETION MODAL -->
-<div id="completion-modal" class="fixed inset-0 hidden flex items-center justify-center z-50">
-  <div class="bg-emerald-500 px-14 py-16 rounded-3xl text-white text-center shadow-2xl border-8 border-white/40">
-    <p id="completion-text" class="text-4xl md:text-5xl font-black mb-10"></p>
-    <button id="restart"
-      class="bg-white/30 hover:bg-white/50 px-12 py-6 rounded-full text-3xl font-black">
-      🎉 Play Again 🎉
-    </button>
+  <!-- Play Area -->
+  <div id="play-area" class="flex-1 grid place-items-center overflow-hidden">
+    <div id="grid" class="grid gap-6 w-full h-full place-items-center"></div>
   </div>
 </div>
 
+<!-- Completion -->
+<div id="completion" class="hidden fixed top-6 left-1/2 bg-emerald-500 text-white px-10 py-6 rounded-3xl shadow-2xl text-center">
+  <p id="completion-text" class="text-2xl md:text-3xl font-black mb-4"></p>
+  <button onclick="resetGame()" class="bg-white/20 px-8 py-3 rounded-full font-black hover:bg-white/30">
+    Play again
+  </button>
+</div>
+
 <script>
-let counted = new Set();
 let total = Math.floor(Math.random()*7)+4;
+let counted = new Set();
 
-const colors = ['#FF6B6B','#FF8E53','#FFD93D','#6BCF7F','#4ECDC4','#54A0FF'];
-
-document.getElementById("counter").textContent = `0 / ${total}`;
+const colors = [
+  "#FF6B6B","#FFD93D","#6BCF7F","#4ECDC4",
+  "#54A0FF","#FF9FF3","#FECA57","#A0E7E5"
+];
 
 function speak(n){
+  if(!("speechSynthesis" in window)) return;
   speechSynthesis.cancel();
-  speechSynthesis.speak(new SpeechSynthesisUtterance(n.toString()));
+  const u=new SpeechSynthesisUtterance(n.toString());
+  u.rate=0.85;
+  u.pitch=1.2;
+  speechSynthesis.speak(u);
 }
 
-function createButterflies(){
-  const grid = document.getElementById("butterfly-grid");
-  grid.innerHTML="";
+function calculateFit(){
+  const area=document.getElementById("play-area").getBoundingClientRect();
+  const size=Math.min(Math.max(window.innerWidth*0.18,80),140);
+  const cols=Math.floor(area.width/(size+24));
+  const rows=Math.floor(area.height/(size+24));
+  return Math.max(1,cols*rows);
+}
+
+function render(){
   counted.clear();
+  const grid=document.getElementById("grid");
+  grid.innerHTML="";
+
+  const maxFit=calculateFit();
+  total=Math.min(total,maxFit);
+
+  document.getElementById("counter").textContent=`0 / ${total}`;
+
+  const cols=Math.ceil(Math.sqrt(total));
+  grid.style.gridTemplateColumns=`repeat(${cols},1fr)`;
 
   for(let i=0;i<total;i++){
-    const cell=document.createElement("div");
-    cell.className="butterfly-cell";
-
     const b=document.createElement("div");
-    b.className="butterfly";
+    b.className="butterfly relative cursor-pointer";
 
     const c=[...colors].sort(()=>Math.random()-0.5);
+
     b.innerHTML=`
-      <div class="butterfly-inner">
-        <svg width="150" height="150" viewBox="0 0 100 100">
-          <path d="M50 50 Q20 10, 10 30 Q5 50, 20 60 Q35 75, 50 50 Z" fill="${c[0]}"/>
-          <path d="M50 50 Q20 90, 10 70 Q5 50, 20 40 Q35 25, 50 50 Z" fill="${c[1]}"/>
-          <path d="M50 50 Q80 10, 90 30 Q95 50, 80 60 Q65 75, 50 50 Z" fill="${c[2]}"/>
-          <path d="M50 50 Q80 90, 90 70 Q95 50, 80 40 Q65 25, 50 50 Z" fill="${c[3] || c[0]}"/>
-          <ellipse cx="50" cy="50" rx="4" ry="20" fill="#2D3436"/>
-        </svg>
-      </div>
+      <svg viewBox="0 0 100 100">
+        <path d="M50 50 Q20 10 10 30 Q5 50 20 60 Q35 75 50 50Z" fill="${c[0]}"/>
+        <path d="M50 50 Q20 90 10 70 Q5 50 20 40 Q35 25 50 50Z" fill="${c[1]}"/>
+        <path d="M50 50 Q80 10 90 30 Q95 50 80 60 Q65 75 50 50Z" fill="${c[2]}"/>
+        <path d="M50 50 Q80 90 90 70 Q95 50 80 40 Q65 25 50 50Z" fill="${c[3]||c[0]}"/>
+        <ellipse cx="50" cy="50" rx="4" ry="18" fill="#2D3436"/>
+      </svg>
       <div class="count-badge"></div>
     `;
 
@@ -194,35 +150,33 @@ function createButterflies(){
       badge.textContent=counted.size;
       badge.style.display="flex";
 
-      document.getElementById("counter").textContent =
+      document.getElementById("counter").textContent=
         `${counted.size} / ${total}`;
 
       speak(counted.size);
 
       if(counted.size===total){
         setTimeout(()=>{
-          document.getElementById("completion-text").textContent =
+          document.getElementById("completion-text").textContent=
             `Great job! There are ${total} butterflies!`;
-          document.getElementById("completion-modal").classList.remove("hidden");
+          document.getElementById("completion").classList.remove("hidden");
           speak(total);
-        },700);
+        },600);
       }
     };
 
-    cell.appendChild(b);
-    grid.appendChild(cell);
+    grid.appendChild(b);
   }
 }
 
-document.getElementById("restart").onclick=()=>{
+function resetGame(){
+  document.getElementById("completion").classList.add("hidden");
   total=Math.floor(Math.random()*7)+4;
-  document.getElementById("counter").textContent=`0 / ${total}`;
-  document.getElementById("completion-modal").classList.add("hidden");
-  createButterflies();
-};
+  render();
+}
 
-createButterflies();
+window.addEventListener("resize",render);
+render();
 </script>
-
 </body>
 </html>
