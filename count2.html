@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +7,13 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
-  margin:0;
-  height:100vh;
+  overflow: hidden; /* 🚫 no scrolling */
 }
 
 /* ---------- BACKGROUND ---------- */
@@ -25,19 +29,25 @@ body {
   100% { background-position: 0% 50%; }
 }
 
+/* ---------- HEADER ---------- */
+.game-header {
+  height: 96px; /* fixed, compact */
+}
+
 /* ---------- PLAY AREA ---------- */
 .play-area {
   border: 10px dashed rgba(255,255,255,0.9);
   border-radius: 2rem;
-  padding: 2.5rem;
+  padding: 1.75rem;
   background: rgba(255,255,255,0.15);
+  height: 100%;
 }
 
 /* ---------- GRID ---------- */
 #butterfly-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 3rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2.5rem;
   height: 100%;
 }
 
@@ -64,10 +74,6 @@ body {
   transform: scale(1.15) rotate(8deg);
 }
 
-.butterfly:active .butterfly-inner {
-  animation: wingFlap 0.2s ease-out;
-}
-
 .butterfly.counted {
   opacity: 0.4;
   pointer-events: none;
@@ -83,27 +89,22 @@ body {
   to { transform: translateY(-8px); }
 }
 
-@keyframes wingFlap {
-  0%,100% { transform: scale(1.1) rotate(5deg); }
-  50% { transform: scale(1.18) rotate(15deg); }
-}
-
 /* ---------- BADGE ---------- */
 .count-badge {
   position: absolute;
-  top: -24px;
-  right: -24px;
-  width: 64px;
-  height: 64px;
+  top: -22px;
+  right: -22px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: white;
   display: none;
   align-items: center;
   justify-content: center;
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 900;
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  border: 5px solid #FDE68A;
+  border: 4px solid #FDE68A;
 }
 
 /* ---------- MODAL ---------- */
@@ -115,18 +116,20 @@ body {
 
 <body class="game-background flex flex-col">
 
-<header class="text-center py-8">
-  <h1 class="text-5xl md:text-6xl font-black drop-shadow-lg">
+<!-- HEADER -->
+<header class="game-header px-6 flex items-center justify-between">
+  <h1 class="text-4xl md:text-5xl font-black drop-shadow-lg">
     Count the butterflies!
   </h1>
 
   <div id="counter"
-    class="mt-6 inline-block px-10 py-5 rounded-full bg-white text-gray-800 text-3xl md:text-4xl font-black shadow-2xl">
+    class="px-8 py-3 rounded-full bg-white text-gray-800 text-3xl md:text-4xl font-black shadow-2xl">
     0 / 0
   </div>
 </header>
 
-<main class="flex-1 px-4 pb-6">
+<!-- PLAY AREA -->
+<main class="flex-1 px-4 pb-4">
   <div class="play-area max-w-6xl mx-auto h-full">
     <div id="butterfly-grid"></div>
   </div>
@@ -147,19 +150,7 @@ body {
 let counted = new Set();
 let total = Math.floor(Math.random()*7)+4;
 
-const colors = [
-  '#FF6B6B','#FF8E53','#FFD93D','#6BCF7F','#4ECDC4',
-  '#45B7D1','#FECA57','#FF9FF3','#54A0FF'
-];
-
-const templates = [
-  (a,b,c,d)=>`
-    <path d="M50 50 Q20 10, 10 30 Q5 50, 20 60 Q35 75, 50 50 Z" fill="${a}"/>
-    <path d="M50 50 Q20 90, 10 70 Q5 50, 20 40 Q35 25, 50 50 Z" fill="${b}"/>
-    <path d="M50 50 Q80 10, 90 30 Q95 50, 80 60 Q65 75, 50 50 Z" fill="${c}"/>
-    <path d="M50 50 Q80 90, 90 70 Q95 50, 80 40 Q65 25, 50 50 Z" fill="${d}"/>
-  `
-];
+const colors = ['#FF6B6B','#FF8E53','#FFD93D','#6BCF7F','#4ECDC4','#54A0FF'];
 
 document.getElementById("counter").textContent = `0 / ${total}`;
 
@@ -183,8 +174,11 @@ function createButterflies(){
     const c=[...colors].sort(()=>Math.random()-0.5);
     b.innerHTML=`
       <div class="butterfly-inner">
-        <svg width="160" height="160" viewBox="0 0 100 100">
-          ${templates[0](c[0],c[1],c[2],c[3])}
+        <svg width="150" height="150" viewBox="0 0 100 100">
+          <path d="M50 50 Q20 10, 10 30 Q5 50, 20 60 Q35 75, 50 50 Z" fill="${c[0]}"/>
+          <path d="M50 50 Q20 90, 10 70 Q5 50, 20 40 Q35 25, 50 50 Z" fill="${c[1]}"/>
+          <path d="M50 50 Q80 10, 90 30 Q95 50, 80 60 Q65 75, 50 50 Z" fill="${c[2]}"/>
+          <path d="M50 50 Q80 90, 90 70 Q95 50, 80 40 Q65 25, 50 50 Z" fill="${c[3] || c[0]}"/>
           <ellipse cx="50" cy="50" rx="4" ry="20" fill="#2D3436"/>
         </svg>
       </div>
