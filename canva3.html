@@ -1,70 +1,75 @@
 <!doctype html>
 <html lang="en" class="h-full">
- <head>
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Counting Game</title>
-  <script src="/_sdk/element_sdk.js"></script>
+  <title>Count the Butterflies!</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-   
+
     .butterfly {
       cursor: pointer;
-      transition: all 0.3s ease;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+      animation: gentleFloat 3s ease-in-out infinite alternate;
     }
-   
+
+    @keyframes gentleFloat {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-8px); }
+    }
+
     .butterfly:hover {
-      transform: scale(1.15) rotate(5deg);
+      transform: scale(1.2) rotate(10deg) translateY(-10px) !important;
+      filter: drop-shadow(0 8px 20px rgba(0,0,0,0.3));
     }
-   
+
+    .butterfly:active {
+      animation: wingFlap 0.2s ease-out;
+    }
+
+    @keyframes wingFlap {
+      0%, 100% { transform: scale(1.1) rotate(5deg); }
+      50% { transform: scale(1.15) rotate(15deg); }
+    }
+
     .butterfly.counted {
       opacity: 0.4;
       cursor: default;
+      animation: none;
     }
-   
+
     .butterfly.counted:hover {
-      transform: none;
+      transform: none !important;
     }
-   
+
     .count-badge {
       animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
-   
+
     @keyframes popIn {
-      0% {
-        transform: scale(0);
-        opacity: 0;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
+      0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
     }
-   
+
     .completion-modal {
       animation: slideDown 0.5s ease-out;
     }
-   
+
     @keyframes slideDown {
-      0% {
-        transform: translateY(-100%);
-        opacity: 0;
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
+      0% { transform: translateY(-100%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
     }
 
-    /* Dynamic soft sky gradient background */
     .game-background {
-      background: linear-gradient(135deg, #a8e6cf, #dcedc1, #f4e1d2, #ffe0b5);
-      background-size: 300% 300%;
-      animation: softGradientShift 20s ease infinite;
+      background: linear-gradient(135deg, #a8e6cf, #dcedc1, #f4e1d2, #ffe0b5, #ffd4b3);
+      background-size: 400% 400%;
+      animation: softGradientShift 25s ease infinite;
     }
 
     @keyframes softGradientShift {
@@ -72,220 +77,137 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .butterfly svg { width: 120px !important; height: 120px !important; }
+      #counter { font-size: 2rem !important; padding: 1rem 2rem !important; }
+    }
   </style>
-  <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
- </head>
- <body class="h-full overflow-auto">
-  <div id="app" class="w-full h-full"></div>
+</head>
+<body class="h-screen overflow-hidden game-background">
+  <div id="app" class="w-full h-full flex flex-col items-center justify-start p-8 md:p-12">
+    <!-- Content injected by JS -->
+  </div>
+
   <script>
-    const defaultConfig = {
-      background_color: "dynamic", // Special value for dynamic gradient
-      butterfly_color: "#EC4899", // Kept for compatibility, but we use multi-color now
+    // Config - easy to customize
+    const config = {
+      game_title: "Count the butterflies!",
+      completion_message: "Great job! There are {count} butterflies!",
       counter_bg_color: "#FFFFFF",
       counter_text_color: "#1F2937",
       completion_bg_color: "#10B981",
-      game_title: "Count the butterflies!",
-      completion_message: "Great job! There are {count} butterflies!",
-      font_family: "Arial",
-      font_size: 16
+      font_family: "'Arial Black', Arial, system-ui, sans-serif",
+      font_size: 18
     };
+
     let countedButterflies = new Set();
-    let totalButterflies = Math.floor(Math.random() * 8) + 3; // Random between 3 and 10
+    let totalButterflies = Math.floor(Math.random() * 7) + 4; // 4–10 for better spread
 
-    const vibrantColors = ['#FF6B6B', '#FF8E53', '#FFD93D', '#6BCF7F', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF9FF3', '#54A0FF', '#48DBFB', '#A0E7E5'];
-
-    const butterflyTemplates = [
-      // Template 1: Classic four-wing with different colors per wing
-      (c1, c2, c3, c4) => `
-        <!-- Left upper wing -->
-        <path d="M50 50 Q20 10, 10 30 Q5 50, 20 60 Q35 75, 50 50 Z" fill="${c1}"/>
-        <!-- Left lower wing -->
-        <path d="M50 50 Q20 90, 10 70 Q5 50, 20 40 Q35 25, 50 50 Z" fill="${c2}"/>
-        <!-- Right upper wing -->
-        <path d="M50 50 Q80 10, 90 30 Q95 50, 80 60 Q65 75, 50 50 Z" fill="${c3}"/>
-        <!-- Right lower wing -->
-        <path d="M50 50 Q80 90, 90 70 Q95 50, 80 40 Q65 25, 50 50 Z" fill="${c4}"/>
-      `,
-      // Template 2: Slightly different shape for variety
-      (c1, c2, c3, c4) => `
-        <path d="M50 50 Q25 15, 12 35 Q8 50, 22 65 Q32 80, 50 50 Z" fill="${c1}"/>
-        <path d="M50 50 Q25 85, 12 65 Q8 50, 22 35 Q32 20, 50 50 Z" fill="${c2}"/>
-        <path d="M50 50 Q75 15, 88 35 Q92 50, 78 65 Q68 80, 50 50 Z" fill="${c3}"/>
-        <path d="M50 50 Q75 85, 88 65 Q92 50, 78 35 Q68 20, 50 50 Z" fill="${c4}"/>
-      `
+    const vibrantColors = [
+      '#FF6B6B', '#FF8E53', '#FFD93D', '#6BCF7F', '#4ECDC4', '#45B7D1',
+      '#96CEB4', '#FECA57', '#FF9FF3', '#54A0FF', '#48DBFB', '#A0E7E5', '#F7DC6F'
     ];
 
-    function onConfigChange(config) {
-      const app = document.getElementById('app');
-      const customFont = config.font_family || defaultConfig.font_family;
-      const baseFontStack = 'system-ui, -apple-system, sans-serif';
-      const baseSize = config.font_size || defaultConfig.font_size;
-      const counterBg = config.counter_bg_color || defaultConfig.counter_bg_color;
-      const counterText = config.counter_text_color || defaultConfig.counter_text_color;
-      const completionBg = config.completion_bg_color || defaultConfig.completion_bg_color;
-      const gameTitle = config.game_title || defaultConfig.game_title;
-     
-      app.style.fontFamily = `${customFont}, ${baseFontStack}`;
-     
-      const titleEl = document.getElementById('game-title');
-      if (titleEl) {
-        titleEl.textContent = gameTitle;
-        titleEl.style.fontSize = `${baseSize * 2}px`;
-        titleEl.style.color = counterText;
-      }
-     
-      const counterEl = document.getElementById('counter');
-      if (counterEl) {
-        counterEl.style.background = counterBg;
-        counterEl.style.color = counterText;
-        counterEl.style.fontSize = `${baseSize * 1.5}px`;
-      }
-     
-      const modal = document.getElementById('completion-modal');
-      if (modal && modal.style.display !== 'none') {
-        modal.style.background = completionBg;
-        const modalText = modal.querySelector('p');
-        if (modalText) {
-          modalText.style.fontSize = `${baseSize * 1.5}px`;
-        }
-        const resetBtn = modal.querySelector('button');
-        if (resetBtn) {
-          resetBtn.style.fontSize = `${baseSize}px`;
-        }
-      }
-    }
-
-    async function init() {
-      await window.elementSdk.init({
-        defaultConfig,
-        onConfigChange,
-        mapToCapabilities: (config) => ({
-          recolorables: [
-            {
-              get: () => config.counter_bg_color || defaultConfig.counter_bg_color,
-              set: (value) => {
-                config.counter_bg_color = value;
-                window.elementSdk.setConfig({ counter_bg_color: value });
-              }
-            },
-            {
-              get: () => config.counter_text_color || defaultConfig.counter_text_color,
-              set: (value) => {
-                config.counter_text_color = value;
-                window.elementSdk.setConfig({ counter_text_color: value });
-              }
-            },
-            {
-              get: () => config.completion_bg_color || defaultConfig.completion_bg_color,
-              set: (value) => {
-                config.completion_bg_color = value;
-                window.elementSdk.setConfig({ completion_bg_color: value });
-              }
-            }
-          ],
-          borderables: [],
-          fontEditable: {
-            get: () => config.font_family || defaultConfig.font_family,
-            set: (value) => {
-              config.font_family = value;
-              window.elementSdk.setConfig({ font_family: value });
-            }
-          },
-          fontSizeable: {
-            get: () => config.font_size || defaultConfig.font_size,
-            set: (value) => {
-              config.font_size = value;
-              window.elementSdk.setConfig({ font_size: value });
-            }
-          }
-        }),
-        mapToEditPanelValues: (config) => new Map([
-          ["game_title", config.game_title || defaultConfig.game_title],
-          ["completion_message", config.completion_message || defaultConfig.completion_message]
-        ])
-      });
-      renderGame();
-      onConfigChange(window.elementSdk.config);
-    }
+    const butterflyTemplates = [
+      // Template 1
+      (c1, c2, c3, c4) =>
+        '<path d="M50 50 Q20 10, 10 30 Q5 50, 20 60 Q35 75, 50 50 Z" fill="' + c1 + '"/>' +
+        '<path d="M50 50 Q20 90, 10 70 Q5 50, 20 40 Q35 25, 50 50 Z" fill="' + c2 + '"/>' +
+        '<path d="M50 50 Q80 10, 90 30 Q95 50, 80 60 Q65 75, 50 50 Z" fill="' + c3 + '"/>' +
+        '<path d="M50 50 Q80 90, 90 70 Q95 50, 80 40 Q65 25, 50 50 Z" fill="' + c4 + '"/>',
+      // Template 2
+      (c1, c2, c3, c4) =>
+        '<path d="M50 50 Q25 15, 12 35 Q8 50, 22 65 Q32 80, 50 50 Z" fill="' + c1 + '"/>' +
+        '<path d="M50 50 Q25 85, 12 65 Q8 50, 22 35 Q32 20, 50 50 Z" fill="' + c2 + '"/>' +
+        '<path d="M50 50 Q75 15, 88 35 Q92 50, 78 65 Q68 80, 50 50 Z" fill="' + c3 + '"/>' +
+        '<path d="M50 50 Q75 85, 88 65 Q92 50, 78 35 Q68 20, 50 50 Z" fill="' + c4 + '"/>'
+    ];
 
     function renderGame() {
       const app = document.getElementById('app');
-      const config = window.elementSdk.config;
-     
+
       app.innerHTML = `
-        <div class="game-background min-h-full flex flex-col items-center justify-start p-8">
-          <h1 id="game-title" class="text-4xl font-bold mb-6 text-center"></h1>
-         
-          <div id="counter" class="px-6 py-3 rounded-full shadow-lg font-bold mb-8"></div>
-         
-          <div class="relative w-full max-w-4xl" style="min-height: 500px;">
-            ${generateButterflies()}
-          </div>
-         
-          <div id="completion-modal" class="fixed top-8 left-1/2 transform -translate-x-1/2 px-8 py-6 rounded-2xl shadow-2xl text-white text-center" style="display: none;">
-            <p class="text-2xl font-bold mb-4"></p>
-            <button class="bg-white bg-opacity-30 hover:bg-opacity-40 px-6 py-2 rounded-full font-semibold transition">Play Again</button>
-          </div>
+        <h1 id="game-title" class="text-5xl md:text-6xl font-black mb-10 md:mb-12 text-center drop-shadow-lg" style="color: ${config.counter_text_color}; font-family: ${config.font_family}; font-size: ${config.font_size * 2.5}px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
+          ${config.game_title}
+        </h1>
+
+        <div id="counter" class="px-10 py-5 md:px-12 md:py-6 rounded-full shadow-2xl font-black mb-12 md:mb-16 text-3xl md:text-4xl tracking-wide" style="background: ${config.counter_bg_color}; color: ${config.counter_text_color}; font-family: ${config.font_family}; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+          0 / ${totalButterflies}
+        </div>
+
+        <div class="relative w-full max-w-6xl mx-auto" style="min-height: 70vh; max-height: 75vh;">
+          ${generateButterflies()}
+        </div>
+
+        <div id="completion-modal" class="fixed top-16 md:top-20 left-1/2 transform -translate-x-1/2 z-50 px-12 md:px-16 py-10 md:py-12 rounded-3xl shadow-2xl text-white text-center hidden backdrop-blur-md border-4 border-white/20">
+          <p class="text-3xl md:text-4xl lg:text-5xl font-black mb-8 drop-shadow-lg"></p>
+          <button class="bg-white/20 hover:bg-white/40 backdrop-blur-sm px-10 md:px-12 py-4 md:py-5 rounded-full text-xl md:text-2xl font-black transition-all duration-300 shadow-2xl hover:scale-105 hover:shadow-3xl">
+            🎉 Play Again 🎉
+          </button>
         </div>
       `;
-     
+
       updateCounter();
       attachEventListeners();
     }
 
     function generateButterflies() {
       const positions = [];
-      const minDistance = 30; // Better spacing
-     
+      const minDistance = 50; // Increased for no touching
+
       for (let i = 0; i < totalButterflies; i++) {
         let attempts = 0;
         let newPos;
         let tooClose;
-       
+
         do {
           newPos = {
-            top: Math.random() * 60 + 10,
-            left: Math.random() * 70 + 10,
-            rotation: Math.random() * 60 - 30 // Random slight rotation for natural look
+            top: Math.random() * 70 + 8,  // Wider vertical spread: 8-78%
+            left: Math.random() * 82 + 6, // Wider horizontal: 6-88%
+            rotation: Math.random() * 80 - 40 // More natural rotation range
           };
-         
+
           tooClose = positions.some(pos => {
-            const distance = Math.sqrt(
-              Math.pow(newPos.top - pos.top, 2) +
-              Math.pow(newPos.left - pos.left, 2)
-            );
-            return distance < minDistance;
+            const dx = newPos.top - pos.top;
+            const dy = newPos.left - pos.left;
+            return Math.sqrt(dx * dx + dy * dy) < minDistance;
           });
-         
+
           attempts++;
-        } while (tooClose && attempts < 100);
-       
+          if (attempts > 200) break; // Prevent infinite loop
+        } while (tooClose);
+
         positions.push(newPos);
       }
-     
+
       return positions.map((pos, index) => {
-        const templateIndex = Math.floor(Math.random() * butterflyTemplates.length);
-        const colors = vibrantColors.sort(() => 0.5 - Math.random()).slice(0, 4); // Random 4 vibrant colors
-        const wings = butterflyTemplates[templateIndex](colors[0], colors[1], colors[2], colors[3]);
-       
+        const templateIdx = Math.floor(Math.random() * butterflyTemplates.length);
+        const colors = [...vibrantColors].sort(() => 0.5 - Math.random()).slice(0, 4);
+        const wings = butterflyTemplates[templateIdx](colors[0], colors[1], colors[2], colors[3]);
+        const delay = (index * 0.5) + 's'; // Staggered float animation start
+
         return `
-        <div class="butterfly absolute" data-id="${index}" style="top: ${pos.top}%; left: ${pos.left}%; transform: rotate(${pos.rotation}deg);">
-          <svg width="150" height="150" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <g>
-              ${wings}
-              <!-- Body -->
-              <ellipse cx="50" cy="50" rx="5" ry="22" fill="#2D3436"/>
-              <!-- Antennae -->
-              <path d="M45 30 Q40 20, 38 12" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round"/>
-              <path d="M55 30 Q60 20, 62 12" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round"/>
-              <circle cx="38" cy="10" r="3" fill="#2D3436"/>
-              <circle cx="62" cy="10" r="3" fill="#2D3436"/>
-            </g>
-          </svg>
-          <div class="count-badge absolute -top-4 -right-4 bg-white text-gray-800 rounded-full w-16 h-16 flex items-center justify-center text-3xl font-bold shadow-xl" style="display: none;"></div>
-        </div>
-      `;
+          <div class="butterfly absolute" data-id="${index}" style="top: ${pos.top}%; left: ${pos.left}%; transform: rotate(${pos.rotation}deg); animation-delay: ${delay};">
+            <svg width="170" height="170" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <g>
+                ${wings}
+                <ellipse cx="50" cy="50" rx="4" ry="20" fill="#2D3436" filter="url(#bodyGlow)"/>
+                <path d="M45 30 Q40 20, 38 12" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M55 30 Q60 20, 62 12" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="38" cy="10" r="3" fill="#2D3436"/>
+                <circle cx="62" cy="10" r="3" fill="#2D3436"/>
+              </g>
+              <defs>
+                <filter id="bodyGlow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#fff" flood-opacity="0.3"/>
+                </filter>
+              </defs>
+            </svg>
+            <div class="count-badge absolute -top-6 -right-6 bg-gradient-to-br from-white to-gray-100 text-gray-800 rounded-full w-20 h-20 flex items-center justify-center text-3xl font-black shadow-2xl border-4 border-white/50" style="display: none; box-shadow: 0 8px 25px rgba(0,0,0,0.3);"></div>
+          </div>
+        `;
       }).join('');
     }
 
@@ -293,7 +215,7 @@
       document.querySelectorAll('.butterfly').forEach(butterfly => {
         butterfly.addEventListener('click', handleButterflyClick);
       });
-     
+
       const resetBtn = document.querySelector('#completion-modal button');
       if (resetBtn) {
         resetBtn.addEventListener('click', resetGame);
@@ -303,49 +225,66 @@
     function handleButterflyClick(e) {
       const butterfly = e.currentTarget;
       const id = butterfly.dataset.id;
-     
+
       if (countedButterflies.has(id)) return;
-     
+
       countedButterflies.add(id);
       butterfly.classList.add('counted');
-     
+
       const badge = butterfly.querySelector('.count-badge');
-      badge.textContent = countedButterflies.size;
+      const currentCount = countedButterflies.size;
+      badge.textContent = currentCount;
       badge.style.display = 'flex';
-     
+
+      // Sound: Speak the number with natural voice
+      speakNumber(currentCount);
+
       updateCounter();
-     
+
       if (countedButterflies.size === totalButterflies) {
-        setTimeout(showCompletion, 600);
+        setTimeout(showCompletion, 800);
+      }
+    }
+
+    function speakNumber(num) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(num.toString());
+        utterance.lang = 'en-US';
+        utterance.rate = 0.8;
+        utterance.pitch = 1.2;
+        utterance.volume = 0.9;
+        speechSynthesis.speak(utterance);
       }
     }
 
     function updateCounter() {
       const counter = document.getElementById('counter');
-      counter.textContent = `${countedButterflies.size} / ${totalButterflies}`;
+      if (counter) {
+        counter.innerHTML = `<span class="text-4xl md:text-5xl">${countedButterflies.size}</span> / ${totalButterflies}`;
+      }
     }
 
     function showCompletion() {
-      const config = window.elementSdk.config;
       const modal = document.getElementById('completion-modal');
-      const message = (config.completion_message || defaultConfig.completion_message)
-        .replace('{count}', totalButterflies);
-     
+      const message = config.completion_message.replace('{count}', totalButterflies);
       modal.querySelector('p').textContent = message;
-      modal.style.display = 'block';
-      modal.style.background = config.completion_bg_color || defaultConfig.completion_bg_color;
+      modal.style.background = `linear-gradient(135deg, ${config.completion_bg_color}, ${config.completion_bg_color}cc)`;
+      modal.classList.remove('hidden');
+      speakNumber(totalButterflies); // Celebrate with final count!
     }
 
     function resetGame() {
       countedButterflies.clear();
-      totalButterflies = Math.floor(Math.random() * 8) + 3;
-      document.getElementById('completion-modal').style.display = 'none';
-     
+      totalButterflies = Math.floor(Math.random() * 7) + 4;
+      document.getElementById('completion-modal').classList.add('hidden');
+      speechSynthesis.cancel(); // Stop any ongoing speech
       renderGame();
-      onConfigChange(window.elementSdk.config);
     }
 
-    init();
+    // Auto-start & handle resize/orientation
+    renderGame();
+    window.addEventListener('resize', renderGame);
+    window.addEventListener('orientationchange', () => setTimeout(renderGame, 300));
   </script>
- </body>
+</body>
 </html>
