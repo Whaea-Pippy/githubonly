@@ -1,125 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Playground Index</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Playground Index</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #fdfbfb, #ebedee);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #fdfbfb, #ebedee);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .container {
-      max-width: 900px;
-      width: 90%;
-      background: white;
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.08);
-    }
+.container {
+  max-width: 900px;
+  width: 90%;
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
 
-    h1 {
-      margin-top: 0;
-      font-size: 2rem;
-      text-align: center;
-    }
+h1 {
+  margin-top: 0;
+  font-size: 2rem;
+  text-align: center;
+}
 
-    .subtitle {
-      text-align: center;
-      font-size: 1rem;
-      color: #555;
-      margin-bottom: 10px;
-    }
+.subtitle {
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 10px;
+}
 
-    .date {
-      text-align: center;
-      font-size: 0.85rem;
-      color: #888;
-      margin-bottom: 30px;
-    }
+.date {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 30px;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
 
-    .card {
-      background: linear-gradient(135deg, #f8f9ff, #eef1ff);
-      border-radius: 16px;
-      padding: 30px 10px;
-      text-align: center;
-      font-weight: 600;
-      text-decoration: none;
-      color: #333;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
+.card {
+  border-radius: 16px;
+  padding: 30px 10px;
+  text-align: center;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 14px 30px rgba(0,0,0,0.12);
-    }
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+}
 
-    footer {
-      text-align: center;
-      margin-top: 30px;
-      font-size: 0.85rem;
-      color: #777;
-    }
+footer {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 0.85rem;
+  color: #777;
+}
 
-    @media (max-width: 600px) {
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-  </style>
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>🎨 Canva Experiments Playground</h1>
+<div class="container">
+  <h1>🎨 Canva Experiments Playground</h1>
 
-    <div class="subtitle">
-      I’m playing with what Canva can do — but honestly,<br>
-      I prefer coding with <strong>ChatGPT</strong> and <strong>Grok</strong> right now 😄
-    </div>
-
-    <div class="date">
-      Last updated: <strong>19 December 2025</strong>
-    </div>
-
-    <div class="grid">
-      <a class="card" href="canva1.html">Science Y7 V1</a>
-      <a class="card" href="https://scienceexample2025.my.canva.site/">Science Y7 V2</a>
-      <a class="card" href="https://scienceexample2025.my.canva.site/number-matching-game">Numbers Y1</a>
-      
-      <a class="card" href="https://scienceexample2025.my.canva.site/kiwi-biology-quiz">Biology Y8</a>
-      <a class="card" href="canva2.html">Count Birds Y0</a>
-      <a class="card" href="https://scienceexample2025.my.canva.site/car-counting-game">Count Cars Y0</a>
-
-      <a class="card" href="https://scienceexample2025.my.canva.site/counting">Count Butterflies</a>
-      <a class="card" href="count1.html">Grok&Chatgpt Cars</a>
-      <a class="card" href="count2.html">Grok&Chatgpt Butterflies</a>
-
-      <a class="card" href="canva3.html">Fail 1</a>
-      <a class="card" href="canva4.html">Fail 2</a>
-      <a class="card" href="canva5.html">Fail 3</a>
-    </div>
-
-    <footer>
-      ✨ Small experiments • low stakes • lots of learning
-    </footer>
+  <div class="subtitle">
+    I’m playing with what Canva can do — but honestly,<br>
+    I prefer coding with <strong>ChatGPT</strong> and <strong>Grok</strong> right now 😄
   </div>
+
+  <div class="date">
+    Last updated: <strong>19 December 2025</strong>
+  </div>
+
+  <div class="grid">
+    <a class="card" href="canva1.html">Science Y7 V1</a>
+    <a class="card" href="https://scienceexample2025.my.canva.site/">Science Y7 V2</a>
+    <a class="card" href="https://scienceexample2025.my.canva.site/number-matching-game">Numbers Y1</a>
+    <a class="card" href="https://scienceexample2025.my.canva.site/kiwi-biology-quiz">Biology Y8</a>
+    <a class="card" href="canva2.html">Count Birds Y0</a>
+    <a class="card" href="https://scienceexample2025.my.canva.site/car-counting-game">Count Cars Y0</a>
+    <a class="card" href="https://scienceexample2025.my.canva.site/counting">Count Butterflies</a>
+    <a class="card" href="count1.html">Grok&Chatgpt Cars</a>
+    <a class="card" href="count2.html">Grok&Chatgpt Butterflies</a>
+    <a class="card" href="canva3.html">Fail 1</a>
+    <a class="card" href="canva4.html">Fail 2</a>
+    <a class="card" href="canva5.html">Fail 3</a>
+  </div>
+
+  <footer>
+    ✨ Small experiments • low stakes • lots of learning
+  </footer>
+</div>
+
+<script>
+const colors = [
+  'linear-gradient(135deg,#FF6B6B,#FF8787)',
+  'linear-gradient(135deg,#FFD93D,#FFEB70)',
+  'linear-gradient(135deg,#6BCF7F,#82E0AA)',
+  'linear-gradient(135deg,#4ECDC4,#5DE0DD)',
+  'linear-gradient(135deg,#54A0FF,#7ABFFF)',
+  'linear-gradient(135deg,#FF9FF3,#FFB8EB)',
+  'linear-gradient(135deg,#F7DC6F,#F9E79F)',
+  'linear-gradient(135deg,#C39BD3,#D2B4DE)',
+  'linear-gradient(135deg,#F1948A,#F5B7B1)',
+  'linear-gradient(135deg,#52BE80,#7DCEA0)',
+  'linear-gradient(135deg,#3498DB,#5DADE2)',
+  'linear-gradient(135deg,#E59866,#EB984E)'
+];
+
+document.querySelectorAll('.card').forEach((card,i)=>{
+  card.style.background = colors[i % colors.length];
+});
+</script>
 
 </body>
 </html>
