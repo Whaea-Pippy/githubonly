@@ -41,7 +41,7 @@ body { margin:0; height:100vh; width:100vw; }
 }
 
 .vehicle:hover .vehicle-inner {
-  transform: scale(1.15);
+  transform: scale(1.12);
 }
 
 .vehicle.counted {
@@ -53,7 +53,7 @@ body { margin:0; height:100vh; width:100vw; }
   animation:none;
 }
 
-/* FLOAT without layout shift */
+/* Float without layout shift */
 @keyframes float {
   from { transform: translateY(0); }
   to   { transform: translateY(-8px); }
@@ -76,16 +76,27 @@ body { margin:0; height:100vh; width:100vw; }
   border:6px solid #FBBF24;
   box-shadow:0 8px 20px rgba(0,0,0,0.3);
 }
+
+/* ---------- MODAL ---------- */
+#completion-modal {
+  background:rgba(0,0,0,0.45);
+}
 </style>
 </head>
 
 <body class="game-background flex flex-col">
 
 <header class="text-center py-6">
-  <h1 id="title" class="text-5xl md:text-7xl font-black text-white">
+  <h1 id="title" class="text-5xl md:text-7xl font-black text-white drop-shadow-xl">
     Count the cars & trucks!
   </h1>
+
   <div id="counter-header" class="text-3xl md:text-5xl text-yellow-300 font-bold mt-4"></div>
+
+  <button id="langToggle"
+    class="mt-6 bg-white/30 hover:bg-white/50 px-8 py-3 rounded-full text-2xl font-bold text-white">
+    🌿 Te Reo Māori
+  </button>
 </header>
 
 <main class="flex-1 px-4 pb-4">
@@ -94,7 +105,37 @@ body { margin:0; height:100vh; width:100vw; }
   </div>
 </main>
 
+<!-- COMPLETION MODAL -->
+<div id="completion-modal" class="fixed inset-0 hidden flex items-center justify-center z-50">
+  <div class="bg-gradient-to-br from-green-500 to-emerald-600 px-12 py-16 rounded-3xl text-white text-center shadow-2xl border-8 border-white/40">
+    <p id="doneTitle" class="text-5xl font-black mb-8">Awesome!</p>
+    <p id="completion-text" class="text-4xl mb-12"></p>
+    <button id="restart"
+      class="bg-white/30 hover:bg-white/50 px-12 py-6 rounded-full text-4xl font-black">
+      Next ▶
+    </button>
+  </div>
+</div>
+
 <script>
+/* ---------- LANGUAGE ---------- */
+let language = "en";
+
+const reoNumbers = {
+  1:"tahi",2:"rua",3:"toru",4:"whā",5:"rima",
+  6:"ono",7:"whitu",8:"waru",9:"iwa",10:"tekau"
+};
+
+function speak(text){
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+}
+
+function speakNumber(n){
+  speak(language === "mi" ? reoNumbers[n] : n.toString());
+}
+
+/* ---------- GAME ---------- */
 let countedVehicles = new Set();
 let totalVehicles = Math.floor(Math.random()*6)+3;
 
@@ -102,40 +143,46 @@ const colors = ['#FF6B6B','#FFD93D','#6BCF7F','#4ECDC4','#54A0FF','#FF9FF3'];
 
 document.getElementById("counter-header").textContent = `0 / ${totalVehicles}`;
 
-function createVehicles() {
+function boxesOverlap(a,b,margin=20){
+  return !(
+    a.x + a.w + margin < b.x ||
+    a.x > b.x + b.w + margin ||
+    a.y + a.h + margin < b.y ||
+    a.y > b.y + b.h + margin
+  );
+}
+
+function createVehicles(){
   const container = document.getElementById("vehicles-container");
-  container.innerHTML = "";
+  container.innerHTML="";
   countedVehicles.clear();
 
   const bounds = container.getBoundingClientRect();
-  const VEH_W = 200;
-  const VEH_H = 120;
-  const SAFE = 240;
-  const positions = [];
+  const W=200, H=120;
+  const placed=[];
 
   for(let i=0;i<totalVehicles;i++){
-    let pos,tries=0;
-    do {
-      pos = {
-        x: Math.random() * (bounds.width - VEH_W),
-        y: Math.random() * (bounds.height - VEH_H)
+    let box,tries=0;
+    do{
+      box={
+        x:Math.random()*(bounds.width-W),
+        y:Math.random()*(bounds.height-H),
+        w:W,
+        h:H
       };
       tries++;
-    } while (
-      positions.some(p => Math.hypot(p.x-pos.x, p.y-pos.y) < SAFE)
-      && tries < 500
-    );
+    } while(placed.some(p=>boxesOverlap(p,box)) && tries<1000);
 
-    positions.push(pos);
+    placed.push(box);
 
-    const v = document.createElement("div");
-    v.className = "vehicle";
-    v.style.left = pos.x + "px";
-    v.style.top = pos.y + "px";
+    const v=document.createElement("div");
+    v.className="vehicle";
+    v.style.left=box.x+"px";
+    v.style.top=box.y+"px";
 
-    const c = colors.sort(()=>Math.random()-0.5);
+    const c=[...colors].sort(()=>Math.random()-0.5);
 
-    v.innerHTML = `
+    v.innerHTML=`
       <div class="vehicle-inner">
         <svg width="200" height="120" viewBox="0 0 100 60">
           <rect x="10" y="25" width="80" height="20" rx="8" fill="${c[0]}"/>
@@ -146,22 +193,54 @@ function createVehicles() {
       <div class="count-badge"></div>
     `;
 
-    v.onclick = () => {
-      if (countedVehicles.has(i)) return;
+    v.onclick=()=>{
+      if(countedVehicles.has(i)) return;
       countedVehicles.add(i);
       v.classList.add("counted");
 
-      const b = v.querySelector(".count-badge");
-      b.textContent = countedVehicles.size;
-      b.style.display = "flex";
+      const badge=v.querySelector(".count-badge");
+      badge.textContent=countedVehicles.size;
+      badge.style.display="flex";
 
-      document.getElementById("counter-header").textContent =
+      document.getElementById("counter-header").textContent=
         `${countedVehicles.size} / ${totalVehicles}`;
+
+      speakNumber(countedVehicles.size);
+
+      if(countedVehicles.size===totalVehicles){
+        setTimeout(()=>{
+          document.getElementById("completion-text").textContent =
+            language==="mi"
+              ? `E ${reoNumbers[totalVehicles]} ngā waka katoa!`
+              : `There are ${totalVehicles} vehicles!`;
+
+          document.getElementById("completion-modal").classList.remove("hidden");
+          speakNumber(totalVehicles);
+        },700);
+      }
     };
 
     container.appendChild(v);
   }
 }
+
+/* ---------- CONTROLS ---------- */
+document.getElementById("restart").onclick=()=>{
+  totalVehicles=Math.floor(Math.random()*6)+3;
+  document.getElementById("counter-header").textContent=`0 / ${totalVehicles}`;
+  document.getElementById("completion-modal").classList.add("hidden");
+  createVehicles();
+};
+
+document.getElementById("langToggle").onclick=()=>{
+  language = language==="en" ? "mi" : "en";
+  document.getElementById("title").textContent =
+    language==="mi" ? "Tatauhia ngā waka!" : "Count the cars & trucks!";
+  document.getElementById("doneTitle").textContent =
+    language==="mi" ? "Ka pai!" : "Awesome!";
+  document.getElementById("langToggle").textContent =
+    language==="mi" ? "🇬🇧 English" : "🌿 Te Reo Māori";
+};
 
 createVehicles();
 </script>
