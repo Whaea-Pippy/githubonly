@@ -177,52 +177,79 @@
             [], // unused
             { 
                 baseWords: ["5", "3", "8", "The", "sum", "of", "and", "is"],
-                correct: ["The", "sum", "of", "5", "and", "3", "is", "8"],
+                correctOptions: [
+                    ["The", "sum", "of", "5", "and", "3", "is", "8"],
+                    ["The", "sum", "of", "3", "and", "5", "is", "8"]
+                ],
                 colour: "#FF6B6B"
             },
             { 
                 baseWords: ["10", "4", "6", "The", "difference", "between", "and", "is"],
-                correct: ["The", "difference", "between", "10", "and", "4", "is", "6"],
+                correctOptions: [
+                    ["The", "difference", "between", "10", "and", "4", "is", "6"]
+                    // subtraction not commutative – only one order
+                ],
                 colour: "#FF8E53"
             },
             { 
                 baseWords: ["7", "6", "42", "The", "product", "of", "and", "is"],
-                correct: ["The", "product", "of", "7", "and", "6", "is", "42"],
+                correctOptions: [
+                    ["The", "product", "of", "7", "and", "6", "is", "42"],
+                    ["The", "product", "of", "6", "and", "7", "is", "42"]
+                ],
                 colour: "#FFCC00"
             },
             { 
                 baseWords: ["20", "5", "4", "The", "quotient", "of", "and", "is"],
-                correct: ["The", "quotient", "of", "20", "and", "5", "is", "4"],
+                correctOptions: [
+                    ["The", "quotient", "of", "20", "and", "5", "is", "4"]
+                    // division not commutative
+                ],
                 colour: "#9ACD32"
             },
             { 
                 baseWords: ["1/2", "1/4", "3/4", "Adding", "and", "gives"],
-                correct: ["Adding", "1/2", "and", "1/4", "gives", "3/4"],
+                correctOptions: [
+                    ["Adding", "1/2", "and", "1/4", "gives", "3/4"],
+                    ["Adding", "1/4", "and", "1/2", "gives", "3/4"]
+                ],
                 colour: "#4CAF50"
             },
             { 
                 baseWords: ["length", "width", "area", "The", "of", "a", "rectangle", "is", "times"],
-                correct: ["The", "area", "of", "a", "rectangle", "is", "length", "times", "width"],
+                correctOptions: [
+                    ["The", "area", "of", "a", "rectangle", "is", "length", "times", "width"],
+                    ["The", "area", "of", "a", "rectangle", "is", "width", "times", "length"]
+                ],
                 colour: "#20B2AA"
             },
             { 
                 baseWords: ["add", "all", "the", "numbers", "divide", "by", "how", "many", "To", "find", "the", "mean"],
-                correct: ["To", "find", "the", "mean", "add", "all", "the", "numbers", "divide", "by", "how", "many"],
+                correctOptions: [
+                    ["To", "find", "the", "mean", "add", "all", "the", "numbers", "divide", "by", "how", "many"]
+                ],
                 colour: "#4682B4"
             },
             { 
                 baseWords: ["x", "stands", "for", "an", "unknown", "number", "The", "variable"],
-                correct: ["The", "variable", "x", "stands", "for", "an", "unknown", "number"],
+                correctOptions: [
+                    ["The", "variable", "x", "stands", "for", "an", "unknown", "number"]
+                ],
                 colour: "#9370DB"
             },
             { 
                 baseWords: ["(3,4)", "The", "point", "is", "located", "at", "on", "the", "coordinate", "plane"],
-                correct: ["The", "point", "is", "located", "at", "(3,4)", "on", "the", "coordinate", "plane"],
+                correctOptions: [
+                    ["The", "point", "is", "located", "at", "(3,4)", "on", "the", "coordinate", "plane"]
+                ],
                 colour: "#DA70D6"
             },
             { 
                 baseWords: ["a²", "b²", "c²", "In", "a", "right-angled", "triangle", "plus", "equals"],
-                correct: ["In", "a", "right-angled", "triangle", "a²", "plus", "b²", "equals", "c²"],
+                correctOptions: [
+                    ["In", "a", "right-angled", "triangle", "a²", "plus", "b²", "equals", "c²"],
+                    ["In", "a", "right-angled", "triangle", "b²", "plus", "a²", "equals", "c²"]
+                ],
                 colour: "#FF69B4"
             }
         ];
@@ -243,7 +270,6 @@
             wordBank.innerHTML = '';
             sentenceArea.innerHTML = '';
 
-            // Shuffle the words every time the level loads
             const shuffledWords = shuffle(data.baseWords);
 
             shuffledWords.forEach(wordText => {
@@ -310,22 +336,25 @@
             const built = Array.from(sentenceArea.querySelectorAll('.sentence-word'))
                 .map(el => el.textContent.trim());
 
-            const correct = levels[currentLevel].correct;
+            const data = levels[currentLevel];
 
             if (built.length === 0) {
                 alert("Build a sentence first!");
                 return;
             }
 
-            const isCorrect = built.length === correct.length && 
-                              built.every((word, i) => word === correct[i]);
+            const isCorrect = data.correctOptions.some(option => 
+                built.length === option.length && 
+                built.every((word, i) => word === option[i])
+            );
 
-            const correctSentence = correct.join(" ");
+            // Use the first correct option for display
+            const exampleCorrect = data.correctOptions[0].join(" ");
 
             if (isCorrect) {
-                alert(`✅ Perfect! "${correctSentence}" is exactly right!`);
+                alert(`✅ Perfect! "${exampleCorrect}" (or equivalent) is exactly right!`);
             } else {
-                alert(`❌ Not quite.\n\nThe correct sentence is:\n"${correctSentence}"\n\nTry again!`);
+                alert(`❌ Not quite.\n\nOne correct version is:\n"${exampleCorrect}"\n\nTry again!`);
             }
         });
 
