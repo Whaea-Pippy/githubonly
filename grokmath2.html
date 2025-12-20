@@ -187,7 +187,7 @@
                 baseWords: ["10", "4", "6", "The", "difference", "between", "and", "is"],
                 correctOptions: [
                     ["The", "difference", "between", "10", "and", "4", "is", "6"]
-                    // subtraction not commutative – only one order
+                    ["The", "difference", "between", "10", "and", "6", "is", "4"]
                 ],
                 colour: "#FF8E53"
             },
@@ -203,7 +203,7 @@
                 baseWords: ["20", "5", "4", "The", "quotient", "of", "and", "is"],
                 correctOptions: [
                     ["The", "quotient", "of", "20", "and", "5", "is", "4"]
-                    // division not commutative
+                    ["The", "quotient", "of", "20", "and", "4", "is", "5"]
                 ],
                 colour: "#9ACD32"
             },
@@ -224,9 +224,9 @@
                 colour: "#20B2AA"
             },
             { 
-                baseWords: ["add", "all", "the", "numbers", "divide", "by", "how", "many", "To", "find", "the", "mean"],
+                baseWords: ["then", "add", "all", "the", "numbers", "divide", "by", "how", "many", "To", "find", "the", "mean"],
                 correctOptions: [
-                    ["To", "find", "the", "mean", "add", "all", "the", "numbers", "divide", "by", "how", "many"]
+                    ["To", "find", "the", "mean", "add", "all", "the", "numbers", "then", "divide", "by", "how", "many"]
                 ],
                 colour: "#4682B4"
             },
@@ -348,13 +348,12 @@
                 built.every((word, i) => word === option[i])
             );
 
-            // Use the first correct option for display
             const exampleCorrect = data.correctOptions[0].join(" ");
 
             if (isCorrect) {
-                alert(`✅ Perfect! "${exampleCorrect}" (or equivalent) is exactly right!`);
+                alert(`✅ Perfect! "${exampleCorrect}" is exactly right!`);
             } else {
-                alert(`❌ Not quite.\n\nOne correct version is:\n"${exampleCorrect}"\n\nTry again!`);
+                alert(`❌ Not quite.\n\nThe correct sentence is:\n"${exampleCorrect}"\n\nTry again!`);
             }
         });
 
