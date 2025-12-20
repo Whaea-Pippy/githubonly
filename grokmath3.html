@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Vocabulary Flashcards</title>
+    <title>Math Sentence Builders</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -51,69 +51,68 @@
         }
         main {
             flex: 1;
-            padding: 20px 15px 15px;
-            overflow: hidden;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 20px;
-            height: 100%;
-            width: 100%;
-        }
-        @media (max-width: 900px) {
-            .grid {
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(5, 1fr);
-                gap: 15px;
-            }
-        }
-        .flashcard {
-            perspective: 1200px; /* increased for better 3D effect */
-            cursor: pointer;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            overflow: hidden;
-        }
-        .card-inner {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* smooth bounce */
-            border-radius: 20px;
-        }
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: white;
+            gap: 15px;
+            overflow: hidden;
+        }
+        .sentence-area {
+            background: white;
             border-radius: 20px;
+            padding: 20px;
+            min-height: 140px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            font-size: 26px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
         }
-        .card-back {
-            transform: rotateY(180deg);
+        .word-bank {
+            flex: 1;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
         }
-        .card-back strong {
-            font-size: 32px;
-            margin-bottom: 15px;
+        .word {
+            background: var(--word-bg);
+            color: white;
+            padding: 16px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
-        .card-back span {
+        .word:active { cursor: grabbing; transform: scale(0.95); }
+        .word.used {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .sentence-word {
+            background: var(--word-bg);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 15px;
             font-size: 24px;
-            font-weight: normal;
-            line-height: 1.4;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            white-space: nowrap;
         }
-        .flipped .card-inner {
-            transform: rotateY(180deg);
+        .sentence-word:hover {
+            transform: translateY(-3px);
         }
         footer {
             background: #333;
@@ -124,24 +123,24 @@
             background: white;
             color: #333;
             border: none;
-            padding: 14px 40px;
-            margin: 0 20px;
+            padding: 14px 36px;
+            margin: 0 15px;
             border-radius: 30px;
             font-size: 20px;
             cursor: pointer;
             transition: background 0.3s;
         }
         .footer-btn:hover { background: #eee; }
-        .footer-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
+        .check-btn {
+            background: #4CAF50;
+            color: white;
         }
+        .check-btn:hover { background: #45a049; }
     </style>
 </head>
 <body>
-
     <header>
-        <h1>Math Vocabulary Flashcards</h1>
+        <h1>Math Sentence Builders</h1>
         <div class="nav-buttons">
             <button class="nav-btn active" style="background:#FF6B6B" data-level="1">1</button>
             <button class="nav-btn" style="background:#FF8E53" data-level="2">2</button>
@@ -155,97 +154,175 @@
             <button class="nav-btn" style="background:#FF69B4" data-level="10">10</button>
         </div>
     </header>
-
     <main>
-        <div class="grid" id="grid"></div>
+        <div class="sentence-area" id="sentence-area"></div>
+        <div class="word-bank" id="word-bank"></div>
     </main>
-
     <footer>
-        <button class="footer-btn" id="prev-level-btn">← Previous Level</button>
-        <button class="footer-btn" id="next-level-btn">Next Level →</button>
+        <button class="footer-btn" id="reset-btn">Reset</button>
+        <button class="footer-btn check-btn" id="check-btn">Check Sentence ✓</button>
     </footer>
-
     <script>
-        const levels = [ [], 
-            [{term:"Integer",def:"A whole number (positive, negative, or zero)."},{term:"Positive",def:"A number greater than zero."},{term:"Negative",def:"A number less than zero."},{term:"Even",def:"Divisible by 2."},{term:"Odd",def:"Not divisible by 2."},{term:"Prime",def:"Greater than 1, only factors 1 and itself."},{term:"Composite",def:"Greater than 1, has more factors."},{term:"Factor",def:"Divides evenly."},{term:"Multiple",def:"Product of the number and an integer."},{term:"Zero",def:"Additive identity."}],
-            [{term:"Fraction",def:"Part of a whole."},{term:"Numerator",def:"Top: how many parts."},{term:"Denominator",def:"Bottom: total parts."},{term:"Proper Fraction",def:"Numerator < denominator."},{term:"Improper Fraction",def:"Numerator ≥ denominator."},{term:"Mixed Number",def:"Whole + fraction."},{term:"Decimal",def:"Base-10 fraction."},{term:"Equivalent",def:"Same value."},{term:"Simplify",def:"Lowest terms."},{term:"Percent",def:"Out of 100."}],
-            [{term:"Add",def:"Combine."},{term:"Subtract",def:"Take away."},{term:"Multiply",def:"Repeated addition."},{term:"Divide",def:"Split equally."},{term:"Sum",def:"Addition result."},{term:"Difference",def:"Subtraction result."},{term:"Product",def:"Multiplication result."},{term:"Quotient",def:"Division result."},{term:"Remainder",def:"Left over."},{term:"Order of Operations",def:"PEMDAS."}],
-            [{term:"Point",def:"Exact location."},{term:"Line",def:"Infinite both ways."},{term:"Ray",def:"One endpoint."},{term:"Line Segment",def:"Two endpoints."},{term:"Angle",def:"Two rays from vertex."},{term:"Vertex",def:"Corner point."},{term:"Acute Angle",def:"<90°."},{term:"Right Angle",def:"90°."},{term:"Obtuse Angle",def:">90°."},{term:"Parallel",def:"Never meet."}],
-            [{term:"Polygon",def:"Closed straight sides."},{term:"Triangle",def:"3 sides."},{term:"Quadrilateral",def:"4 sides."},{term:"Rectangle",def:"Four right angles."},{term:"Square",def:"Equal sides + right angles."},{term:"Circle",def:"All points equidistant from center."},{term:"Radius",def:"Center to edge."},{term:"Diameter",def:"Through center."},{term:"Perimeter",def:"Around."},{term:"Area",def:"Inside space."}],
-            [{term:"Length",def:"How long."},{term:"Width",def:"How wide."},{term:"Height",def:"How tall."},{term:"Unit",def:"Standard measure."},{term:"Volume",def:"3D space."},{term:"Capacity",def:"How much holds."},{term:"Weight",def:"Gravitational force."},{term:"Mass",def:"Amount of matter."},{term:"Time",def:"Duration."},{term:"Temperature",def:"Hot/cold."}],
-            [{term:"Data",def:"Facts collected."},{term:"Mean",def:"Average."},{term:"Median",def:"Middle."},{term:"Mode",def:"Most frequent."},{term:"Range",def:"Max - min."},{term:"Bar Graph",def:"Bars for amounts."},{term:"Line Graph",def:"Change over time."},{term:"Pie Chart",def:"Parts of whole."},{term:"Table",def:"Rows/columns."},{term:"Probability",def:"Likelihood."}],
-            [{term:"Variable",def:"Unknown letter."},{term:"Expression",def:"Math phrase."},{term:"Equation",def:"Equals two expressions."},{term:"Coefficient",def:"Number by variable."},{term:"Constant",def:"Fixed number."},{term:"Term",def:"Part separated by +/−."},{term:"Like Terms",def:"Same variable."},{term:"Solve",def:"Find value."},{term:"Inequality",def:"> or <."},{term:"Exponent",def:"Power."}],
-            [{term:"Coordinate",def:"(x,y)."},{term:"X-axis",def:"Horizontal."},{term:"Y-axis",def:"Vertical."},{term:"Origin",def:"(0,0)."},{term:"Quadrant",def:"Four sections."},{term:"Plot",def:"Mark point."},{term:"Slope",def:"Rise/run."},{term:"Linear",def:"Straight line."},{term:"Function",def:"One output per input."},{term:"Graph",def:"Visual equation."}],
-            [{term:"Congruent",def:"Same size/shape."},{term:"Similar",def:"Same shape."},{term:"Symmetry",def:"Mirror line."},{term:"Transformation",def:"Move shape."},{term:"Translation",def:"Slide."},{term:"Reflection",def:"Flip."},{term:"Rotation",def:"Turn."},{term:"Pythagorean Theorem",def:"a² + b² = c²."},{term:"Circumference",def:"Around circle."},{term:"Pi",def:"≈3.14."}]
+        const levels = [
+            [], // unused
+            { 
+                words: ["5", "3", "8", "The", "sum", "of", "and", "is"],
+                correct: ["The", "sum", "of", "5", "and", "3", "is", "8"],
+                colour: "#FF6B6B"
+            },
+            { 
+                words: ["10", "4", "6", "The", "difference", "between", "and", "is"],
+                correct: ["The", "difference", "between", "10", "and", "4", "is", "6"],
+                colour: "#FF8E53"
+            },
+            { 
+                words: ["7", "6", "42", "The", "product", "of", "and", "is"],
+                correct: ["The", "product", "of", "7", "and", "6", "is", "42"],
+                colour: "#FFCC00"
+            },
+            { 
+                words: ["20", "5", "4", "The", "quotient", "of", "and", "is"],
+                correct: ["The", "quotient", "of", "20", "and", "5", "is", "4"],
+                colour: "#9ACD32"
+            },
+            { 
+                words: ["1/2", "1/4", "3/4", "Adding", "and", "gives"],
+                correct: ["Adding", "1/2", "and", "1/4", "gives", "3/4"],
+                colour: "#4CAF50"
+            },
+            { 
+                words: ["length", "width", "area", "The", "of", "a", "rectangle", "is"],
+                correct: ["The", "area", "of", "a", "rectangle", "is", "length", "times", "width"],
+                colour: "#20B2AA"
+            },
+            { 
+                words: ["add", "all", "the", "numbers", "divide", "by", "how", "many", "To", "find", "the", "mean"],
+                correct: ["To", "find", "the", "mean", "add", "all", "the", "numbers", "divide", "by", "how", "many"],
+                colour: "#4682B4"
+            },
+            { 
+                words: ["x", "stands", "for", "an", "unknown", "number", "The", "variable"],
+                correct: ["The", "variable", "x", "stands", "for", "an", "unknown", "number"],
+                colour: "#9370DB"
+            },
+            { 
+                words: ["(", "3", ",", "4", ")", "The", "point", "is", "located", "at", "on", "the", "coordinate", "plane"],
+                correct: ["The", "point", "is", "located", "at", "(", "3", ",", "4", ")", "on", "the", "coordinate", "plane"],
+                colour: "#DA70D6"
+            },
+            { 
+                words: ["a²", "b²", "c²", "In", "a", "right-angled", "triangle"],
+                correct: ["In", "a", "right-angled", "triangle", "a²", "plus", "b²", "equals", "c²"],
+                colour: "#FF69B4"
+            }
         ];
-
-        const colors = ['#FF6B6B','#FF8E53','#FFCC00','#9ACD32','#4CAF50','#20B2AA','#4682B4','#9370DB','#DA70D6','#FF69B4'];
 
         let currentLevel = 1;
 
-        const grid = document.getElementById('grid');
+        const sentenceArea = document.getElementById('sentence-area');
+        const wordBank = document.getElementById('word-bank');
         const navBtns = document.querySelectorAll('.nav-btn');
-        const prevLevelBtn = document.getElementById('prev-level-btn');
-        const nextLevelBtn = document.getElementById('next-level-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const checkBtn = document.getElementById('check-btn');
 
-        function updateGrid() {
-            grid.innerHTML = '';
-            const levelData = levels[currentLevel];
-            const color = colors[currentLevel - 1];
-            document.body.style.backgroundColor = color + '22';
+        function loadLevel(level) {
+            currentLevel = level;
+            const data = levels[level];
+            document.body.style.backgroundColor = data.colour + '22';
 
-            levelData.forEach(word => {
-                const card = document.createElement('div');
-                card.className = 'flashcard';
+            wordBank.innerHTML = '';
+            sentenceArea.innerHTML = '';
 
-                card.innerHTML = `
-                    <div class="card-inner">
-                        <div class="card-front" style="background-color:${color};">${word.term}</div>
-                        <div class="card-back" style="background-color:${color};">
-                            <strong>${word.term}</strong>
-                            <span>${word.def}</span>
-                        </div>
-                    </div>
-                `;
+            data.words.forEach(wordText => {
+                const wordEl = document.createElement('div');
+                wordEl.className = 'word';
+                wordEl.textContent = wordText;
+                wordEl.style.setProperty('--word-bg', data.colour);
 
-                // Click anywhere on the card to flip
-                card.addEventListener('click', function() {
-                    this.querySelector('.card-inner').classList.toggle('flipped');
+                wordEl.draggable = true;
+                wordEl.addEventListener('dragstart', e => {
+                    e.dataTransfer.setData('text/plain', wordText);
                 });
 
-                grid.appendChild(card);
+                wordEl.addEventListener('click', () => {
+                    if (!wordEl.classList.contains('used')) {
+                        addWordToSentence(wordText, data.colour);
+                        wordEl.classList.add('used');
+                    }
+                });
+
+                wordBank.appendChild(wordEl);
             });
 
+            updateActiveButton();
+        }
+
+        function addWordToSentence(wordText, colour) {
+            const wordSpan = document.createElement('span');
+            wordSpan.className = 'sentence-word';
+            wordSpan.textContent = wordText;
+            wordSpan.style.setProperty('--word-bg', colour);
+
+            wordSpan.addEventListener('click', () => {
+                wordSpan.remove();
+                const original = Array.from(wordBank.querySelectorAll('.word')).find(w => w.textContent === wordText && w.classList.contains('used'));
+                if (original) original.classList.remove('used');
+            });
+
+            sentenceArea.appendChild(wordSpan);
+        }
+
+        sentenceArea.addEventListener('dragover', e => e.preventDefault());
+
+        sentenceArea.addEventListener('drop', e => {
+            e.preventDefault();
+            const wordText = e.dataTransfer.getData('text/plain');
+            if (wordText) {
+                const colour = levels[currentLevel].colour;
+                addWordToSentence(wordText, colour);
+                const original = Array.from(wordBank.querySelectorAll('.word')).find(w => w.textContent === wordText);
+                if (original) original.classList.add('used');
+            }
+        });
+
+        function updateActiveButton() {
             navBtns.forEach(btn => {
                 btn.classList.toggle('active', parseInt(btn.dataset.level) === currentLevel);
             });
-
-            prevLevelBtn.disabled = currentLevel === 1;
-            nextLevelBtn.disabled = currentLevel === 10;
         }
+
+        resetBtn.addEventListener('click', () => loadLevel(currentLevel));
+
+        checkBtn.addEventListener('click', () => {
+            const built = Array.from(sentenceArea.querySelectorAll('.sentence-word'))
+                .map(el => el.textContent.trim());
+
+            const correct = levels[currentLevel].correct;
+
+            if (built.length === 0) {
+                alert("Build a sentence first!");
+                return;
+            }
+
+            const isCorrect = built.length === correct.length && 
+                              built.every((word, i) => word === correct[i]);
+
+            const correctSentence = correct.join(" ");
+
+            if (isCorrect) {
+                alert(`✅ Perfect! "${correctSentence}" is exactly right!`);
+            } else {
+                alert(`❌ Not quite.\n\nThe correct sentence is:\n"${correctSentence}"\n\nTry again!`);
+            }
+        });
 
         navBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                currentLevel = parseInt(btn.dataset.level);
-                updateGrid();
+                loadLevel(parseInt(btn.dataset.level));
             });
         });
 
-        prevLevelBtn.addEventListener('click', () => {
-            if (currentLevel > 1) {
-                currentLevel--;
-                updateGrid();
-            }
-        });
-
-        nextLevelBtn.addEventListener('click', () => {
-            if (currentLevel < 10) {
-                currentLevel++;
-                updateGrid();
-            }
-        });
-
-        updateGrid();
+        loadLevel(1);
     </script>
 </body>
 </html>
