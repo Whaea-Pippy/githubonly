@@ -61,21 +61,22 @@
             background: white;
             border-radius: 20px;
             padding: 20px;
-            min-height: 120px;
+            min-height: 140px;
             box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-            font-size: 28px;
+            font-size: 26px;
             font-weight: bold;
             color: #333;
-            text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
+            overflow: hidden;
         }
         .sentence-area.empty {
             color: #aaa;
             font-style: italic;
+            font-size: 22px;
         }
         .word-bank {
             flex: 1;
@@ -100,6 +101,7 @@
             user-select: none;
             transition: all 0.2s;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            touch-action: manipulation; /* improves touch on mobile */
         }
         .word:active { cursor: grabbing; transform: scale(0.95); }
         .word.used {
@@ -111,9 +113,10 @@
             color: white;
             padding: 12px 20px;
             border-radius: 15px;
-            font-size: 26px;
+            font-size: 24px;
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            white-space: nowrap; /* prevents word break */
         }
         .sentence-word:hover {
             transform: translateY(-3px);
@@ -143,7 +146,6 @@
     </style>
 </head>
 <body>
-
     <header>
         <h1>Math Sentence Builders</h1>
         <div class="nav-buttons">
@@ -159,20 +161,16 @@
             <button class="nav-btn" style="background:#FF69B4" data-level="10">10</button>
         </div>
     </header>
-
     <main>
         <div class="sentence-area empty" id="sentence-area">
-            Drag words here to build a math sentence...
+            Drag or click words below to build the sentence...
         </div>
-
         <div class="word-bank" id="word-bank"></div>
     </main>
-
     <footer>
         <button class="footer-btn" id="reset-btn">Reset</button>
         <button class="footer-btn check-btn" id="check-btn">Check Sentence ✓</button>
     </footer>
-
     <script>
 const levels = [
     [], // unused
@@ -228,8 +226,8 @@ const levels = [
         colour: "#FF69B4"
     }
 ];
+
         let currentLevel = 5;
-        let draggedElement = null;
 
         const sentenceArea = document.getElementById('sentence-area');
         const wordBank = document.getElementById('word-bank');
@@ -243,26 +241,83 @@ const levels = [
             document.body.style.backgroundColor = data.colour + '22';
 
             wordBank.innerHTML = '';
-            sentenceArea.innerHTML = '<div class="empty-text">Drag words here to build a math sentence...</div>';
+            sentenceArea.innerHTML = '';
             sentenceArea.classList.add('empty');
+            sentenceArea.textContent = 'Drag or click words below to build the sentence...';
 
-            data.words.forEach(word => {
-                const el = document.createElement('div');
-                el.className = 'word';
-                el.textContent = word;
-                el.draggable = true;
-                el.style.setProperty('--word-bg', data.colour);
+            data.words.forEach(wordText => {
+                const wordEl = document.createElement('div');
+                wordEl.className = 'word';
+                wordEl.textContent = wordText;
+                wordEl.style.setProperty('--word-bg', data.colour);
 
-                el.addEventListener('dragstart', e => {
-                    draggedElement = el;
-                    e.dataTransfer.effectAllowed = 'move';
+                // Drag support
+                wordEl.draggable = true;
+                wordEl.addEventListener('dragstart', e => {
+                    e.dataTransfer.setData('text/plain', wordText);
+                    e.dataTransfer.effectAllowed = 'copyMove';
                 });
 
-                wordBank.appendChild(el);
+                // Click support (for touch devices & mouse)
+                wordEl.addEventListener('click', () => {
+                    if (!wordEl.classList.contains('used')) {
+                        addWordToSentence(wordText, data.colour);
+                        wordEl.classList.add('used');
+                    }
+                });
+
+                wordBank.appendChild(wordEl);
             });
 
             updateActiveButton();
         }
+
+        function addWordToSentence(wordText, colour) {
+            const wordSpan = document.createElement('span');
+            wordSpan.className = 'sentence-word';
+            wordSpan.textContent = wordText;
+            wordSpan.style.setProperty('--word-bg', colour);
+
+            // Click to remove
+            wordSpan.addEventListener('click', () => {
+                wordSpan.remove();
+                // Re-enable the original word in bank
+                const original = Array.from(wordBank.querySelectorAll('.word')).find(w => w.textContent === wordText && w.classList.contains('used'));
+                if (original) original.classList.remove('used');
+                checkEmptyState();
+            });
+
+            sentenceArea.appendChild(wordSpan);
+            checkEmptyState();
+        }
+
+        function checkEmptyState() {
+            const hasWords = sentenceArea.querySelectorAll('.sentence-word').length > 0;
+            if (hasWords) {
+                sentenceArea.classList.remove('empty');
+            } else {
+                sentenceArea.classList.add('empty');
+                sentenceArea.textContent = 'Drag or click words below to build the sentence...';
+            }
+        }
+
+        // Drag & Drop into sentence area
+        sentenceArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+        });
+
+        sentenceArea.addEventListener('drop', e => {
+            e.preventDefault();
+            const wordText = e.dataTransfer.getData('text/plain');
+            if (wordText) {
+                const colour = levels[currentLevel].colour;
+                addWordToSentence(wordText, colour);
+                // Mark original as used
+                const original = Array.from(wordBank.querySelectorAll('.word')).find(w => w.textContent === wordText);
+                if (original) original.classList.add('used');
+            }
+        });
 
         function updateActiveButton() {
             navBtns.forEach(btn => {
@@ -270,53 +325,8 @@ const levels = [
             });
         }
 
-        // Drag & Drop
-        sentenceArea.addEventListener('dragover', e => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        });
-
-        sentenceArea.addEventListener('drop', e => {
-            e.preventDefault();
-            if (draggedElement && draggedElement.parentElement === wordBank) {
-                const clone = draggedElement.cloneNode(true);
-                clone.className = 'sentence-word';
-                clone.style.setProperty('--word-bg', levels[currentLevel].colour);
-                clone.draggable = false;
-
-                // Click to remove from sentence
-                clone.addEventListener('click', () => {
-                    clone.remove();
-                    draggedElement.classList.remove('used');
-                    checkEmptyState();
-                });
-
-                sentenceArea.appendChild(clone);
-                draggedElement.classList.add('used');
-                checkEmptyState();
-            }
-        });
-
-        function checkEmptyState() {
-            const hasWords = sentenceArea.querySelectorAll('.sentence-word').length > 0;
-            if (hasWords) {
-                sentenceArea.classList.remove('empty');
-                sentenceArea.querySelector('.empty-text')?.remove();
-            } else {
-                sentenceArea.classList.add('empty');
-                if (!sentenceArea.querySelector('.empty-text')) {
-                    const txt = document.createElement('div');
-                    txt.className = 'empty-text';
-                    txt.textContent = 'Drag words here to build a math sentence...';
-                    sentenceArea.appendChild(txt);
-                }
-            }
-        }
-
-        // Reset
         resetBtn.addEventListener('click', () => loadLevel(currentLevel));
 
-        // Check sentence
         checkBtn.addEventListener('click', () => {
             const built = Array.from(sentenceArea.querySelectorAll('.sentence-word')).map(el => el.textContent.trim());
             const correct = levels[currentLevel].correct;
@@ -326,23 +336,21 @@ const levels = [
                 return;
             }
 
-            const isCorrect = built.every((word, i) => word === correct[i]) && built.length === correct.length;
+            const isCorrect = built.length === correct.length && built.every((w, i) => w === correct[i]);
 
             if (isCorrect) {
                 alert("✅ Perfect! That's the correct math sentence!");
             } else {
-                alert("❌ Not quite right yet — keep trying! (Hint: word order matters)");
+                alert("❌ Not quite right yet — keep trying! (Order matters)");
             }
         });
 
-        // Level buttons
         navBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 loadLevel(parseInt(btn.dataset.level));
             });
         });
 
-        // Start on level 5 (green) to match active button
         loadLevel(5);
     </script>
 </body>
