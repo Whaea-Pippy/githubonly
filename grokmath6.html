@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Vocabulary Flashcards</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f8ff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        header {
+            background: #333;
+            padding: 10px;
+            text-align: center;
+            color: white;
+        }
+        h1 { font-size: 22px; margin: 5px 0; }
+        .nav-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 0;
+        }
+        .nav-btn {
+            width: 60px; height: 60px; border-radius: 50%; border: none;
+            font-size: 24px; font-weight: bold; color: white; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { transform: scale(1.1); }
+        .nav-btn.active { box-shadow: 0 0 15px 4px rgba(255,255,255,0.8); transform: scale(1.15); }
+
+        main { flex: 1; padding: 20px 15px 15px; overflow: hidden; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 20px;
+            height: 100%;
+        }
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(5, 1fr); gap: 15px; }
+        }
+
+        .flashcard {
+            perspective: 1200px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .card-inner {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-radius: 20px;
+        }
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 20px; text-align: center;
+            font-size: 28px; font-weight: bold; color: white;
+            border-radius: 20px;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .card-back strong { font-size: 32px; margin-bottom: 15px; }
+        .card-back span { font-size: 24px; font-weight: normal; line-height: 1.4; }
+        .flipped .card-inner { transform: rotateY(180deg); }
+
+        footer {
+            background: #333; padding: 15px; text-align: center;
+        }
+        .footer-btn {
+            background: white; color: #333; border: none;
+            padding: 14px 40px; margin: 0 20px; border-radius: 30px;
+            font-size: 20px; cursor: pointer;
+            transition: background 0.3s;
+        }
+        .footer-btn:hover { background: #eee; }
+        .footer-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Math Vocabulary Flashcards</h1>
+    <div class="nav-buttons">
+        <button class="nav-btn active" style="background:#FF6B6B" data-level="1">1</button>
+        <button class="nav-btn" style="background:#FF8E53" data-level="2">2</button>
+        <button class="nav-btn" style="background:#FFCC00" data-level="3">3</button>
+        <button class="nav-btn" style="background:#9ACD32" data-level="4">4</button>
+        <button class="nav-btn" style="background:#4CAF50" data-level="5">5</button>
+        <button class="nav-btn" style="background:#20B2AA" data-level="6">6</button>
+        <button class="nav-btn" style="background:#4682B4" data-level="7">7</button>
+        <button class="nav-btn" style="background:#9370DB" data-level="8">8</button>
+        <button class="nav-btn" style="background:#DA70D6" data-level="9">9</button>
+        <button class="nav-btn" style="background:#FF69B4" data-level="10">10</button>
+    </div>
+</header>
+
+<main>
+    <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+    <button class="footer-btn" id="prev-level">← Previous Level</button>
+    <button class="footer-btn" id="next-level">Next Level →</button>
+</footer>
+
+<script>
+    const levels = [ [], 
+        [{term:"Integer",def:"A whole number (positive, negative, or zero)."},{term:"Positive",def:"A number greater than zero."},{term:"Negative",def:"A number less than zero."},{term:"Even",def:"Divisible by 2."},{term:"Odd",def:"Not divisible by 2."},{term:"Prime",def:"Greater than 1, only factors 1 and itself."},{term:"Composite",def:"Greater than 1, has more factors."},{term:"Factor",def:"Divides evenly."},{term:"Multiple",def:"Product of the number and an integer."},{term:"Zero",def:"Additive identity."}],
+        [{term:"Fraction",def:"Part of a whole."},{term:"Numerator",def:"Top: how many parts."},{term:"Denominator",def:"Bottom: total parts."},{term:"Proper Fraction",def:"Numerator < denominator."},{term:"Improper Fraction",def:"Numerator ≥ denominator."},{term:"Mixed Number",def:"Whole + fraction."},{term:"Decimal",def:"Base-10 fraction."},{term:"Equivalent",def:"Same value."},{term:"Simplify",def:"Lowest terms."},{term:"Percent",def:"Out of 100."}],
+        [{term:"Add",def:"Combine."},{term:"Subtract",def:"Take away."},{term:"Multiply",def:"Repeated addition."},{term:"Divide",def:"Split equally."},{term:"Sum",def:"Addition result."},{term:"Difference",def:"Subtraction result."},{term:"Product",def:"Multiplication result."},{term:"Quotient",def:"Division result."},{term:"Remainder",def:"Left over."},{term:"Order of Operations",def:"PEMDAS."}],
+        [{term:"Point",def:"Exact location."},{term:"Line",def:"Infinite both ways."},{term:"Ray",def:"One endpoint."},{term:"Line Segment",def:"Two endpoints."},{term:"Angle",def:"Two rays from vertex."},{term:"Vertex",def:"Corner point."},{term:"Acute Angle",def:"<90°."},{term:"Right Angle",def:"90°."},{term:"Obtuse Angle",def:">90°."},{term:"Parallel",def:"Never meet."}],
+        [{term:"Polygon",def:"Closed straight sides."},{term:"Triangle",def:"3 sides."},{term:"Quadrilateral",def:"4 sides."},{term:"Rectangle",def:"Four right angles."},{term:"Square",def:"Equal sides + right angles."},{term:"Circle",def:"All points equidistant from center."},{term:"Radius",def:"Center to edge."},{term:"Diameter",def:"Through center."},{term:"Perimeter",def:"Around."},{term:"Area",def:"Inside space."}],
+        [{term:"Length",def:"How long."},{term:"Width",def:"How wide."},{term:"Height",def:"How tall."},{term:"Unit",def:"Standard measure."},{term:"Volume",def:"3D space."},{term:"Capacity",def:"How much holds."},{term:"Weight",def:"Gravitational force."},{term:"Mass",def:"Amount of matter."},{term:"Time",def:"Duration."},{term:"Temperature",def:"Hot/cold."}],
+        [{term:"Data",def:"Facts collected."},{term:"Mean",def:"Average."},{term:"Median",def:"Middle."},{term:"Mode",def:"Most frequent."},{term:"Range",def:"Max - min."},{term:"Bar Graph",def:"Bars for amounts."},{term:"Line Graph",def:"Change over time."},{term:"Pie Chart",def:"Parts of whole."},{term:"Table",def:"Rows/columns."},{term:"Probability",def:"Likelihood."}],
+        [{term:"Variable",def:"Unknown letter."},{term:"Expression",def:"Math phrase."},{term:"Equation",def:"Equals two expressions."},{term:"Coefficient",def:"Number by variable."},{term:"Constant",def:"Fixed number."},{term:"Term",def:"Part separated by +/−."},{term:"Like Terms",def:"Same variable."},{term:"Solve",def:"Find value."},{term:"Inequality",def:"> or <."},{term:"Exponent",def:"Power."}],
+        [{term:"Coordinate",def:"(x,y)."},{term:"X-axis",def:"Horizontal."},{term:"Y-axis",def:"Vertical."},{term:"Origin",def:"(0,0)."},{term:"Quadrant",def:"Four sections."},{term:"Plot",def:"Mark point."},{term:"Slope",def:"Rise/run."},{term:"Linear",def:"Straight line."},{term:"Function",def:"One output per input."},{term:"Graph",def:"Visual equation."}],
+        [{term:"Congruent",def:"Same size/shape."},{term:"Similar",def:"Same shape."},{term:"Symmetry",def:"Mirror line."},{term:"Transformation",def:"Move shape."},{term:"Translation",def:"Slide."},{term:"Reflection",def:"Flip."},{term:"Rotation",def:"Turn."},{term:"Pythagorean Theorem",def:"a² + b² = c²."},{term:"Circumference",def:"Around circle."},{term:"Pi",def:"≈3.14."}]
+    ];
+
+    const colors = ['#FF6B6B','#FF8E53','#FFCC00','#9ACD32','#4CAF50','#20B2AA','#4682B4','#9370DB','#DA70D6','#FF69B4'];
+
+    let currentLevel = 1;
+
+    const grid = document.getElementById('grid');
+    const navBtns = document.querySelectorAll('.nav-btn');
+
+    function loadLevel() {
+        grid.innerHTML = '';
+        const color = colors[currentLevel - 1];
+        document.body.style.backgroundColor = color + '22';
+
+        levels[currentLevel].forEach(word => {
+            const card = document.createElement('div');
+            card.className = 'flashcard';
+            card.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front" style="background-color:${color};">${word.term}</div>
+                    <div class="card-back" style="background-color:${color};">
+                        <strong>${word.term}</strong>
+                        <span>${word.def}</span>
+                    </div>
+                </div>
+            `;
+
+            // ROCK-SOLID FLIP - this works everywhere
+            card.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const inner = this.querySelector('.card-inner');
+                inner.classList.toggle('flipped');
+            });
+
+            grid.appendChild(card);
+        });
+
+        navBtns.forEach(btn => {
+            btn.classList.toggle('active', parseInt(btn.dataset.level) === currentLevel);
+        });
+
+        document.getElementById('prev-level').disabled = currentLevel === 1;
+        document.getElementById('next-level').disabled = currentLevel === 10;
+    }
+
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentLevel = parseInt(btn.dataset.level);
+            loadLevel();
+        });
+    });
+
+    document.getElementById('prev-level').addEventListener('click', () => {
+        if (currentLevel > 1) {
+            currentLevel--;
+            loadLevel();
+        }
+    });
+
+    document.getElementById('next-level').addEventListener('click', () => {
+        if (currentLevel < 10) {
+            currentLevel++;
+            loadLevel();
+        }
+    });
+
+    loadLevel();
+</script>
+</body>
+</html>
