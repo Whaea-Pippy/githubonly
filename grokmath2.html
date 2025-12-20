@@ -174,60 +174,60 @@
     </footer>
 
     <script>
-        const levels = [
-            [], // unused
-            { // Level 1: Basic addition
-                words: ["5", "+", "3", "=", "8", "The", "sum", "of", "and", "is"],
-                correct: ["The", "sum", "of", "5", "and", "3", "is", "8", "+", "="],
-                colour: "#FF6B6B"
-            },
-            { // Level 2: Subtraction
-                words: ["10", "-", "4", "=", "6", "difference", "The", "between", "and", "is"],
-                correct: ["The", "difference", "between", "10", "and", "4", "is", "6", "-", "="],
-                colour: "#FF8E53"
-            },
-            { // Level 3: Multiplication
-                words: ["7", "×", "6", "=", "42", "product", "The", "of", "and", "is"],
-                correct: ["The", "product", "of", "7", "and", "6", "is", "42", "×", "="],
-                colour: "#FFCC00"
-            },
-            { // Level 4: Division
-                words: ["20", "÷", "5", "=", "4", "quotient", "The", "of", "and", "is"],
-                correct: ["The", "quotient", "of", "20", "and", "5", "is", "4", "÷", "="],
-                colour: "#9ACD32"
-            },
-            { // Level 5: Fractions
-                words: ["1/2", "+", "1/4", "=", "3/4", "Adding", "fractions", "gives"],
-                correct: ["Adding", "1/2", "and", "1/4", "gives", "3/4", "+", "="],
-                colour: "#4CAF50"
-            },
-            { // Level 6: Area
-                words: ["length", "×", "width", "=", "area", "The", "of", "rectangle", "is", "a"],
-                correct: ["The", "area", "of", "a", "rectangle", "is", "length", "×", "width", "="],
-                colour: "#20B2AA"
-            },
-            { // Level 7: Mean
-                words: ["add", "numbers", "divide", "by", "count", "To", "find", "the", "mean", ","],
-                correct: ["To", "find", "the", "mean", ",", "add", "numbers", "divide", "by", "count"],
-                colour: "#4682B4"
-            },
-            { // Level 8: Variables
-                words: ["x", "+", "5", "=", "12", "represents", "unknown", "The", "variable", "an", "value"],
-                correct: ["The", "variable", "x", "represents", "an", "unknown", "value", "+", "=", "5", "12"],
-                colour: "#9370DB"
-            },
-            { // Level 9: Coordinates
-                words: ["(", "3", ",", "4", ")", "point", "The", "is", "at", "on", "plane"],
-                correct: ["The", "point", "is", "at", "(", "3", ",", "4", ")", "on", "plane"],
-                colour: "#DA70D6"
-            },
-            { // Level 10: Pythagoras
-                words: ["a²", "+", "b²", "=", "c²", "In", "right", "triangle", "the", ","],
-                correct: ["In", "a", "right", "triangle", ",", "a²", "+", "b²", "=", "c²"],
-                colour: "#FF69B4"
-            }
-        ];
-
+const levels = [
+    [], // unused
+    { // Level 1: Basic addition
+        words: ["5", "+", "3", "=", "8", "The", "sum", "of", "and", "is"],
+        correct: ["The", "sum", "of", "5", "and", "3", "is", "8"], // natural sentence
+        symbols: ["+", "="], // optional symbols to place if wanted
+        colour: "#FF6B6B"
+    },
+    { // Level 2: Subtraction
+        words: ["10", "-", "4", "=", "6", "difference", "The", "between", "and", "is"],
+        correct: ["The", "difference", "between", "10", "and", "4", "is", "6"],
+        colour: "#FF8E53"
+    },
+    { // Level 3: Multiplication
+        words: ["7", "×", "6", "=", "42", "product", "The", "of", "and", "is"],
+        correct: ["The", "product", "of", "7", "and", "6", "is", "42"],
+        colour: "#FFCC00"
+    },
+    { // Level 4: Division
+        words: ["20", "÷", "5", "=", "4", "quotient", "The", "of", "and", "is"],
+        correct: ["The", "quotient", "of", "20", "and", "5", "is", "4"],
+        colour: "#9ACD32"
+    },
+    { // Level 5: Fractions
+        words: ["1/2", "+", "1/4", "=", "3/4", "Adding", "and", "gives"],
+        correct: ["Adding", "1/2", "and", "1/4", "gives", "3/4"],
+        colour: "#4CAF50"
+    },
+    { // Level 6: Area
+        words: ["length", "×", "width", "=", "area", "The", "of", "a", "rectangle", "is"],
+        correct: ["The", "area", "of", "a", "rectangle", "is", "length", "×", "width"],
+        colour: "#20B2AA"
+    },
+    { // Level 7: Mean
+        words: ["add", "all", "the", "numbers", "divide", "by", "how", "many", "To", "find", "the", "mean"],
+        correct: ["To", "find", "the", "mean", "add", "all", "the", "numbers", "divide", "by", "how", "many"],
+        colour: "#4682B4"
+    },
+    { // Level 8: Variables
+        words: ["x", "stands", "for", "unknown", "The", "variable", "an", "number"],
+        correct: ["The", "variable", "x", "stands", "for", "an", "unknown", "number"],
+        colour: "#9370DB"
+    },
+    { // Level 9: Coordinates
+        words: ["(", "3", ",", "4", ")", "point", "The", "is", "located", "at", "on", "the", "plane"],
+        correct: ["The", "point", "is", "located", "at", "(", "3", ",", "4", ")", "on", "the", "plane"],
+        colour: "#DA70D6"
+    },
+    { // Level 10: Pythagoras
+        words: ["a²", "+", "b²", "=", "c²", "In", "a", "right-angled", "triangle"],
+        correct: ["In", "a", "right-angled", "triangle", "a²", "+", "b²", "=", "c²"],
+        colour: "#FF69B4"
+    }
+];
         let currentLevel = 5;
         let draggedElement = null;
 
