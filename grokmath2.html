@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Sentence Builders</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        header {
+            background: #333;
+            padding: 10px;
+            text-align: center;
+        }
+        h1 {
+            color: white;
+            margin: 5px 0;
+            font-size: 22px;
+        }
+        .nav-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 0;
+        }
+        .nav-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { transform: scale(1.1); }
+        .nav-btn.active {
+            box-shadow: 0 0 15px 4px rgba(255,255,255,0.8);
+            transform: scale(1.15);
+        }
+        main {
+            flex: 1;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+        }
+        .sentence-area {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 120px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .sentence-area.empty {
+            color: #aaa;
+            font-style: italic;
+        }
+        .word-bank {
+            flex: 1;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        .word {
+            background: var(--word-bg);
+            color: white;
+            padding: 16px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .word:active { cursor: grabbing; transform: scale(0.95); }
+        .word.used {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .sentence-word {
+            background: var(--word-bg);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-size: 26px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .sentence-word:hover {
+            transform: translateY(-3px);
+        }
+        footer {
+            background: #333;
+            padding: 15px;
+            text-align: center;
+        }
+        .footer-btn {
+            background: white;
+            color: #333;
+            border: none;
+            padding: 14px 36px;
+            margin: 0 15px;
+            border-radius: 30px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .footer-btn:hover { background: #eee; }
+        .check-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        .check-btn:hover { background: #45a049; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Math Sentence Builders</h1>
+        <div class="nav-buttons">
+            <button class="nav-btn" style="background:#FF6B6B" data-level="1">1</button>
+            <button class="nav-btn" style="background:#FF8E53" data-level="2">2</button>
+            <button class="nav-btn" style="background:#FFCC00" data-level="3">3</button>
+            <button class="nav-btn" style="background:#9ACD32" data-level="4">4</button>
+            <button class="nav-btn active" style="background:#4CAF50" data-level="5">5</button>
+            <button class="nav-btn" style="background:#20B2AA" data-level="6">6</button>
+            <button class="nav-btn" style="background:#4682B4" data-level="7">7</button>
+            <button class="nav-btn" style="background:#9370DB" data-level="8">8</button>
+            <button class="nav-btn" style="background:#DA70D6" data-level="9">9</button>
+            <button class="nav-btn" style="background:#FF69B4" data-level="10">10</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="sentence-area empty" id="sentence-area">
+            Drag words here to build a math sentence...
+        </div>
+
+        <div class="word-bank" id="word-bank"></div>
+    </main>
+
+    <footer>
+        <button class="footer-btn" id="reset-btn">Reset</button>
+        <button class="footer-btn check-btn" id="check-btn">Check Sentence ✓</button>
+    </footer>
+
+    <script>
+        const levels = [
+            [], // unused
+            { // Level 1: Basic addition
+                words: ["5", "+", "3", "=", "8", "The", "sum", "of", "and", "is"],
+                correct: ["The", "sum", "of", "5", "and", "3", "is", "8", "+", "="],
+                colour: "#FF6B6B"
+            },
+            { // Level 2: Subtraction
+                words: ["10", "-", "4", "=", "6", "difference", "The", "between", "and", "is"],
+                correct: ["The", "difference", "between", "10", "and", "4", "is", "6", "-", "="],
+                colour: "#FF8E53"
+            },
+            { // Level 3: Multiplication
+                words: ["7", "×", "6", "=", "42", "product", "The", "of", "and", "is"],
+                correct: ["The", "product", "of", "7", "and", "6", "is", "42", "×", "="],
+                colour: "#FFCC00"
+            },
+            { // Level 4: Division
+                words: ["20", "÷", "5", "=", "4", "quotient", "The", "of", "and", "is"],
+                correct: ["The", "quotient", "of", "20", "and", "5", "is", "4", "÷", "="],
+                colour: "#9ACD32"
+            },
+            { // Level 5: Fractions
+                words: ["1/2", "+", "1/4", "=", "3/4", "Adding", "fractions", "gives"],
+                correct: ["Adding", "1/2", "and", "1/4", "gives", "3/4", "+", "="],
+                colour: "#4CAF50"
+            },
+            { // Level 6: Area
+                words: ["length", "×", "width", "=", "area", "The", "of", "rectangle", "is", "a"],
+                correct: ["The", "area", "of", "a", "rectangle", "is", "length", "×", "width", "="],
+                colour: "#20B2AA"
+            },
+            { // Level 7: Mean
+                words: ["add", "numbers", "divide", "by", "count", "To", "find", "the", "mean", ","],
+                correct: ["To", "find", "the", "mean", ",", "add", "numbers", "divide", "by", "count"],
+                colour: "#4682B4"
+            },
+            { // Level 8: Variables
+                words: ["x", "+", "5", "=", "12", "represents", "unknown", "The", "variable", "an", "value"],
+                correct: ["The", "variable", "x", "represents", "an", "unknown", "value", "+", "=", "5", "12"],
+                colour: "#9370DB"
+            },
+            { // Level 9: Coordinates
+                words: ["(", "3", ",", "4", ")", "point", "The", "is", "at", "on", "plane"],
+                correct: ["The", "point", "is", "at", "(", "3", ",", "4", ")", "on", "plane"],
+                colour: "#DA70D6"
+            },
+            { // Level 10: Pythagoras
+                words: ["a²", "+", "b²", "=", "c²", "In", "right", "triangle", "the", ","],
+                correct: ["In", "a", "right", "triangle", ",", "a²", "+", "b²", "=", "c²"],
+                colour: "#FF69B4"
+            }
+        ];
+
+        let currentLevel = 5;
+        let draggedElement = null;
+
+        const sentenceArea = document.getElementById('sentence-area');
+        const wordBank = document.getElementById('word-bank');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const checkBtn = document.getElementById('check-btn');
+
+        function loadLevel(level) {
+            currentLevel = level;
+            const data = levels[level];
+            document.body.style.backgroundColor = data.colour + '22';
+
+            wordBank.innerHTML = '';
+            sentenceArea.innerHTML = '<div class="empty-text">Drag words here to build a math sentence...</div>';
+            sentenceArea.classList.add('empty');
+
+            data.words.forEach(word => {
+                const el = document.createElement('div');
+                el.className = 'word';
+                el.textContent = word;
+                el.draggable = true;
+                el.style.setProperty('--word-bg', data.colour);
+
+                el.addEventListener('dragstart', e => {
+                    draggedElement = el;
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                wordBank.appendChild(el);
+            });
+
+            updateActiveButton();
+        }
+
+        function updateActiveButton() {
+            navBtns.forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.level) === currentLevel);
+            });
+        }
+
+        // Drag & Drop
+        sentenceArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+
+        sentenceArea.addEventListener('drop', e => {
+            e.preventDefault();
+            if (draggedElement && draggedElement.parentElement === wordBank) {
+                const clone = draggedElement.cloneNode(true);
+                clone.className = 'sentence-word';
+                clone.style.setProperty('--word-bg', levels[currentLevel].colour);
+                clone.draggable = false;
+
+                // Click to remove from sentence
+                clone.addEventListener('click', () => {
+                    clone.remove();
+                    draggedElement.classList.remove('used');
+                    checkEmptyState();
+                });
+
+                sentenceArea.appendChild(clone);
+                draggedElement.classList.add('used');
+                checkEmptyState();
+            }
+        });
+
+        function checkEmptyState() {
+            const hasWords = sentenceArea.querySelectorAll('.sentence-word').length > 0;
+            if (hasWords) {
+                sentenceArea.classList.remove('empty');
+                sentenceArea.querySelector('.empty-text')?.remove();
+            } else {
+                sentenceArea.classList.add('empty');
+                if (!sentenceArea.querySelector('.empty-text')) {
+                    const txt = document.createElement('div');
+                    txt.className = 'empty-text';
+                    txt.textContent = 'Drag words here to build a math sentence...';
+                    sentenceArea.appendChild(txt);
+                }
+            }
+        }
+
+        // Reset
+        resetBtn.addEventListener('click', () => loadLevel(currentLevel));
+
+        // Check sentence
+        checkBtn.addEventListener('click', () => {
+            const built = Array.from(sentenceArea.querySelectorAll('.sentence-word')).map(el => el.textContent.trim());
+            const correct = levels[currentLevel].correct;
+
+            if (built.length === 0) {
+                alert("Build a sentence first!");
+                return;
+            }
+
+            const isCorrect = built.every((word, i) => word === correct[i]) && built.length === correct.length;
+
+            if (isCorrect) {
+                alert("✅ Perfect! That's the correct math sentence!");
+            } else {
+                alert("❌ Not quite right yet — keep trying! (Hint: word order matters)");
+            }
+        });
+
+        // Level buttons
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                loadLevel(parseInt(btn.dataset.level));
+            });
+        });
+
+        // Start on level 5 (green) to match active button
+        loadLevel(5);
+    </script>
+</body>
+</html>
