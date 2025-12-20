@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Vocabulary Flashcards</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        header {
+            background-color: #333;
+            padding: 10px;
+            text-align: center;
+        }
+        .nav-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .nav-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .nav-btn:hover {
+            transform: scale(1.1);
+        }
+        .nav-btn.active {
+            box-shadow: 0 0 15px 5px rgba(255,255,255,0.8);
+        }
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .flashcard {
+            width: 90%;
+            max-width: 600px;
+            height: 400px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            padding: 20px;
+            text-align: center;
+            font-size: 32px;
+            color: white;
+        }
+        .card-front {
+            font-weight: bold;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        .card-back strong {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        footer {
+            background-color: #333;
+            padding: 15px;
+            text-align: center;
+        }
+        .footer-btn {
+            background-color: #fff;
+            color: #333;
+            border: none;
+            padding: 12px 30px;
+            margin: 0 20px;
+            border-radius: 30px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .footer-btn:hover {
+            background-color: #ddd;
+        }
+        .footer-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        h1 {
+            color: white;
+            margin: 0;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Math Vocabulary Flashcards</h1>
+        <div class="nav-buttons">
+            <button class="nav-btn active" style="background-color: #FF6B6B;" data-level="1">1</button>
+            <button class="nav-btn" style="background-color: #FF8E53;" data-level="2">2</button>
+            <button class="nav-btn" style="background-color: #FFCC00;" data-level="3">3</button>
+            <button class="nav-btn" style="background-color: #9ACD32;" data-level="4">4</button>
+            <button class="nav-btn" style="background-color: #4CAF50;" data-level="5">5</button>
+            <button class="nav-btn" style="background-color: #20B2AA;" data-level="6">6</button>
+            <button class="nav-btn" style="background-color: #4682B4;" data-level="7">7</button>
+            <button class="nav-btn" style="background-color: #9370DB;" data-level="8">8</button>
+            <button class="nav-btn" style="background-color: #DA70D6;" data-level="9">9</button>
+            <button class="nav-btn" style="background-color: #FF69B4;" data-level="10">10</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="flashcard" id="flashcard">
+            <div class="card-inner">
+                <div class="card-front" id="front"></div>
+                <div class="card-back" id="back"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <button class="footer-btn" id="back-btn">← Back</button>
+        <button class="footer-btn" id="next-btn">Next →</button>
+    </footer>
+
+    <script>
+        const levels = [
+            [], // index 0 not used
+            [ // Level 1: Basic Numbers
+                {term: "Integer", def: "A whole number (positive, negative, or zero)."},
+                {term: "Positive", def: "A number greater than zero."},
+                {term: "Negative", def: "A number less than zero."},
+                {term: "Even", def: "A number divisible by 2."},
+                {term: "Odd", def: "A number not divisible by 2."},
+                {term: "Prime", def: "A number greater than 1 with only itself and 1 as factors."},
+                {term: "Composite", def: "A number greater than 1 with more than two factors."},
+                {term: "Factor", def: "A number that divides another number evenly."},
+                {term: "Multiple", def: "The product of a number and an integer."},
+                {term: "Zero", def: "The number with no value; additive identity."}
+            ],
+            [ // Level 2: Fractions & Decimals
+                {term: "Fraction", def: "A part of a whole, shown as numerator over denominator."},
+                {term: "Numerator", def: "The top number in a fraction; how many parts."},
+                {term: "Denominator", def: "The bottom number in a fraction; total parts."},
+                {term: "Proper Fraction", def: "A fraction where numerator < denominator."},
+                {term: "Improper Fraction", def: "A fraction where numerator ≥ denominator."},
+                {term: "Mixed Number", def: "A whole number plus a proper fraction."},
+                {term: "Decimal", def: "A fraction with denominator a power of 10."},
+                {term: "Equivalent", def: "Having the same value."},
+                {term: "Simplify", def: "Reduce a fraction to lowest terms."},
+                {term: "Percent", def: "Per hundred; out of 100."}
+            ],
+            [ // Level 3: Operations
+                {term: "Add", def: "Combine numbers to find the total."},
+                {term: "Subtract", def: "Take away one number from another."},
+                {term: "Multiply", def: "Repeated addition; find the product."},
+                {term: "Divide", def: "Split into equal parts; find the quotient."},
+                {term: "Sum", def: "The result of addition."},
+                {term: "Difference", def: "The result of subtraction."},
+                {term: "Product", def: "The result of multiplication."},
+                {term: "Quotient", def: "The result of division."},
+                {term: "Remainder", def: "What's left over after division."},
+                {term: "Order of Operations", def: "Rules for which calculations to do first (PEMDAS)."}
+            ],
+            [ // Level 4: Basic Geometry
+                {term: "Point", def: "An exact location in space."},
+                {term: "Line", def: "A straight path that goes forever in both directions."},
+                {term: "Ray", def: "A line with one endpoint."},
+                {term: "Line Segment", def: "A part of a line with two endpoints."},
+                {term: "Angle", def: "Formed by two rays sharing an endpoint."},
+                {term: "Vertex", def: "The point where two rays meet in an angle."},
+                {term: "Acute Angle", def: "An angle less than 90 degrees."},
+                {term: "Right Angle", def: "An angle exactly 90 degrees."},
+                {term: "Obtuse Angle", def: "An angle greater than 90 degrees."},
+                {term: "Parallel", def: "Lines that never meet; same direction."}
+            ],
+            [ // Level 5: Shapes
+                {term: "Polygon", def: "A closed shape with straight sides."},
+                {term: "Triangle", def: "A 3-sided polygon."},
+                {term: "Quadrilateral", def: "A 4-sided polygon."},
+                {term: "Rectangle", def: "A quadrilateral with four right angles."},
+                {term: "Square", def: "A rectangle with all sides equal."},
+                {term: "Circle", def: "A round shape with all points same distance from center."},
+                {term: "Radius", def: "Distance from center to edge of a circle."},
+                {term: "Diameter", def: "Distance across a circle through the center."},
+                {term: "Perimeter", def: "The distance around a shape."},
+                {term: "Area", def: "The space inside a shape."}
+            ],
+            [ // Level 6: Measurement
+                {term: "Length", def: "How long something is."},
+                {term: "Width", def: "How wide something is."},
+                {term: "Height", def: "How tall something is."},
+                {term: "Unit", def: "A standard amount used to measure (e.g., cm, inch)."},
+                {term: "Volume", def: "The space inside a 3D shape."},
+                {term: "Capacity", def: "How much a container can hold."},
+                {term: "Weight", def: "How heavy something is."},
+                {term: "Mass", def: "Amount of matter in an object."},
+                {term: "Time", def: "Measured in seconds, minutes, hours."},
+                {term: "Temperature", def: "How hot or cold something is."}
+            ],
+            [ // Level 7: Data & Graphs
+                {term: "Data", def: "Information or facts collected."},
+                {term: "Mean", def: "Average; add up and divide by count."},
+                {term: "Median", def: "Middle value when ordered."},
+                {term: "Mode", def: "Most common value."},
+                {term: "Range", def: "Difference between highest and lowest."},
+                {term: "Bar Graph", def: "Uses bars to show amounts."},
+                {term: "Line Graph", def: "Shows change over time."},
+                {term: "Pie Chart", def: "Shows parts of a whole."},
+                {term: "Table", def: "Organized rows and columns of data."},
+                {term: "Probability", def: "How likely something is to happen."}
+            ],
+            [ // Level 8: Algebra Basics
+                {term: "Variable", def: "A letter that represents an unknown number."},
+                {term: "Expression", def: "Numbers, variables, and operations (no =)."},
+                {term: "Equation", def: "A statement that two expressions are equal."},
+                {term: "Coefficient", def: "Number in front of a variable."},
+                {term: "Constant", def: "A fixed number with no variable."},
+                {term: "Term", def: "A single number or variable part."},
+                {term: "Like Terms", def: "Terms with the same variable."},
+                {term: "Solve", def: "Find the value that makes an equation true."},
+                {term: "Inequality", def: "Shows one side greater or less than the other."},
+                {term: "Exponent", def: "Shows how many times to multiply a base."}
+            ],
+            [ // Level 9: Coordinate Plane
+                {term: "Coordinate", def: "A pair of numbers (x,y) for a point."},
+                {term: "X-axis", def: "Horizontal number line."},
+                {term: "Y-axis", def: "Vertical number line."},
+                {term: "Origin", def: "Point (0,0) where axes meet."},
+                {term: "Quadrant", def: "One of four sections of the plane."},
+                {term: "Plot", def: "Mark a point on the coordinate plane."},
+                {term: "Slope", def: "Steepness of a line; rise over run."},
+                {term: "Linear", def: "A straight line relationship."},
+                {term: "Function", def: "A rule where each input has one output."},
+                {term: "Graph", def: "Visual picture of data or equation."}
+            ],
+            [ // Level 10: Advanced Geometry
+                {term: "Congruent", def: "Same size and shape."},
+                {term: "Similar", def: "Same shape, different size."},
+                {term: "Symmetry", def: "Can be folded to match perfectly."},
+                {term: "Transformation", def: "Move a shape (slide, flip, turn)."},
+                {term: "Translation", def: "Slide a shape without rotating."},
+                {term: "Reflection", def: "Flip over a line."},
+                {term: "Rotation", def: "Turn around a point."},
+                {term: "Pythagorean Theorem", def: "In right triangle, a² + b² = c²."},
+                {term: "Circumference", def: "Distance around a circle."},
+                {term: "Pi", def: "Ratio of circumference to diameter (≈3.14)."}
+            ]
+        ];
+
+        const colors = [
+            '#FF6B6B', '#FF8E53', '#FFCC00', '#9ACD32', '#4CAF50',
+            '#20B2AA', '#4682B4', '#9370DB', '#DA70D6', '#FF69B4'
+        ];
+
+        let currentLevel = 1;
+        let currentIndex = 0;
+
+        const front = document.getElementById('front');
+        const back = document.getElementById('back');
+        const card = document.getElementById('flashcard');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const backBtn = document.getElementById('back-btn');
+
+        function updateCard() {
+            const word = levels[currentLevel][currentIndex];
+            front.textContent = word.term;
+            back.innerHTML = `<strong>${word.term}</strong><br><br>${word.def}`;
+            card.classList.remove('flipped');
+
+            // Apply level color
+            const color = colors[currentLevel - 1];
+            document.body.style.backgroundColor = color + '22'; // very light tint
+            front.style.backgroundColor = color;
+            back.style.backgroundColor = color;
+
+            updateNav();
+            updateFooterButtons();
+        }
+
+        function updateNav() {
+            navBtns.forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.level) === currentLevel);
+            });
+        }
+
+        function updateFooterButtons() {
+            backBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === levels[currentLevel].length - 1;
+        }
+
+        // Navigation buttons (levels)
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentLevel = parseInt(btn.dataset.level);
+                currentIndex = 0;
+                updateCard();
+            });
+        });
+
+        // Flip card on click
+        card.addEventListener('click', () => {
+            card.classList.toggle('flipped');
+        });
+
+        // Next / Back within level
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < levels[currentLevel].length - 1) {
+                currentIndex++;
+                updateCard();
+            }
+        });
+
+        backBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+            }
+        });
+
+        // Initial load
+        updateCard();
+    </script>
+</body>
+</html>
