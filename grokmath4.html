@@ -51,22 +51,20 @@
         .nav-btn:hover { transform: scale(1.1); }
         .nav-btn.active { box-shadow: 0 0 15px 4px rgba(255,255,255,0.8); transform: scale(1.15); }
 
-        main { flex: 1; padding: 20px 15px; overflow: hidden; display: flex; flex-direction: column; }
+        main { flex: 1; padding: 20px 15px; overflow: hidden; }
         .match-container {
-            flex: 1;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            min-height: 0; /* important for grid children */
+            height: 100%;
         }
         @media (max-width: 900px) {
             .match-container { grid-template-columns: 1fr; gap: 15px; }
         }
         .column {
-            display: grid;
-            grid-template-rows: repeat(5, 1fr);
+            display: flex;
+            flex-direction: column;
             gap: 12px;
-            min-height: 0;
         }
         .match-card {
             background: white;
@@ -85,7 +83,6 @@
             line-height: 1.4;
             word-wrap: break-word;
             overflow-wrap: break-word;
-            min-height: 0;
         }
         .match-card:hover {
             transform: translateY(-4px);
@@ -96,9 +93,9 @@
             box-shadow: 0 0 20px rgba(255,215,0,0.6);
         }
         .match-card.matched {
-            background: #4CAF50;
             color: white;
             cursor: default;
+            order: -1; /* moves to top */
         }
         .match-card.wrong {
             background: #FF6B6B;
@@ -127,7 +124,6 @@
             background: #333;
             padding: 15px;
             text-align: center;
-            flex-shrink: 0;
         }
         .footer-btn {
             background: white; color: #333; border: none;
@@ -311,6 +307,7 @@
     let currentLevel = 1;
     let selectedTerm = null;
     let matches = 0;
+    let pairColorIndex = 0;
 
     const termsColumn = document.getElementById('terms-column');
     const defsColumn = document.getElementById('defs-column');
@@ -336,6 +333,7 @@
         defsColumn.innerHTML = '';
         selectedTerm = null;
         matches = 0;
+        pairColorIndex = 0;
 
         const data = matchingData[level];
 
@@ -379,8 +377,18 @@
             selectedTerm = card;
         } else if (selectedTerm && selectedTerm.dataset.type === 'term') {
             if (selectedTerm.dataset.pair === card.dataset.pair) {
+                // Correct match – assign colour and move to top
+                const pairColor = colors[pairColorIndex % colors.length];
+                selectedTerm.style.backgroundColor = pairColor;
+                card.style.backgroundColor = pairColor;
                 selectedTerm.classList.add('matched');
                 card.classList.add('matched');
+
+                // Move to top
+                termsColumn.prepend(selectedTerm);
+                defsColumn.prepend(card);
+
+                pairColorIndex++;
                 matches++;
 
                 scores[ACTIVITY_NAME].correct++;
@@ -397,6 +405,7 @@
                     feedback.classList.add('show');
                 }
             } else {
+                // Wrong
                 card.classList.add('wrong');
                 selectedTerm.classList.add('wrong');
                 setTimeout(() => {
