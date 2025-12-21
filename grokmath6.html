@@ -89,7 +89,7 @@
             color: #333;
         }
         .formula-area.empty::before {
-            content: "Drag symbols here to build the formula...";
+            content: "Drag or click symbols here to build the formula...";
             color: #aaa;
             font-style: italic;
             font-size: 28px;
@@ -159,7 +159,8 @@
         .footer-btn {
             background: white; color: #333; border: none;
             padding: 14px 40px; margin: 0 20px; border-radius: 30px;
-            font-size: 20px; cursor: pointer;
+            font-size: 20px;
+            cursor: pointer;
             transition: background 0.3s;
         }
         .footer-btn:hover { background: #eee; }
@@ -218,32 +219,20 @@
 
     const formulae = [
         [], // unused
-        [ // Level 1 - Basic Area & Perimeter
-            {prompt: "Area of a rectangle", symbols: ["A", "=", "l", "×", "w"], correct: ["A", "=", "l", "×", "w"]},
-            {prompt: "Perimeter of a rectangle", symbols: ["P", "=", "2", "(", "l", "+", "w", ")"], correct: ["P", "=", "2", "(", "l", "+", "w", ")"]},
-            {prompt: "Area of a triangle", symbols: ["A", "=", "1/2", "b", "×", "h"], correct: ["A", "=", "1/2", "b", "×", "h"]},
-            {prompt: "Circumference of a circle", symbols: ["C", "=", "2", "π", "r"], correct: ["C", "=", "2", "π", "r"]},
-            {prompt: "Area of a circle", symbols: ["A", "=", "π", "r", "²"], correct: ["A", "=", "π", "r", "²"]}
+        [ // Level 1
+            {prompt: "Area of a rectangle", symbols: ["A", "=", "l", "×", "w"], correctOptions: [["A", "=", "l", "×", "w"], ["A", "=", "w", "×", "l"]]},
+            {prompt: "Perimeter of a rectangle", symbols: ["P", "=", "2", "(", "l", "+", "w", ")"], correctOptions: [["P", "=", "2", "(", "l", "+", "w", ")"]]},
+            {prompt: "Area of a triangle", symbols: ["A", "=", "1/2", "b", "×", "h"], correctOptions: [["A", "=", "1/2", "b", "×", "h"], ["A", "=", "1/2", "h", "×", "b"]]},
+            {prompt: "Circumference of a circle", symbols: ["C", "=", "2", "π", "r"], correctOptions: [["C", "=", "2", "π", "r"]]},
+            {prompt: "Area of a circle", symbols: ["A", "=", "π", "r", "²"], correctOptions: [["A", "=", "π", "r", "²"]]}
         ],
-        [ // Level 2 - Volume & Speed
-            {prompt: "Volume of a cuboid", symbols: ["V", "=", "l", "×", "w", "×", "h"], correct: ["V", "=", "l", "×", "w", "×", "h"]},
-            {prompt: "Volume of a cylinder", symbols: ["V", "=", "π", "r", "²", "h"], correct: ["V", "=", "π", "r", "²", "h"]},
-            {prompt: "Speed", symbols: ["s", "=", "d", "÷", "t"], correct: ["s", "=", "d", "÷", "t"]},
-            {prompt: "Density", symbols: ["ρ", "=", "m", "÷", "V"], correct: ["ρ", "=", "m", "÷", "V"]},
-            {prompt: "Simple interest", symbols: ["I", "=", "P", "×", "r", "×", "t"], correct: ["I", "=", "P", "×", "r", "×", "t"]}
-        ],
-        [ // Level 3 - Pythagoras & Quadratic
-            {prompt: "Pythagorean theorem", symbols: ["c", "²", "=", "a", "²", "+", "b", "²"], correct: ["c", "²", "=", "a", "²", "+", "b", "²"]},
-            {prompt: "Quadratic formula", symbols: ["x", "=", "−b", "±", "√(", "b²", "−", "4ac", ")", "÷", "2a"], correct: ["x", "=", "−b", "±", "√(", "b²", "−", "4ac", ")", "÷", "2a"]},
-            {prompt: "Slope of a line", symbols: ["m", "=", "(", "y₂", "−", "y₁", ")", "÷", "(", "x₂", "−", "x₁", ")"], correct: ["m", "=", "(", "y₂", "−", "y₁", ")", "÷", "(", "x₂", "−", "x₁", ")"]},
-            {prompt: "Distance formula", symbols: ["d", "=", "√", "(", "(", "x₂", "−", "x₁", ")", "²", "+", "(", "y₂", "−", "y₁", ")", "²", ")"], correct: ["d", "=", "√", "(", "(", "x₂", "−", "x₁", ")", "²", "+", "(", "y₂", "−", "y₁", ")", "²", ")"]},
-            {prompt: "Mean (average)", symbols: ["x̄", "=", "Σx", "÷", "n"], correct: ["x̄", "=", "Σx", "÷", "n"]}
-        ],
-        [], [], [], [], [], [], [], [] // placeholders for levels 4-10 – add more as needed
+        // Add more levels as needed – for now, only Level 1 shown
+        // Replace with your real data for levels 2–10
+        [], [], [], [], [], [], [], [], []
     ];
 
-    // Fill missing levels with Level 1 for testing – replace with real data later
-    for (let i = 4; i <= 10; i++) {
+    // Fill missing levels with Level 1 for testing
+    for (let i = 2; i <= 10; i++) {
         formulae[i] = formulae[1].slice();
     }
 
@@ -330,16 +319,23 @@
 
     checkBtn.addEventListener('click', () => {
         const built = Array.from(formulaArea.querySelectorAll('.placed-symbol')).map(el => el.textContent);
-        const correct = formulae[currentLevel][currentFormulaIndex].correct;
+        const data = formulae[currentLevel][currentFormulaIndex];
 
         scores[ACTIVITY_NAME].total++;
 
-        if (built.length === correct.length && built.every((s, i) => s === correct[i])) {
+        const isCorrect = data.correctOptions.some(option => 
+            built.length === option.length && 
+            built.every((s, i) => s === option[i])
+        );
+
+        const exampleCorrect = data.correctOptions[0].join(" ");
+
+        if (isCorrect) {
             feedbackEl.textContent = '✅ Perfect formula!';
             feedbackEl.style.color = '#4CAF50';
             scores[ACTIVITY_NAME].correct++;
         } else {
-            feedbackEl.textContent = '❌ Not quite – try again!';
+            feedbackEl.textContent = `❌ Not quite. One correct version is: ${exampleCorrect}`;
             feedbackEl.style.color = '#FF6B6B';
         }
 
