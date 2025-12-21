@@ -89,7 +89,7 @@
             color: #333;
         }
         .formula-area.empty::before {
-            content: "Drag or click symbols here to build the formula...";
+            content: "Drag symbols here to build the formula...";
             color: #aaa;
             font-style: italic;
             font-size: 28px;
@@ -159,8 +159,7 @@
         .footer-btn {
             background: white; color: #333; border: none;
             padding: 14px 40px; margin: 0 20px; border-radius: 30px;
-            font-size: 20px;
-            cursor: pointer;
+            font-size: 20px; cursor: pointer;
             transition: background 0.3s;
         }
         .footer-btn:hover { background: #eee; }
@@ -220,19 +219,26 @@
     const formulae = [
         [], // unused
         [ // Level 1
-            {prompt: "Area of a rectangle", symbols: ["A", "=", "l", "×", "w"], correctOptions: [["A", "=", "l", "×", "w"], ["A", "=", "w", "×", "l"]]},
-            {prompt: "Perimeter of a rectangle", symbols: ["P", "=", "2", "(", "l", "+", "w", ")"], correctOptions: [["P", "=", "2", "(", "l", "+", "w", ")"]]},
-            {prompt: "Area of a triangle", symbols: ["A", "=", "1/2", "b", "×", "h"], correctOptions: [["A", "=", "1/2", "b", "×", "h"], ["A", "=", "1/2", "h", "×", "b"]]},
-            {prompt: "Circumference of a circle", symbols: ["C", "=", "2", "π", "r"], correctOptions: [["C", "=", "2", "π", "r"]]},
-            {prompt: "Area of a circle", symbols: ["A", "=", "π", "r", "²"], correctOptions: [["A", "=", "π", "r", "²"]]}
+            {prompt: "Area of a rectangle", correctOptions: [["A", "=", "l", "×", "w"], ["A", "=", "w", "×", "l"]]},
+            {prompt: "Perimeter of a rectangle", correctOptions: [["P", "=", "2", "(", "l", "+", "w", ")"], ["P", "=", "2", "(", "w", "+", "l", ")"]]},
+            {prompt: "Area of a triangle", correctOptions: [["A", "=", "½", "b", "×", "h"], ["A", "=", "½", "h", "×", "b"]]},
+            {prompt: "Circumference of a circle", correctOptions: [["C", "=", "2", "π", "r"], ["C", "=", "2", "r", "π"]]},
+            {prompt: "Area of a circle", correctOptions: [["A", "=", "π", "r", "²"], ["A", "=", "r", "²", "π"]]}
         ],
-        // Add more levels as needed – for now, only Level 1 shown
-        // Replace with your real data for levels 2–10
-        [], [], [], [], [], [], [], [], []
+        [ // Level 2
+            {prompt: "Volume of a cuboid", correctOptions: [["V", "=", "l", "×", "w", "×", "h"], ["V", "=", "w", "×", "l", "×", "h"], ["V", "=", "h", "×", "w", "×", "l"]]},
+            {prompt: "Volume of a cylinder", correctOptions: [["V", "=", "π", "r", "²", "h"], ["V", "=", "π", "h", "r", "²"], ["V", "=", "h", "π", "r", "²"]]},
+            {prompt: "Speed", correctOptions: [["s", "=", "d", "÷", "t"], ["s", "=", "d", "/", "t"]]},
+            {prompt: "Density", correctOptions: [["ρ", "=", "m", "÷", "V"], ["ρ", "=", "m", "/", "V"]]},
+            {prompt: "Simple interest", correctOptions: [["I", "=", "P", "×", "r", "×", "t"], ["I", "=", "P", "r", "t"]]}
+        ],
+        // Add more levels as needed – same structure
+        // For now, repeating Level 1 for testing – replace with real data later
+        [], [], [], [], [], [], [], []
     ];
 
     // Fill missing levels with Level 1 for testing
-    for (let i = 2; i <= 10; i++) {
+    for (let i = 3; i <= 10; i++) {
         formulae[i] = formulae[1].slice();
     }
 
@@ -319,23 +325,21 @@
 
     checkBtn.addEventListener('click', () => {
         const built = Array.from(formulaArea.querySelectorAll('.placed-symbol')).map(el => el.textContent);
-        const data = formulae[currentLevel][currentFormulaIndex];
+        const correctOptions = formulae[currentLevel][currentFormulaIndex].correctOptions;
 
         scores[ACTIVITY_NAME].total++;
 
-        const isCorrect = data.correctOptions.some(option => 
+        const isCorrect = correctOptions.some(option => 
             built.length === option.length && 
             built.every((s, i) => s === option[i])
         );
-
-        const exampleCorrect = data.correctOptions[0].join(" ");
 
         if (isCorrect) {
             feedbackEl.textContent = '✅ Perfect formula!';
             feedbackEl.style.color = '#4CAF50';
             scores[ACTIVITY_NAME].correct++;
         } else {
-            feedbackEl.textContent = `❌ Not quite. One correct version is: ${exampleCorrect}`;
+            feedbackEl.textContent = '❌ Not quite – try again!';
             feedbackEl.style.color = '#FF6B6B';
         }
 
