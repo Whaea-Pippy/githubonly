@@ -55,32 +55,34 @@
         .match-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            gap: 20px;
             height: 100%;
         }
         @media (max-width: 900px) {
-            .match-container { grid-template-columns: 1fr; gap: 20px; }
+            .match-container { grid-template-columns: 1fr; gap: 15px; }
         }
         .column {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
+            display: grid;
+            grid-template-rows: repeat(5, 1fr);
+            gap: 15px;
         }
         .match-card {
             background: white;
             border-radius: 20px;
-            padding: 20px;
+            padding: 10px;
             text-align: center;
-            font-size: 26px;
             font-weight: bold;
             color: #333;
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             transition: all 0.3s;
-            min-height: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: clamp(18px, 4vw, 26px); /* dynamic font size */
+            line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .match-card:hover {
             transform: translateY(-5px);
