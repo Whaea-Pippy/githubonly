@@ -380,19 +380,17 @@
         if (card.dataset.type === 'term') {
             selectedTerm = card;
         } else if (selectedTerm && selectedTerm.dataset.type === 'term') {
-            if (selectedTerm.dataset.pair === card.dataset.pair) {
-                const pairColor = colors[pairColorIndex % colors.length];
-                selectedTerm.style.backgroundColor = pairColor;
-                card.style.backgroundColor = pairColor;
-                selectedTerm.classList.add('matched');
-                card.classList.add('matched');
+if (selectedTerm.dataset.pair === card.dataset.pair) {
+    const pairColor = colors[pairColorIndex % colors.length];
+    selectedTerm.style.backgroundColor = pairColor;
+    card.style.backgroundColor = pairColor;
+    selectedTerm.classList.add('matched');
+    card.classList.add('matched');
+    termsColumn.appendChild(selectedTerm);
+    defsColumn.appendChild(card);
 
-                termsColumn.prepend(selectedTerm);
-                defsColumn.prepend(card);
-
-                pairColorIndex++;
-                matches++;
-
+    pairColorIndex++;
+    matches++;
                 scores[ACTIVITY_NAME].correct++;
                 scores[ACTIVITY_NAME].total++;
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
