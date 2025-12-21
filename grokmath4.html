@@ -64,9 +64,7 @@
         .column {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            overflow-y: auto;
-            padding-right: 10px;
+            gap: 18px;
         }
         .match-card {
             background: white;
@@ -192,15 +190,115 @@
             {term:"Multiple",def:"Product of the number and an integer."},
             {term:"Zero",def:"Additive identity."}
         ],
-        // Levels 2–10 same as your flashcards data (omitted for brevity – copy from previous)
-        // ... (use the same data as before)
+        [ // Level 2
+            {term:"Fraction",def:"Part of a whole."},
+            {term:"Numerator",def:"Top: how many parts."},
+            {term:"Denominator",def:"Bottom: total parts."},
+            {term:"Proper Fraction",def:"Numerator < denominator."},
+            {term:"Improper Fraction",def:"Numerator ≥ denominator."},
+            {term:"Mixed Number",def:"Whole + fraction."},
+            {term:"Decimal",def:"Base-10 fraction."},
+            {term:"Equivalent",def:"Same value."},
+            {term:"Simplify",def:"Lowest terms."},
+            {term:"Percent",def:"Out of 100."}
+        ],
+        [ // Level 3
+            {term:"Add",def:"Combine."},
+            {term:"Subtract",def:"Take away."},
+            {term:"Multiply",def:"Repeated addition."},
+            {term:"Divide",def:"Split equally."},
+            {term:"Sum",def:"Addition result."},
+            {term:"Difference",def:"Subtraction result."},
+            {term:"Product",def:"Multiplication result."},
+            {term:"Quotient",def:"Division result."},
+            {term:"Remainder",def:"Left over."},
+            {term:"Order of Operations",def:"PEMDAS."}
+        ],
+        [ // Level 4
+            {term:"Point",def:"Exact location."},
+            {term:"Line",def:"Infinite both ways."},
+            {term:"Ray",def:"One endpoint."},
+            {term:"Line Segment",def:"Two endpoints."},
+            {term:"Angle",def:"Two rays from vertex."},
+            {term:"Vertex",def:"Corner point."},
+            {term:"Acute Angle",def:"<90°."},
+            {term:"Right Angle",def:"90°."},
+            {term:"Obtuse Angle",def:">90°."},
+            {term:"Parallel",def:"Never meet."}
+        ],
+        [ // Level 5
+            {term:"Polygon",def:"Closed straight sides."},
+            {term:"Triangle",def:"3 sides."},
+            {term:"Quadrilateral",def:"4 sides."},
+            {term:"Rectangle",def:"Four right angles."},
+            {term:"Square",def:"Equal sides + right angles."},
+            {term:"Circle",def:"All points equidistant from center."},
+            {term:"Radius",def:"Center to edge."},
+            {term:"Diameter",def:"Through center."},
+            {term:"Perimeter",def:"Around."},
+            {term:"Area",def:"Inside space."}
+        ],
+        [ // Level 6
+            {term:"Length",def:"How long."},
+            {term:"Width",def:"How wide."},
+            {term:"Height",def:"How tall."},
+            {term:"Unit",def:"Standard measure."},
+            {term:"Volume",def:"3D space."},
+            {term:"Capacity",def:"How much holds."},
+            {term:"Weight",def:"Gravitational force."},
+            {term:"Mass",def:"Amount of matter."},
+            {term:"Time",def:"Duration."},
+            {term:"Temperature",def:"Hot/cold."}
+        ],
+        [ // Level 7
+            {term:"Data",def:"Facts collected."},
+            {term:"Mean",def:"Average."},
+            {term:"Median",def:"Middle."},
+            {term:"Mode",def:"Most frequent."},
+            {term:"Range",def:"Max - min."},
+            {term:"Bar Graph",def:"Bars for amounts."},
+            {term:"Line Graph",def:"Change over time."},
+            {term:"Pie Chart",def:"Parts of whole."},
+            {term:"Table",def:"Rows/columns."},
+            {term:"Probability",def:"Likelihood."}
+        ],
+        [ // Level 8
+            {term:"Variable",def:"Unknown letter."},
+            {term:"Expression",def:"Math phrase."},
+            {term:"Equation",def:"Equals two expressions."},
+            {term:"Coefficient",def:"Number by variable."},
+            {term:"Constant",def:"Fixed number."},
+            {term:"Term",def:"Part separated by +/−."},
+            {term:"Like Terms",def:"Same variable."},
+            {term:"Solve",def:"Find value."},
+            {term:"Inequality",def:"> or <."},
+            {term:"Exponent",def:"Power."}
+        ],
+        [ // Level 9
+            {term:"Coordinate",def:"(x,y)."},
+            {term:"X-axis",def:"Horizontal."},
+            {term:"Y-axis",def:"Vertical."},
+            {term:"Origin",def:"(0,0)."},
+            {term:"Quadrant",def:"Four sections."},
+            {term:"Plot",def:"Mark point."},
+            {term:"Slope",def:"Rise/run."},
+            {term:"Linear",def:"Straight line."},
+            {term:"Function",def:"One output per input."},
+            {term:"Graph",def:"Visual equation."}
+        ],
+        [ // Level 10
+            {term:"Congruent",def:"Same size/shape."},
+            {term:"Similar",def:"Same shape."},
+            {term:"Symmetry",def:"Mirror line."},
+            {term:"Transformation",def:"Move shape."},
+            {term:"Translation",def:"Slide."},
+            {term:"Reflection",def:"Flip."},
+            {term:"Rotation",def:"Turn."},
+            {term:"Pythagorean Theorem",def:"a² + b² = c²."},
+            {term:"Circumference",def:"Around circle."},
+            {term:"Pi",def:"≈3.14."}
+        ]
     ];
-
-    // Fill in the rest of the levels with your flashcard data
-    // For now, duplicating Level 1 for testing – replace with real data
-    for (let i = 2; i <= 10; i++) {
-        matchingData[i] = matchingData[1].slice();
-    }
 
     let currentLevel = 1;
     let selectedTerm = null;
@@ -233,46 +331,46 @@
 
         const data = matchingData[level];
 
-        const terms = data.map(item => item.term);
+        const terms = data.map(item => ({text: item.term, pair: item.term}));
         const defs = data.map(item => ({text: item.def, pair: item.term}));
 
         const shuffledTerms = shuffle(terms);
         const shuffledDefs = shuffle(defs);
 
-        shuffledTerms.forEach(term => {
+        shuffledTerms.forEach(item => {
             const card = document.createElement('div');
             card.className = 'match-card';
-            card.textContent = term;
-            card.dataset.pair = term;
-            card.addEventListener('click', () => selectCard(card, 'term'));
+            card.textContent = item.text;
+            card.dataset.pair = item.pair;
+            card.dataset.type = 'term';
+            card.addEventListener('click', () => selectCard(card));
             termsColumn.appendChild(card);
         });
 
-        shuffledDefs.forEach(def => {
+        shuffledDefs.forEach(item => {
             const card = document.createElement('div');
             card.className = 'match-card';
-            card.textContent = def.text;
-            card.dataset.pair = def.pair;
-            card.addEventListener('click', () => selectCard(card, 'def'));
+            card.textContent = item.text;
+            card.dataset.pair = item.pair;
+            card.dataset.type = 'def';
+            card.addEventListener('click', () => selectCard(card));
             defsColumn.appendChild(card);
         });
 
         updateActiveButton();
     }
 
-    function selectCard(card, type) {
+    function selectCard(card) {
         if (card.classList.contains('matched')) return;
 
-        // Clear previous selection
         document.querySelectorAll('.match-card.selected').forEach(c => c.classList.remove('selected'));
 
         card.classList.add('selected');
 
-        if (type === 'term') {
+        if (card.dataset.type === 'term') {
             selectedTerm = card;
-        } else if (selectedTerm) {
+        } else if (selectedTerm && selectedTerm.dataset.type === 'term') {
             if (selectedTerm.dataset.pair === card.dataset.pair) {
-                // Correct match
                 selectedTerm.classList.add('matched');
                 card.classList.add('matched');
                 matches++;
@@ -291,7 +389,6 @@
                     feedback.classList.add('show');
                 }
             } else {
-                // Wrong
                 card.classList.add('wrong');
                 selectedTerm.classList.add('wrong');
                 setTimeout(() => {
