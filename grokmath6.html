@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,126 +14,111 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 
 header {
     background: #333;
     padding: 10px;
-    text-align: center;
     color: white;
+    text-align: center;
     position: relative;
 }
-
-h1 { font-size: 22px; margin: 5px 0; }
 
 .score-display {
     position: absolute;
     top: 10px;
     right: 20px;
-    background: rgba(255,255,255,0.9);
+    background: white;
     color: #333;
     padding: 8px 16px;
     border-radius: 20px;
     font-weight: bold;
-    font-size: 18px;
 }
 
 .nav-buttons {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
-    padding: 8px 0;
+    margin-top: 10px;
 }
 
 .nav-btn {
-    width: 60px;
-    height: 60px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     border: none;
-    font-size: 24px;
-    font-weight: bold;
     color: white;
+    font-weight: bold;
     cursor: pointer;
 }
 
 .nav-btn.active {
-    box-shadow: 0 0 15px 4px rgba(255,255,255,0.8);
-    transform: scale(1.15);
+    outline: 3px solid white;
 }
 
 main {
     flex: 1;
     padding: 20px;
     display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .formula-container {
-    flex: 1;
     background: white;
     border-radius: 20px;
     padding: 30px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.prompt {
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 30px;
+    width: 100%;
+    max-width: 900px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
     text-align: center;
 }
 
+.prompt {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
 .formula-area {
-    background: #f8f8f8;
-    border: 3px dashed #ddd;
-    border-radius: 20px;
-    min-height: 140px;
-    width: 100%;
-    max-width: 900px;
+    min-height: 120px;
+    border: 3px dashed #ccc;
+    border-radius: 15px;
     padding: 20px;
-    margin-bottom: 30px;
     display: flex;
-    gap: 15px;
     flex-wrap: wrap;
+    gap: 12px;
     justify-content: center;
     align-items: center;
-    font-size: 40px;
-    font-weight: bold;
+    margin-bottom: 20px;
 }
 
 .formula-area.empty::before {
-    content: "Drag or click symbols here to build the formula...";
+    content: "Build the formula here...";
     color: #aaa;
-    font-style: italic;
-    font-size: 28px;
+    font-size: 22px;
 }
 
 .symbol-bank {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px,1fr));
-    gap: 15px;
-    max-width: 900px;
-    width: 100%;
-    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
 .symbol {
-    background: var(--level-color);
+    width: 70px;
+    height: 70px;
+    border-radius: 15px;
+    background: var(--c);
     color: white;
-    width: 80px;
-    height: 80px;
-    border-radius: 20px;
+    font-size: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 36px;
-    font-weight: bold;
     cursor: pointer;
+    font-weight: bold;
 }
 
 .symbol.used {
@@ -142,29 +127,29 @@ main {
 }
 
 .placed-symbol {
-    background: var(--level-color);
+    background: var(--c);
     color: white;
-    padding: 14px 28px;
-    border-radius: 20px;
-    font-size: 40px;
+    padding: 10px 22px;
+    border-radius: 15px;
+    font-size: 28px;
     cursor: pointer;
 }
 
 .check-btn {
     background: #4CAF50;
     color: white;
-    padding: 14px 40px;
     border: none;
+    padding: 14px 40px;
     border-radius: 30px;
     font-size: 20px;
     cursor: pointer;
 }
 
 .feedback {
-    margin-top: 25px;
-    font-size: 34px;
+    margin-top: 20px;
+    font-size: 30px;
     font-weight: bold;
-    min-height: 50px;
+    min-height: 40px;
 }
 </style>
 </head>
@@ -173,70 +158,76 @@ main {
 
 <header>
 <h1>Math Formulae Builder</h1>
-<div class="score-display" id="score-display">Score: 0/0</div>
+<div class="score-display" id="score">Score: 0/0</div>
 
 <div class="nav-buttons">
-<button class="nav-btn active" style="background:#FF6B6B" data-level="1">1</button>
-<button class="nav-btn" style="background:#FF8E53" data-level="2">2</button>
-<button class="nav-btn" style="background:#FFCC00" data-level="3">3</button>
-<button class="nav-btn" style="background:#9ACD32" data-level="4">4</button>
-<button class="nav-btn" style="background:#4CAF50" data-level="5">5</button>
-<button class="nav-btn" style="background:#20B2AA" data-level="6">6</button>
-<button class="nav-btn" style="background:#4682B4" data-level="7">7</button>
-<button class="nav-btn" style="background:#9370DB" data-level="8">8</button>
-<button class="nav-btn" style="background:#DA70D6" data-level="9">9</button>
-<button class="nav-btn" style="background:#FF69B4" data-level="10">10</button>
+<button class="nav-btn active" data-level="1" style="background:#FF6B6B">1</button>
+<button class="nav-btn" data-level="2" style="background:#FF8E53">2</button>
+<button class="nav-btn" data-level="3" style="background:#FFCC00">3</button>
 </div>
 </header>
 
 <main>
 <div class="formula-container">
 <div class="prompt" id="prompt"></div>
-<div class="formula-area empty" id="formula-area"></div>
-<div class="symbol-bank" id="symbol-bank"></div>
-<button class="check-btn" id="check-btn">Check Formula ✓</button>
+<div class="formula-area empty" id="formula"></div>
+<div class="symbol-bank" id="bank"></div>
+<button class="check-btn" id="check">Check ✓</button>
 <div class="feedback" id="feedback"></div>
 </div>
 </main>
 
 <script>
-const colors = ['#FF6B6B','#FF8E53','#FFCC00','#9ACD32','#4CAF50','#20B2AA','#4682B4','#9370DB','#DA70D6','#FF69B4'];
+const colors = ['#FF6B6B','#FF8E53','#FFCC00'];
 
-const formulae = /* UNCHANGED – your full 10-level array goes here exactly as before */ window.formulae;
+const formulae = [
+[],
+[
+ {prompt:"Area of rectangle", symbols:["A","=","l","×","w"], correct:[["A","=","l","×","w"],["A","=","w","×","l"]]},
+ {prompt:"Perimeter of rectangle", symbols:["P","=","2","(","l","+","w",")"], correct:[["P","=","2","(","l","+","w",")"]]}
+],
+[
+ {prompt:"Speed", symbols:["s","=","d","÷","t"], correct:[["s","=","d","÷","t"]]},
+ {prompt:"Density", symbols:["ρ","=","m","÷","V"], correct:[["ρ","=","m","÷","V"]]}
+],
+[
+ {prompt:"Pythagoras", symbols:["c","²","=","a","²","+","b","²"], correct:[["c","²","=","a","²","+","b","²"]]}
+]
+];
 
 let level = 1;
 let index = 0;
 let score = {c:0,t:0};
 
 const promptEl = document.getElementById("prompt");
-const formulaArea = document.getElementById("formula-area");
-const bank = document.getElementById("symbol-bank");
-const feedback = document.getElementById("feedback");
-const checkBtn = document.getElementById("check-btn");
-const scoreEl = document.getElementById("score-display");
+const formulaEl = document.getElementById("formula");
+const bankEl = document.getElementById("bank");
+const feedbackEl = document.getElementById("feedback");
+const checkBtn = document.getElementById("check");
+const scoreEl = document.getElementById("score");
 
 function load() {
     const f = formulae[level][index];
-    promptEl.textContent = "Build the formula for: " + f.prompt;
-    formulaArea.innerHTML = "";
-    formulaArea.classList.add("empty");
-    bank.innerHTML = "";
-    feedback.textContent = "";
+    promptEl.textContent = "Build: " + f.prompt;
+    formulaEl.innerHTML = "";
+    formulaEl.classList.add("empty");
+    bankEl.innerHTML = "";
+    feedbackEl.textContent = "";
     checkBtn.disabled = false;
 
     const col = colors[level-1];
 
     shuffle(f.symbols).forEach(s=>{
-        const d=document.createElement("div");
-        d.className="symbol";
-        d.textContent=s;
-        d.style.setProperty("--level-color",col);
-        d.onclick=()=>{
-            if(d.classList.contains("used"))return;
+        const d = document.createElement("div");
+        d.className = "symbol";
+        d.textContent = s;
+        d.style.setProperty("--c",col);
+        d.onclick = ()=>{
+            if(d.classList.contains("used")) return;
             d.classList.add("used");
             place(s,col);
         };
-        bank.appendChild(d);
+        bankEl.appendChild(d);
     });
 
     document.querySelectorAll(".nav-btn").forEach(b=>{
@@ -248,26 +239,26 @@ function place(s,col){
     const d=document.createElement("div");
     d.className="placed-symbol";
     d.textContent=s;
-    d.style.setProperty("--level-color",col);
+    d.style.setProperty("--c",col);
     d.onclick=()=>{
         d.remove();
-        [...bank.children].find(b=>b.textContent===s && b.classList.contains("used"))?.classList.remove("used");
-        if(!formulaArea.children.length) formulaArea.classList.add("empty");
+        [...bankEl.children].find(b=>b.textContent===s && b.classList.contains("used"))?.classList.remove("used");
+        if(!formulaEl.children.length) formulaEl.classList.add("empty");
     };
-    formulaArea.appendChild(d);
-    formulaArea.classList.remove("empty");
+    formulaEl.appendChild(d);
+    formulaEl.classList.remove("empty");
 }
 
 checkBtn.onclick=()=>{
-    const built=[...formulaArea.children].map(e=>e.textContent);
+    const built=[...formulaEl.children].map(e=>e.textContent);
     const f=formulae[level][index];
     score.t++;
 
-    const correct=f.correctOptions.some(o=>o.length===built.length && o.every((v,i)=>v===built[i]));
+    const ok=f.correct.some(o=>o.length===built.length && o.every((v,i)=>v===built[i]));
 
-    if(correct){
-        feedback.textContent="🎉 CONGRATS!";
-        feedback.style.color="#4CAF50";
+    if(ok){
+        feedbackEl.textContent="🎉 CONGRATS!";
+        feedbackEl.style.color="#4CAF50";
         score.c++;
         checkBtn.disabled=true;
 
@@ -277,8 +268,8 @@ checkBtn.onclick=()=>{
             load();
         },1200);
     } else {
-        feedback.textContent="❌ Try again";
-        feedback.style.color="#FF6B6B";
+        feedbackEl.textContent="❌ Try again";
+        feedbackEl.style.color="#FF6B6B";
     }
 
     scoreEl.textContent=`Score: ${score.c}/${score.t}`;
@@ -292,7 +283,9 @@ document.querySelectorAll(".nav-btn").forEach(b=>{
     };
 });
 
-function shuffle(a){ return a.slice().sort(()=>Math.random()-0.5); }
+function shuffle(a){
+    return a.slice().sort(()=>Math.random()-0.5);
+}
 
 load();
 </script>
