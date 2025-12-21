@@ -218,34 +218,77 @@
 
     const formulae = [
         [], // unused
-        [ // Level 1
+        [ // Level 1 - Basic Area & Perimeter
             {prompt: "Area of a rectangle", symbols: ["A", "=", "l", "×", "w"], correctOptions: [["A", "=", "l", "×", "w"], ["A", "=", "w", "×", "l"]]},
             {prompt: "Perimeter of a rectangle", symbols: ["P", "=", "2", "(", "l", "+", "w", ")"], correctOptions: [["P", "=", "2", "(", "l", "+", "w", ")"]]},
             {prompt: "Area of a triangle", symbols: ["A", "=", "1/2", "b", "×", "h"], correctOptions: [["A", "=", "1/2", "b", "×", "h"], ["A", "=", "1/2", "h", "×", "b"]]},
             {prompt: "Circumference of a circle", symbols: ["C", "=", "2", "π", "r"], correctOptions: [["C", "=", "2", "π", "r"]]},
             {prompt: "Area of a circle", symbols: ["A", "=", "π", "r", "²"], correctOptions: [["A", "=", "π", "r", "²"]]}
         ],
-        [ // Level 2
+        [ // Level 2 - Volume & Rate
             {prompt: "Volume of a cuboid", symbols: ["V", "=", "l", "×", "w", "×", "h"], correctOptions: [["V", "=", "l", "×", "w", "×", "h"], ["V", "=", "l", "×", "h", "×", "w"], ["V", "=", "w", "×", "l", "×", "h"], ["V", "=", "w", "×", "h", "×", "l"], ["V", "=", "h", "×", "l", "×", "w"], ["V", "=", "h", "×", "w", "×", "l"]]},
             {prompt: "Volume of a cylinder", symbols: ["V", "=", "π", "r", "²", "h"], correctOptions: [["V", "=", "π", "r", "²", "h"]]},
             {prompt: "Speed", symbols: ["s", "=", "d", "÷", "t"], correctOptions: [["s", "=", "d", "÷", "t"]]},
             {prompt: "Density", symbols: ["ρ", "=", "m", "÷", "V"], correctOptions: [["ρ", "=", "m", "÷", "V"]]},
             {prompt: "Simple interest", symbols: ["I", "=", "P", "×", "r", "×", "t"], correctOptions: [["I", "=", "P", "×", "r", "×", "t"]]}
         ],
-        [ // Level 3
+        [ // Level 3 - Pythagoras & Quadratic
             {prompt: "Pythagorean theorem", symbols: ["c", "²", "=", "a", "²", "+", "b", "²"], correctOptions: [["c", "²", "=", "a", "²", "+", "b", "²"], ["c", "²", "=", "b", "²", "+", "a", "²"]]},
-            {prompt: "Quadratic formula", symbols: ["x", "=", "−b", "±", "√(", "b²", "−", "4ac", ")", "÷", "2a"], correctOptions: [["x", "=", "−b", "±", "√(", "b²", "−", "4ac", ")", "÷", "2a"]]},
+            {prompt: "Quadratic formula", symbols: ["x", "=", "−b", "±", "√", "(", "b", "²", "−", "4ac", ")", "÷", "2a"], correctOptions: [["x", "=", "−b", "±", "√", "(", "b", "²", "−", "4ac", ")", "÷", "2a"]]},
             {prompt: "Slope of a line", symbols: ["m", "=", "(", "y₂", "−", "y₁", ")", "÷", "(", "x₂", "−", "x₁", ")"], correctOptions: [["m", "=", "(", "y₂", "−", "y₁", ")", "÷", "(", "x₂", "−", "x₁", ")"]]},
             {prompt: "Distance formula", symbols: ["d", "=", "√", "(", "(", "x₂", "−", "x₁", ")", "²", "+", "(", "y₂", "−", "y₁", ")", "²", ")"], correctOptions: [["d", "=", "√", "(", "(", "x₂", "−", "x₁", ")", "²", "+", "(", "y₂", "−", "y₁", ")", "²", ")"]]},
-            {prompt: "Mean (average)", symbols: ["x̄", "=", "Σx", "÷", "n"], correctOptions: [["x̄", "=", "Σx", "÷", "n"]]}
+            {prompt: "Mean", symbols: ["x̄", "=", "Σx", "÷", "n"], correctOptions: [["x̄", "=", "Σx", "÷", "n"]]}
         ],
-        [], [], [], [], [], [], [], [] // placeholders
+        [ // Level 4 - Trigonometry basics
+            {prompt: "Sine ratio", symbols: ["sin", "θ", "=", "opposite", "÷", "hypotenuse"], correctOptions: [["sin", "θ", "=", "opposite", "÷", "hypotenuse"]]},
+            {prompt: "Cosine ratio", symbols: ["cos", "θ", "=", "adjacent", "÷", "hypotenuse"], correctOptions: [["cos", "θ", "=", "adjacent", "÷", "hypotenuse"]]},
+            {prompt: "Tangent ratio", symbols: ["tan", "θ", "=", "opposite", "÷", "adjacent"], correctOptions: [["tan", "θ", "=", "opposite", "÷", "adjacent"]]},
+            {prompt: "Area of trapezium", symbols: ["A", "=", "1/2", "(", "a", "+", "b", ")", "h"], correctOptions: [["A", "=", "1/2", "(", "a", "+", "b", ")", "h"], ["A", "=", "1/2", "(", "b", "+", "a", ")", "h"]]},
+            {prompt: "Surface area of cuboid", symbols: ["SA", "=", "2", "(", "lw", "+", "lh", "+", "wh", ")"], correctOptions: [["SA", "=", "2", "(", "lw", "+", "lh", "+", "wh", ")"]]}
+        ],
+        [ // Level 5 - Advanced geometry
+            {prompt: "Volume of sphere", symbols: ["V", "=", "4/3", "π", "r", "³"], correctOptions: [["V", "=", "4/3", "π", "r", "³"]]},
+            {prompt: "Surface area of sphere", symbols: ["SA", "=", "4", "π", "r", "²"], correctOptions: [["SA", "=", "4", "π", "r", "²"]]},
+            {prompt: "Volume of cone", symbols: ["V", "=", "1/3", "π", "r", "²", "h"], correctOptions: [["V", "=", "1/3", "π", "r", "²", "h"]]},
+            {prompt: "Surface area of cylinder", symbols: ["SA", "=", "2", "π", "r", "h", "+", "2", "π", "r", "²"], correctOptions: [["SA", "=", "2", "π", "r", "h", "+", "2", "π", "r", "²"]]},
+            {prompt: "Area of parallelogram", symbols: ["A", "=", "b", "×", "h"], correctOptions: [["A", "=", "b", "×", "h"]]}
+        ],
+        [ // Level 6 - Rates & ratios
+            {prompt: "Time formula", symbols: ["t", "=", "d", "÷", "s"], correctOptions: [["t", "=", "d", "÷", "s"]]},
+            {prompt: "Work rate", symbols: ["work", "=", "rate", "×", "time"], correctOptions: [["work", "=", "rate", "×", "time"]]},
+            {prompt: "Compound interest", symbols: ["A", "=", "P", "(", "1", "+", "r/n", ")", "^", "(nt", ")"], correctOptions: [["A", "=", "P", "(", "1", "+", "r/n", ")", "^", "(nt", ")"]]},
+            {prompt: "Direct proportion", symbols: ["y", "=", "k", "x"], correctOptions: [["y", "=", "k", "x"]]},
+            {prompt: "Inverse proportion", symbols: ["y", "=", "k", "÷", "x"], correctOptions: [["y", "=", "k", "÷", "x"]]}
+        ],
+        [ // Level 7 - Statistics
+            {prompt: "Standard deviation symbol", symbols: ["σ", "=", "√", "(", "Σ", "(", "x", "−", "μ", ")", "²", "÷", "N", ")"], correctOptions: [["σ", "=", "√", "(", "Σ", "(", "x", "−", "μ", ")", "²", "÷", "N", ")"]]},
+            {prompt: "Probability", symbols: ["P", "(", "A", ")", "=", "n(A)", "÷", "n(S)"], correctOptions: [["P", "(", "A", ")", "=", "n(A)", "÷", "n(S)"]]},
+            {prompt: "Variance", symbols: ["σ", "²", "=", "Σ", "(", "x", "−", "μ", ")", "²", "÷", "N"], correctOptions: [["σ", "²", "=", "Σ", "(", "x", "−", "μ", ")", "²", "÷", "N"]]},
+            {prompt: "Median (even number)", symbols: ["median", "=", "(", "x_n", "+", "x_(n+1)", ")", "÷", "2"], correctOptions: [["median", "=", "(", "x_n", "+", "x_(n+1)", ")", "÷", "2"]]},
+            {prompt: "Mode", symbols: ["mode", "=", "most", "frequent", "value"], correctOptions: [["mode", "=", "most", "frequent", "value"]]}
+        ],
+        [ // Level 8 - Algebra
+            {prompt: "Discriminant", symbols: ["Δ", "=", "b", "²", "−", "4ac"], correctOptions: [["Δ", "=", "b", "²", "−", "4ac"]]},
+            {prompt: "Sum of arithmetic series", symbols: ["S_n", "=", "n/2", "(", "2a", "+", "(", "n", "−", "1", ")", "d", ")"], correctOptions: [["S_n", "=", "n/2", "(", "2a", "+", "(", "n", "−", "1", ")", "d", ")"]]},
+            {prompt: "Sum of geometric series", symbols: ["S_n", "=", "a", "(", "r", "n", "−", "1", ")", "÷", "(", "r", "−", "1", ")"], correctOptions: [["S_n", "=", "a", "(", "r", "n", "−", "1", ")", "÷", "(", "r", "−", "1", ")"]]},
+            {prompt: "Factor theorem", symbols: ["f", "(", "a", ")", "=", "0", "⇒", "(", "x", "−", "a", ")", "factor"], correctOptions: [["f", "(", "a", ")", "=", "0", "⇒", "(", "x", "−", "a", ")", "factor"]]},
+            {prompt: "Binomial expansion", symbols: ["(a", "+", "b)", "n", "=", "Σ", "C(n,k)", "a", "^(n-k)", "b", "^k"], correctOptions: [["(a", "+", "b)", "n", "=", "Σ", "C(n,k)", "a", "^(n-k)", "b", "^k"]]}
+        ],
+        [ // Level 9 - Coordinate geometry
+            {prompt: "Midpoint formula", symbols: ["M", "=", "(", "(", "x₁", "+", "x₂", ")", "÷", "2", ",", "(", "y₁", "+", "y₂", ")", "÷", "2", ")"], correctOptions: [["M", "=", "(", "(", "x₁", "+", "x₂", ")", "÷", "2", ",", "(", "y₁", "+", "y₂", ")", "÷", "2", ")"]]},
+            {prompt: "Equation of line (slope-intercept)", symbols: ["y", "=", "m", "x", "+", "c"], correctOptions: [["y", "=", "m", "x", "+", "c"]]},
+            {prompt: "Equation of circle", symbols: ["(x", "−", "h)", "²", "+", "(y", "−", "k)", "²", "=", "r", "²"], correctOptions: [["(x", "−", "h)", "²", "+", "(y", "−", "k)", "²", "=", "r", "²"]]},
+            {prompt: "Section formula", symbols: ["(", "m", "x₂", "+", "n", "x₁", "÷", "(m+n)", ",", "m", "y₂", "+", "n", "y₁", "÷", "(m+n)", ")"], correctOptions: [["(", "m", "x₂", "+", "n", "x₁", "÷", "(m+n)", ",", "m", "y₂", "+", "n", "y₁", "÷", "(m+n)", ")"]]},
+            {prompt: "Gradient of perpendicular lines", symbols: ["m₁", "×", "m₂", "=", "−1"], correctOptions: [["m₁", "×", "m₂", "=", "−1"]]}
+        ],
+        [ // Level 10 - Advanced
+            {prompt: "Law of cosines", symbols: ["c", "²", "=", "a", "²", "+", "b", "²", "−", "2ab", "cosC"], correctOptions: [["c", "²", "=", "a", "²", "+", "b", "²", "−", "2ab", "cosC"]]},
+            {prompt: "Law of sines", symbols: ["a", "÷", "sinA", "=", "b", "÷", "sinB", "=", "c", "÷", "sinC"], correctOptions: [["a", "÷", "sinA", "=", "b", "÷", "sinB", "=", "c", "÷", "sinC"]]},
+            {prompt: "Euler's formula", symbols: ["e", "iπ", "+", "1", "=", "0"], correctOptions: [["e", "iπ", "+", "1", "=", "0"]]},
+            {prompt: "Surface area of cone", symbols: ["SA", "=", "π", "r", "l", "+", "π", "r", "²"], correctOptions: [["SA", "=", "π", "r", "l", "+", "π", "r", "²"]]},
+            {prompt: "Volume of pyramid", symbols: ["V", "=", "1/3", "B", "h"], correctOptions: [["V", "=", "1/3", "B", "h"]]}
+        ]
     ];
-
-    // Fill missing levels with Level 1 for testing – replace later
-    for (let i = 4; i <= 10; i++) {
-        formulae[i] = formulae[1].slice();
-    }
 
     let currentLevel = 1;
     let currentFormulaIndex = 0;
