@@ -3,29 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Sentence Builders</title>
+    <title>Math Vocabulary Interactive Quiz</title>
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            margin: 0;
-            padding: 0;
             font-family: Arial, sans-serif;
             background: #f0f8ff;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            height: 100vh;
             overflow: hidden;
         }
         header {
             background: #333;
             padding: 10px;
             text-align: center;
-        }
-        h1 {
             color: white;
-            margin: 5px 0;
-            font-size: 22px;
         }
+        h1 { font-size: 22px; margin: 5px 0; }
         .nav-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -34,295 +29,278 @@
             padding: 8px 0;
         }
         .nav-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: none;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
+            width: 60px; height: 60px; border-radius: 50%; border: none;
+            font-size: 24px; font-weight: bold; color: white; cursor: pointer;
             transition: all 0.2s;
         }
         .nav-btn:hover { transform: scale(1.1); }
-        .nav-btn.active {
-            box-shadow: 0 0 15px 4px rgba(255,255,255,0.8);
-            transform: scale(1.15);
-        }
-        main {
+        .nav-btn.active { box-shadow: 0 0 15px 4px rgba(255,255,255,0.8); transform: scale(1.15); }
+
+        main { flex: 1; padding: 20px 15px 15px; overflow: hidden; display: flex; flex-direction: column; }
+        .quiz-container {
             flex: 1;
-            padding: 15px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            overflow: hidden;
-        }
-        .sentence-area {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            min-height: 140px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-            font-size: 26px;
-            font-weight: bold;
-            color: #333;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 12px;
+            align-items: center;
+            text-align: center;
         }
-        .word-bank {
-            flex: 1;
+        .question {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            color: #333;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        @media (max-width: 900px) {
+            .options { grid-template-columns: 1fr; }
+        }
+        .option {
             background: white;
+            border: 3px solid #ddd;
             border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-            overflow-y: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-        }
-        .word {
-            background: var(--word-bg);
-            color: white;
-            padding: 16px;
-            border-radius: 15px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: grab;
-            user-select: none;
-            transition: all 0.2s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .word:active { cursor: grabbing; transform: scale(0.95); }
-        .word.used {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-        .sentence-word {
-            background: var(--word-bg);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 15px;
             font-size: 24px;
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            white-space: nowrap;
+            transition: all 0.3s;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
         }
-        .sentence-word:hover {
-            transform: translateY(-3px);
+        .option:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        .option.correct {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        .option.wrong {
+            background: #FF6B6B;
+            color: white;
+            border-color: #FF6B6B;
+        }
+        .feedback {
+            margin-top: 30px;
+            font-size: 28px;
+            font-weight: bold;
+            min-height: 40px;
         }
         footer {
-            background: #333;
-            padding: 15px;
-            text-align: center;
+            background: #333; padding: 15px; text-align: center;
         }
         .footer-btn {
-            background: white;
-            color: #333;
-            border: none;
-            padding: 14px 36px;
-            margin: 0 15px;
-            border-radius: 30px;
-            font-size: 20px;
-            cursor: pointer;
+            background: white; color: #333; border: none;
+            padding: 14px 40px; margin: 0 20px; border-radius: 30px;
+            font-size: 20px; cursor: pointer;
             transition: background 0.3s;
         }
         .footer-btn:hover { background: #eee; }
-        .check-btn {
-            background: #4CAF50;
-            color: white;
-        }
-        .check-btn:hover { background: #45a049; }
+        .next-btn { background: #4CAF50; color: white; }
+        .next-btn:hover { background: #45a049; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Math Sentence Builders</h1>
-        <div class="nav-buttons">
-            <button class="nav-btn active" style="background:#FF6B6B" data-level="1">1</button>
-            <button class="nav-btn" style="background:#FF8E53" data-level="2">2</button>
-            <button class="nav-btn" style="background:#FFCC00" data-level="3">3</button>
-            <button class="nav-btn" style="background:#9ACD32" data-level="4">4</button>
-            <button class="nav-btn" style="background:#4CAF50" data-level="5">5</button>
-            <button class="nav-btn" style="background:#20B2AA" data-level="6">6</button>
-            <button class="nav-btn" style="background:#4682B4" data-level="7">7</button>
-            <button class="nav-btn" style="background:#9370DB" data-level="8">8</button>
-            <button class="nav-btn" style="background:#DA70D6" data-level="9">9</button>
-            <button class="nav-btn" style="background:#FF69B4" data-level="10">10</button>
-        </div>
-    </header>
-    <main>
-        <div class="sentence-area" id="sentence-area"></div>
-        <div class="word-bank" id="word-bank"></div>
-    </main>
-    <footer>
-        <button class="footer-btn" id="reset-btn">Reset</button>
-        <button class="footer-btn check-btn" id="check-btn">Check Sentence ✓</button>
-    </footer>
-    <script>
-        const levels = [
-            [], // unused
-            { 
-                words: ["5", "3", "8", "The", "sum", "of", "and", "is"],
-                correct: ["The", "sum", "of", "5", "and", "3", "is", "8"],
-                colour: "#FF6B6B"
-            },
-            { 
-                words: ["10", "4", "6", "The", "difference", "between", "and", "is"],
-                correct: ["The", "difference", "between", "10", "and", "4", "is", "6"],
-                colour: "#FF8E53"
-            },
-            { 
-                words: ["7", "6", "42", "The", "product", "of", "and", "is"],
-                correct: ["The", "product", "of", "7", "and", "6", "is", "42"],
-                colour: "#FFCC00"
-            },
-            { 
-                words: ["20", "5", "4", "The", "quotient", "of", "and", "is"],
-                correct: ["The", "quotient", "of", "20", "and", "5", "is", "4"],
-                colour: "#9ACD32"
-            },
-            { 
-                words: ["1/2", "1/4", "3/4", "Adding", "and", "gives"],
-                correct: ["Adding", "1/2", "and", "1/4", "gives", "3/4"],
-                colour: "#4CAF50"
-            },
-            { 
-                words: ["length", "width", "area", "The", "of", "a", "rectangle", "is"],
-                correct: ["The", "area", "of", "a", "rectangle", "is", "length", "times", "width"],
-                colour: "#20B2AA"
-            },
-            { 
-                words: ["add", "all", "the", "numbers", "divide", "by", "how", "many", "To", "find", "the", "mean"],
-                correct: ["To", "find", "the", "mean", "add", "all", "the", "numbers", "divide", "by", "how", "many"],
-                colour: "#4682B4"
-            },
-            { 
-                words: ["x", "stands", "for", "an", "unknown", "number", "The", "variable"],
-                correct: ["The", "variable", "x", "stands", "for", "an", "unknown", "number"],
-                colour: "#9370DB"
-            },
-            { 
-                words: ["(", "3", ",", "4", ")", "The", "point", "is", "located", "at", "on", "the", "coordinate", "plane"],
-                correct: ["The", "point", "is", "located", "at", "(", "3", ",", "4", ")", "on", "the", "coordinate", "plane"],
-                colour: "#DA70D6"
-            },
-            { 
-                words: ["a²", "b²", "c²", "In", "a", "right-angled", "triangle"],
-                correct: ["In", "a", "right-angled", "triangle", "a²", "plus", "b²", "equals", "c²"],
-                colour: "#FF69B4"
-            }
-        ];
 
-        let currentLevel = 1;
+<header>
+    <h1>Math Vocabulary Interactive Quiz</h1>
+    <div class="nav-buttons">
+        <button class="nav-btn active" style="background:#FF6B6B" data-level="1">1</button>
+        <button class="nav-btn" style="background:#FF8E53" data-level="2">2</button>
+        <button class="nav-btn" style="background:#FFCC00" data-level="3">3</button>
+        <button class="nav-btn" style="background:#9ACD32" data-level="4">4</button>
+        <button class="nav-btn" style="background:#4CAF50" data-level="5">5</button>
+        <button class="nav-btn" style="background:#20B2AA" data-level="6">6</button>
+        <button class="nav-btn" style="background:#4682B4" data-level="7">7</button>
+        <button class="nav-btn" style="background:#9370DB" data-level="8">8</button>
+        <button class="nav-btn" style="background:#DA70D6" data-level="9">9</button>
+        <button class="nav-btn" style="background:#FF69B4" data-level="10">10</button>
+    </div>
+</header>
 
-        const sentenceArea = document.getElementById('sentence-area');
-        const wordBank = document.getElementById('word-bank');
-        const navBtns = document.querySelectorAll('.nav-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const checkBtn = document.getElementById('check-btn');
+<main>
+    <div class="quiz-container">
+        <div class="question" id="question"></div>
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback"></div>
+    </div>
+</main>
 
-        function loadLevel(level) {
-            currentLevel = level;
-            const data = levels[level];
-            document.body.style.backgroundColor = data.colour + '22';
+<footer>
+    <button class="footer-btn" id="reset-btn">Reset Quiz</button>
+    <button class="footer-btn next-btn" id="next-btn">Next Question →</button>
+</footer>
 
-            wordBank.innerHTML = '';
-            sentenceArea.innerHTML = '';
+<script>
+    const colors = ['#FF6B6B','#FF8E53','#FFCC00','#9ACD32','#4CAF50','#20B2AA','#4682B4','#9370DB','#DA70D6','#FF69B4'];
 
-            data.words.forEach(wordText => {
-                const wordEl = document.createElement('div');
-                wordEl.className = 'word';
-                wordEl.textContent = wordText;
-                wordEl.style.setProperty('--word-bg', data.colour);
+    const quizzes = [
+        [], // unused
+        [ // Level 1
+            { q: "What is an integer?", options: ["A whole number", "A fraction", "A decimal", "A percentage"], correct: 0 },
+            { q: "Which is a positive number?", options: ["-5", "0", "3", "-2"], correct: 2 },
+            { q: "What is a prime number?", options: ["Divisible by 2", "Only factors 1 and itself", "Even number", "Multiple of 5"], correct: 1 },
+            { q: "What is zero called in addition?", options: ["Multiplicative identity", "Additive identity", "Even number", "Prime"], correct: 1 },
+            { q: "Which is an even number?", options: ["7", "9", "12", "15"], correct: 2 }
+        ],
+        [ // Level 2
+            { q: "What is a fraction?", options: ["Whole number", "Part of a whole", "Decimal", "Percentage"], correct: 1 },
+            { q: "What is the top number in a fraction called?", options: ["Denominator", "Numerator", "Mixed", "Improper"], correct: 1 },
+            { q: "What is 1/2 + 1/4?", options: ["1/6", "3/4", "2/6", "1"], correct: 1 },
+            { q: "What is a proper fraction?", options: ["Numerator > denominator", "Numerator < denominator", "Whole number + fraction", "Decimal"], correct: 1 },
+            { q: "What is 0.75 as a percentage?", options: ["7.5%", "75%", "750%", "0.75%"], correct: 1 }
+        ],
+        [ // Level 3
+            { q: "What is the result of addition called?", options: ["Product", "Quotient", "Sum", "Difference"], correct: 2 },
+            { q: "What is multiplication?", options: ["Repeated subtraction", "Repeated addition", "Splitting into parts", "Taking away"], correct: 1 },
+            { q: "What is the result of subtraction called?", options: ["Sum", "Product", "Difference", "Quotient"], correct: 2 },
+            { q: "What does PEMDAS stand for?", options: ["Please Excuse My Dear Aunt Sally", "Parentheses Exponents Multiply Divide Add Subtract", "Both", "None"], correct: 2 },
+            { q: "What is the remainder in division?", options: ["What's left over", "The answer", "The divisor", "The dividend"], correct: 0 }
+        ],
+        [ // Level 4
+            { q: "What is a point?", options: ["Exact location", "Straight path", "Corner", "Angle"], correct: 0 },
+            { q: "What is a right angle?", options: ["Less than 90°", "Exactly 90°", "More than 90°", "180°"], correct: 1 },
+            { q: "What are parallel lines?", options: ["Intersect", "Never meet", "Form a right angle", "Curved"], correct: 1 },
+            { q: "What is an acute angle?", options: ["90°", "More than 90°", "Less than 90°", "180°"], correct: 2 },
+            { q: "What is a line segment?", options: ["Infinite both ways", "One endpoint", "Two endpoints", "Curved"], correct: 2 }
+        ],
+        [ // Level 5
+            { q: "What is a polygon?", options: ["Curved shape", "Closed straight sides", "Open shape", "3D shape"], correct: 1 },
+            { q: "How many sides does a triangle have?", options: ["4", "3", "5", "6"], correct: 1 },
+            { q: "What is a square?", options: ["All sides equal, four right angles", "Three sides", "Curved", "Five sides"], correct: 0 },
+            { q: "What is the distance around a shape called?", options: ["Area", "Volume", "Perimeter", "Diameter"], correct: 2 },
+            { q: "What is the radius?", options: ["Across through center", "Center to edge", "Around the circle", "Inside space"], correct: 1 }
+        ],
+        [ // Level 6
+            { q: "What is length?", options: ["How wide", "How long", "How tall", "How heavy"], correct: 1 },
+            { q: "What is volume?", options: ["Space inside 3D shape", "Distance around", "How heavy", "How hot"], correct: 0 },
+            { q: "What is mass?", options: ["How heavy (force)", "Amount of matter", "How much holds", "Temperature"], correct: 1 },
+            { q: "What unit measures time?", options: ["cm", "kg", "seconds/minutes", "°C"], correct: 2 },
+            { q: "What is capacity?", options: ["How much a container holds", "How long", "How tall", "Amount of matter"], correct: 0 }
+        ],
+        [ // Level 7
+            { q: "What is the mean?", options: ["Most common", "Middle value", "Average", "Highest minus lowest"], correct: 2 },
+            { q: "What is the mode?", options: ["Average", "Middle", "Most common", "Range"], correct: 2 },
+            { q: "What is a bar graph used for?", options: ["Change over time", "Parts of whole", "Amounts", "Lines"], correct: 2 },
+            { q: "What is probability?", options: ["Likelihood", "Average", "Data", "Graph"], correct: 0 },
+            { q: "What is the range?", options: ["Middle value", "Highest minus lowest", "Average", "Most common"], correct: 1 }
+        ],
+        [ // Level 8
+            { q: "What is a variable?", options: ["Fixed number", "Letter for unknown", "Coefficient", "Expression"], correct: 1 },
+            { q: "What is an equation?", options: ["Math phrase", "Two expressions equal", "Inequality", "Term"], correct: 1 },
+            { q: "What is a coefficient?", options: ["Number before variable", "Fixed number", "Like terms", "Exponent"], correct: 0 },
+            { q: "What is an exponent?", options: ["Power", "Variable", "Constant", "Inequality"], correct: 0 },
+            { q: "What are like terms?", options: ["Same variable", "Different variables", "Constants", "Exponents"], correct: 0 }
+        ],
+        [ // Level 9
+            { q: "What is (3,4) called?", options: ["Origin", "Coordinate", "Quadrant", "Slope"], correct: 1 },
+            { q: "What is the horizontal axis?", options: ["Y-axis", "X-axis", "Origin", "Quadrant"], correct: 1 },
+            { q: "What is the origin?", options: ["(1,1)", "(0,0)", "(0,1)", "(1,0)"], correct: 1 },
+            { q: "What is slope?", options: ["Rise over run", "Horizontal", "Vertical", "Point"], correct: 0 },
+            { q: "What is a linear graph?", options: ["Curved", "Straight line", "Circle", "Bar"], correct: 1 }
+        ],
+        [ // Level 10
+            { q: "What does congruent mean?", options: ["Same shape different size", "Same size and shape", "Mirror", "Slide"], correct: 1 },
+            { q: "What is the Pythagorean Theorem?", options: ["a² + b² = c²", "a + b = c", "a × b = c", "a - b = c"], correct: 0 },
+            { q: "What is pi approximately?", options: ["2.14", "3.14", "4.14", "1.14"], correct: 1 },
+            { q: "What is symmetry?", options: ["Folds perfectly", "Same size", "Slide", "Flip"], correct: 0 },
+            { q: "What is a transformation?", options: ["Slide, flip, turn", "Same shape", "Right angle", "Area"], correct: 0 }
+        ]
+    ];
 
-                wordEl.draggable = true;
-                wordEl.addEventListener('dragstart', e => {
-                    e.dataTransfer.setData('text/plain', wordText);
-                });
+    let currentLevel = 1;
+    let currentQuestionIndex = 0;
+    let selectedOption = null;
 
-                wordEl.addEventListener('click', () => {
-                    if (!wordEl.classList.contains('used')) {
-                        addWordToSentence(wordText, data.colour);
-                        wordEl.classList.add('used');
-                    }
-                });
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const feedbackEl = document.getElementById('feedback');
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const resetBtn = document.getElementById('reset-btn');
 
-                wordBank.appendChild(wordEl);
-            });
+    function loadQuestion() {
+        const quiz = quizzes[currentLevel][currentQuestionIndex];
+        questionEl.textContent = quiz.q;
 
-            updateActiveButton();
-        }
+        optionsEl.innerHTML = '';
+        feedbackEl.textContent = '';
 
-        function addWordToSentence(wordText, colour) {
-            const wordSpan = document.createElement('span');
-            wordSpan.className = 'sentence-word';
-            wordSpan.textContent = wordText;
-            wordSpan.style.setProperty('--word-bg', colour);
-
-            wordSpan.addEventListener('click', () => {
-                wordSpan.remove();
-                const original = Array.from(wordBank.querySelectorAll('.word')).find(w => w.textContent === wordText && w.classList.contains('used'));
-                if (original) original.classList.remove('used');
-            });
-
-            sentenceArea.appendChild(wordSpan);
-        }
-
-        sentenceArea.addEventListener('dragover', e => e.preventDefault());
-
-        sentenceArea.addEventListener('drop', e => {
-            e.preventDefault();
-            const wordText = e.dataTransfer.getData('text/plain');
-            if (wordText) {
-                const colour = levels[currentLevel].colour;
-                addWordToSentence(wordText, colour);
-                const original = Array.from(wordBank.querySelectorAll('.word')).find(w => w.textContent === wordText);
-                if (original) original.classList.add('used');
-            }
+        quiz.options.forEach((option, i) => {
+            const btn = document.createElement('div');
+            btn.className = 'option';
+            btn.textContent = option;
+            btn.addEventListener('click', () => selectOption(btn, i, quiz.correct));
+            optionsEl.appendChild(btn);
         });
 
-        function updateActiveButton() {
-            navBtns.forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.level) === currentLevel);
-            });
+        selectedOption = null;
+        nextBtn.style.display = 'none';
+        document.body.style.backgroundColor = colors[currentLevel - 1] + '22';
+        updateActiveButton();
+    }
+
+    function selectOption(btn, index, correct) {
+        if (selectedOption) return;
+
+        selectedOption = btn;
+
+        const allOptions = optionsEl.querySelectorAll('.option');
+        allOptions.forEach(o => o.style.pointerEvents = 'none');
+
+        if (index === correct) {
+            btn.classList.add('correct');
+            feedbackEl.textContent = '✅ Correct! Well done!';
+            feedbackEl.style.color = '#4CAF50';
+        } else {
+            btn.classList.add('wrong');
+            allOptions[correct].classList.add('correct');
+            feedbackEl.textContent = '❌ Not quite – try again next time!';
+            feedbackEl.style.color = '#FF6B6B';
         }
 
-        resetBtn.addEventListener('click', () => loadLevel(currentLevel));
+        nextBtn.style.display = 'inline-block';
+    }
 
-        checkBtn.addEventListener('click', () => {
-            const built = Array.from(sentenceArea.querySelectorAll('.sentence-word'))
-                .map(el => el.textContent.trim());
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex >= quizzes[currentLevel].length) {
+            currentQuestionIndex = 0; // loop back to start
+        }
+        loadQuestion();
+    }
 
-            const correct = levels[currentLevel].correct;
-
-            if (built.length === 0) {
-                alert("Build a sentence first!");
-                return;
-            }
-
-            const isCorrect = built.length === correct.length && 
-                              built.every((word, i) => word === correct[i]);
-
-            const correctSentence = correct.join(" ");
-
-            if (isCorrect) {
-                alert(`✅ Perfect! "${correctSentence}" is exactly right!`);
-            } else {
-                alert(`❌ Not quite.\n\nThe correct sentence is:\n"${correctSentence}"\n\nTry again!`);
-            }
-        });
-
+    function updateActiveButton() {
         navBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                loadLevel(parseInt(btn.dataset.level));
-            });
+            btn.classList.toggle('active', parseInt(btn.dataset.level) === currentLevel);
         });
+    }
 
-        loadLevel(1);
-    </script>
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentLevel = parseInt(btn.dataset.level);
+            currentQuestionIndex = 0;
+            loadQuestion();
+        });
+    });
+
+    nextBtn.addEventListener('click', nextQuestion);
+
+    resetBtn.addEventListener('click', () => {
+        currentQuestionIndex = 0;
+        loadQuestion();
+    });
+
+    loadQuestion(); // start on level 1, first question
+</script>
 </body>
 </html>
