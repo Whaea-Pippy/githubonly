@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,7 +63,6 @@
     flex: 1;
     padding: 20px;
     display: flex;
-    overflow: hidden;
   }
   .formula-container {
     flex: 1;
@@ -83,9 +82,9 @@
   }
   .formula-area {
     background: #f8f8f8;
-    border: 3px dashed #ccc;
+    border: 4px dashed #ccc;
     border-radius: 16px;
-    min-height: 120px;
+    min-height: 140px;
     width: 100%;
     max-width: 1000px;
     padding: 20px;
@@ -96,12 +95,19 @@
     align-items: center;
     font-size: 40px;
     font-weight: bold;
-    min-height: 140px;
-    transition: border-color 0.3s;
+    transition: border-color 0.4s, background-color 0.4s;
+  }
+  .formula-area.correct { 
+    border-color: #4CAF50; 
+    background: #e8f5e9;
+  }
+  .formula-area.wrong { 
+    border-color: #f44336; 
+    background: #ffebee;
   }
   .formula-area.highlight { border-color: #4CAF50; }
   .formula-area.empty::before {
-    content: "Drag or click symbols here...";
+    content: "Drag or click symbols here to build the formula...";
     color: #aaa;
     font-style: italic;
     font-size: 26px;
@@ -147,10 +153,10 @@
   .controls {
     display: flex;
     gap: 15px;
-    margin-top: 15px;
+    margin: 20px 0;
   }
   button {
-    padding: 12px 28px;
+    padding: 12px 30px;
     font-size: 18px;
     border: none;
     border-radius: 30px;
@@ -161,20 +167,22 @@
   #clear-btn { background: #FF6B6B; color: white; }
   #answer-btn { background: #2196F3; color: white; }
   .feedback {
-    margin-top: 20px;
-    font-size: 32px;
+    font-size: 34px;
     font-weight: bold;
     min-height: 50px;
+    margin: 10px 0;
   }
   .answer-display {
-    margin-top: 15px;
-    font-size: 26px;
+    font-size: 28px;
     font-weight: bold;
     color: #333;
-    background: #f0f0f0;
-    padding: 10px 20px;
+    background: #e3f2fd;
+    padding: 12px 24px;
     border-radius: 12px;
+    margin-top: 15px;
     display: none;
+    text-align: center;
+    border: 2px solid #2196F3;
   }
 </style>
 </head>
@@ -236,9 +244,11 @@ const formulae = [
     {prompt: "Area of a circle", symbols: ["A", "=", "π", "r", "²"], correctOptions: [["A", "=", "π", "r", "²"]]}
   ],
   // Level 2
-  [{prompt: "Volume of a cuboid", symbols: ["V", "=", "l", "×", "w", "×", "h"], correctOptions: [["V", "=", "l", "×", "w", "×", "h"], ["V", "=", "l", "×", "h", "×", "w"], ["V", "=", "w", "×", "l", "×", "h"], ["V", "=", "w", "×", "h", "×", "l"], ["V", "=", "h", "×", "l", "×", "w"], ["V", "=", "h", "×", "w", "×", "l"]]}],
-  // Add your remaining levels here (3–10) from your original code...
-  // For brevity, only level 1 & 2 are shown — paste the rest as needed
+  [ // Add your full levels here...
+    {prompt: "Volume of a cuboid", symbols: ["V", "=", "l", "×", "w", "×", "h"], correctOptions: [["V", "=", "l", "×", "w", "×", "h"], ["V", "=", "l", "×", "h", "×", "w"], ["V", "=", "w", "×", "l", "×", "h"], ["V", "=", "w", "×", "h", "×", "l"], ["V", "=", "h", "×", "l", "×", "w"], ["V", "=", "h", "×", "w", "×", "l"]]},
+    // ... add more
+  ],
+  // Add levels 3–10 from your original code
 ];
 
 let currentLevel = 1;
@@ -253,7 +263,7 @@ const clearBtn = document.getElementById("clear-btn");
 const answerBtn = document.getElementById("answer-btn");
 const answerDisplay = document.getElementById("answer-display");
 
-// Drag and drop support
+// Drag and drop
 let draggedItem = null;
 
 function loadFormula() {
@@ -261,18 +271,17 @@ function loadFormula() {
   promptEl.textContent = "Build the formula for: " + f.prompt;
 
   formulaArea.innerHTML = "";
+  formulaArea.classList.remove("correct", "wrong");
   formulaArea.classList.add("empty");
   bank.innerHTML = "";
   feedback.textContent = "";
   answerDisplay.style.display = "none";
   checkBtn.disabled = false;
 
-  // Set theme color
   const col = colors[currentLevel - 1];
   document.documentElement.style.setProperty('--level-color', col);
   document.body.style.background = col + '22';
 
-  // Shuffle symbols
   const symbols = shuffle([...f.symbols]);
 
   symbols.forEach(s => {
@@ -304,7 +313,6 @@ function loadFormula() {
     bank.appendChild(div);
   });
 
-  // Update nav buttons
   document.querySelectorAll(".nav-btn").forEach(b => {
     b.classList.toggle("active", Number(b.dataset.level) === currentLevel);
   });
@@ -335,7 +343,7 @@ function addToFormula(symbol) {
   formulaArea.classList.remove("empty");
 }
 
-// Drag & drop events
+// Drag events
 formulaArea.addEventListener('dragover', (e) => {
   e.preventDefault();
   formulaArea.classList.add("highlight");
@@ -365,9 +373,7 @@ formulaArea.addEventListener('drop', (e) => {
           break;
         }
       }
-      if (insertBefore) {
-        formulaArea.insertBefore(draggedItem, insertBefore);
-      }
+      if (insertBefore) formulaArea.insertBefore(draggedItem, insertBefore);
     }
   }
 });
@@ -382,44 +388,47 @@ checkBtn.onclick = () => {
     opt.length === built.length && opt.every((v,i) => v === built[i])
   );
 
+  formulaArea.classList.remove("correct", "wrong");
   if (isCorrect) {
-    feedback.textContent = "🎉 Perfect!";
+    formulaArea.classList.add("correct");
+    feedback.textContent = "🎉 Perfect formula!";
     feedback.style.color = "#4CAF50";
     scores[ACTIVITY_NAME].correct++;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
-    updateScoreDisplay();
     checkBtn.disabled = true;
     setTimeout(() => {
       currentFormulaIndex++;
       if (currentFormulaIndex >= formulae[currentLevel].length) currentFormulaIndex = 0;
       loadFormula();
-    }, 1500);
+    }, 1800);
   } else {
-    feedback.textContent = "❌ Not quite – try again!";
-    feedback.style.color = "#FF6B6B";
-    updateScoreDisplay();
+    formulaArea.classList.add("wrong");
+    feedback.textContent = "❌ Wrong – try again!";
+    feedback.style.color = "#f44336";
   }
+  updateScoreDisplay();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
 };
 
-// Show answer button (instant marking)
+// Show answer
 answerBtn.onclick = () => {
   const f = formulae[currentLevel][currentFormulaIndex];
-  const correct = f.correctOptions[0]; // Show first correct one
+  const correct = f.correctOptions[0]; // Show the first correct version
   answerDisplay.textContent = "Correct formula: " + correct.join(" ");
   answerDisplay.style.display = "block";
 };
 
-// Clear button
+// Clear
 clearBtn.onclick = () => {
   formulaArea.innerHTML = "";
   formulaArea.classList.add("empty");
+  formulaArea.classList.remove("correct", "wrong");
   [...bank.children].forEach(el => el.classList.remove("used"));
   feedback.textContent = "";
   answerDisplay.style.display = "none";
   checkBtn.disabled = false;
 };
 
-// Level selection
+// Level switch
 document.querySelectorAll(".nav-btn").forEach(btn => {
   btn.onclick = () => {
     currentLevel = Number(btn.dataset.level);
@@ -429,10 +438,9 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
 });
 
 function shuffle(array) {
-  return array.map(a => [Math.random(), a]).sort((a,b) => a[0]-b[0]).map(a => a[1]);
+  return array.map(a => [Math.random(), a]).sort((a,b) => a[0] - b[0]).map(a => a[1]);
 }
 
-// Initial load
 updateScoreDisplay();
 loadFormula();
 </script>
