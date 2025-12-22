@@ -24,6 +24,7 @@
     padding: 12px;
     text-align: center;
     position: relative;
+    z-index: 10;
   }
   h1 { font-size: 24px; margin: 6px 0; }
   .score-display {
@@ -62,13 +63,13 @@
   main {
     flex: 1;
     padding: 20px;
-    display: flex;
+    overflow-y: auto;
+    scrollbar-width: thin;
   }
   .formula-container {
-    flex: 1;
     background: white;
     border-radius: 20px;
-    padding: 30px;
+    padding: 25px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
@@ -97,14 +98,8 @@
     font-weight: bold;
     transition: border-color 0.4s, background-color 0.4s;
   }
-  .formula-area.correct { 
-    border-color: #4CAF50; 
-    background: #e8f5e9;
-  }
-  .formula-area.wrong { 
-    border-color: #f44336; 
-    background: #ffebee;
-  }
+  .formula-area.correct  { border-color: #4CAF50; background: #e8f5e9; }
+  .formula-area.wrong    { border-color: #f44336; background: #ffebee; }
   .formula-area.highlight { border-color: #4CAF50; }
   .formula-area.empty::before {
     content: "Drag or click symbols here to build the formula...";
@@ -114,11 +109,17 @@
     pointer-events: none;
   }
   .symbol-bank {
+    width: 100%;
+    max-width: 1000px;
+    max-height: 220px; /* ← key fix: limit height so it scrolls */
+    overflow-y: auto;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
     gap: 15px;
-    max-width: 1000px;
-    width: 100%;
+    padding: 10px;
+    background: #fafafa;
+    border-radius: 12px;
+    border: 1px solid #eee;
     margin-bottom: 20px;
   }
   .symbol {
@@ -154,6 +155,8 @@
     display: flex;
     gap: 15px;
     margin: 20px 0;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   button {
     padding: 12px 30px;
@@ -177,12 +180,14 @@
     font-weight: bold;
     color: #333;
     background: #e3f2fd;
-    padding: 12px 24px;
+    padding: 16px 32px;
     border-radius: 12px;
-    margin-top: 15px;
+    margin-top: 20px;
     display: none;
     text-align: center;
     border: 2px solid #2196F3;
+    max-width: 100%;
+    word-wrap: break-word;
   }
 </style>
 </head>
@@ -466,10 +471,10 @@ checkBtn.onclick = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
 };
 
-// Show answer
+// Show answer (FIXED)
 answerBtn.onclick = () => {
   const f = formulae[currentLevel][currentFormulaIndex];
-  const correct = f.correctOptions[0]; // Show first correct version
+  const correct = f.correctOptions[0]; // show first correct version
   answerDisplay.textContent = "Correct formula: " + correct.join(" ");
   answerDisplay.style.display = "block";
 };
