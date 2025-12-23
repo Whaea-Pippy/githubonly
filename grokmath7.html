@@ -1,220 +1,574 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Vocabulary Flashcards</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f8ff;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        header {
-            background: #333;
-            padding: 10px;
-            text-align: center;
-            color: white;
-        }
-        h1 { font-size: 22px; margin: 5px 0; }
-        .nav-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            padding: 8px 0;
-        }
-        .nav-btn {
-            width: 60px; height: 60px; border-radius: 50%; border: none;
-            font-size: 24px; font-weight: bold; color: white; cursor: pointer;
-            transition: all 0.2s;
-        }
-        .nav-btn:hover { transform: scale(1.1); }
-        .nav-btn.active { box-shadow: 0 0 15px 4px rgba(255,255,255,0.8); transform: scale(1.15); }
-
-        main { flex: 1; padding: 20px 15px 15px; overflow: hidden; }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 20px;
-            height: 100%;
-        }
-        @media (max-width: 900px) {
-            .grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(5, 1fr); gap: 15px; }
-        }
-
-        /* Flip CSS from your working example */
-        .fc {
-            perspective: 1200px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            overflow: hidden;
-            cursor: pointer;
-        }
-        .fc-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            border-radius: 20px;
-        }
-        .fc.flipped .fc-inner {
-            transform: rotateY(180deg);
-        }
-        .fc-front, .fc-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            font-weight: 600;
-            flex-direction: column;
-        }
-        .fc-front {
-            background: #ffffff;
-            border: 2px solid var(--level-color);
-            color: #000;
-            font-size: 28px;
-        }
-        .fc-back {
-            background: var(--level-color);
-            color: #fff;
-            transform: rotateY(180deg);
-            font-size: 24px;
-            line-height: 1.4;
-        }
-        .fc-back strong {
-            font-size: 32px;
-            margin-bottom: 15px;
-        }
-
-        footer {
-            background: #333; padding: 15px; text-align: center;
-        }
-        .footer-btn {
-            background: white; color: #333; border: none;
-            padding: 14px 40px; margin: 0 20px; border-radius: 30px;
-            font-size: 20px; cursor: pointer;
-            transition: background 0.3s;
-        }
-        .footer-btn:hover { background: #eee; }
-        .footer-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Geometry Explorer</title>
+<style>
+  :root {
+    --primary: #4CAF50;
+    --accent: #2196F3;
+    --bg: #f8f9fa;
+  }
+  body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  header {
+    background: #222;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    position: relative;
+  }
+  h1 { margin: 0; font-size: 1.4rem; }
+  .score {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: rgba(255,255,255,0.9);
+    color: #222;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 0;
+  }
+  .nav-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .nav-btn.active {
+    transform: scale(1.15);
+    box-shadow: 0 0 12px rgba(255,255,255,0.7);
+  }
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    overflow: hidden;
+  }
+  #canvas-container {
+    flex: 1;
+    position: relative;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .info-panel {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    min-height: 120px;
+  }
+  .info-panel strong {
+    color: var(--accent);
+  }
+  .question {
+    font-weight: bold;
+    color: #d32f2f;
+    margin: 10px 0;
+  }
+  .answer-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+    align-items: center;
+  }
+  .input-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  input {
+    padding: 8px 12px;
+    font-size: 1.1rem;
+    width: 140px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+  }
+  .unit-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #555;
+    min-width: 50px;
+  }
+  button {
+    padding: 8px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  #check-btn { background: var(--primary); color: white; }
+  #new-btn { background: #FF9800; color: white; }
+  #feedback {
+    margin-left: 10px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    min-height: 28px;
+  }
+  .correct { color: var(--primary); }
+  .wrong { color: #d32f2f; }
+  .working {
+    background: #e8f5e9;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-family: monospace;
+    font-size: 1.15rem;
+  }
+</style>
 </head>
 <body>
 
 <header>
-    <h1>Math Vocabulary Flashcards</h1>
-    <div class="nav-buttons">
-        <button class="nav-btn active" style="background:#FF6B6B" data-level="1">1</button>
-        <button class="nav-btn" style="background:#FF8E53" data-level="2">2</button>
-        <button class="nav-btn" style="background:#FFCC00" data-level="3">3</button>
-        <button class="nav-btn" style="background:#9ACD32" data-level="4">4</button>
-        <button class="nav-btn" style="background:#4CAF50" data-level="5">5</button>
-        <button class="nav-btn" style="background:#20B2AA" data-level="6">6</button>
-        <button class="nav-btn" style="background:#4682B4" data-level="7">7</button>
-        <button class="nav-btn" style="background:#9370DB" data-level="8">8</button>
-        <button class="nav-btn" style="background:#DA70D6" data-level="9">9</button>
-        <button class="nav-btn" style="background:#FF69B4" data-level="10">10</button>
-    </div>
+  <h1>Geometry Explorer</h1>
+  <div class="score" id="score">Score: 0/0</div>
+  <div class="nav">
+    <button class="nav-btn active" style="background:#FF6B6B" data-level="1">1</button>
+    <button class="nav-btn" style="background:#FF8E53" data-level="2">2</button>
+    <button class="nav-btn" style="background:#FFCC00" data-level="3">3</button>
+    <button class="nav-btn" style="background:#9ACD32" data-level="4">4</button>
+    <button class="nav-btn" style="background:#4CAF50" data-level="5">5</button>
+    <button class="nav-btn" style="background:#20B2AA" data-level="6">6</button>
+    <button class="nav-btn" style="background:#4682B4" data-level="7">7</button>
+    <button class="nav-btn" style="background:#9370DB" data-level="8">8</button>
+    <button class="nav-btn" style="background:#DA70D6" data-level="9">9</button>
+    <button class="nav-btn" style="background:#FF69B4" data-level="10">10</button>
+  </div>
 </header>
 
 <main>
-    <div class="grid" id="grid"></div>
+  <div id="canvas-container">
+    <canvas id="canvas"></canvas>
+  </div>
+  <div class="info-panel" id="info"></div>
+  <div class="controls">
+    <div class="answer-area">
+      <div class="input-group">
+        <input type="number" id="user-answer" placeholder="Your answer" step="0.1" min="0">
+        <span class="unit-label" id="unit-display"></span>
+      </div>
+      <button id="check-btn">Check</button>
+      <span id="feedback"></span>
+    </div>
+    <button id="new-btn">New Question</button>
+  </div>
 </main>
 
-<footer>
-    <button class="footer-btn" id="prev-level">← Previous Level</button>
-    <button class="footer-btn" id="next-level">Next Level →</button>
-</footer>
-
 <script>
-    const levels = [ [], 
-        [{term:"Integer",def:"A whole number (positive, negative, or zero)."},{term:"Positive",def:"A number greater than zero."},{term:"Negative",def:"A number less than zero."},{term:"Even",def:"Divisible by 2."},{term:"Odd",def:"Not divisible by 2."},{term:"Prime",def:"Greater than 1, only factors 1 and itself."},{term:"Composite",def:"Greater than 1, has more factors."},{term:"Factor",def:"Divides evenly."},{term:"Multiple",def:"Product of the number and an integer."},{term:"Zero",def:"Additive identity."}],
-        [{term:"Fraction",def:"Part of a whole."},{term:"Numerator",def:"Top: how many parts."},{term:"Denominator",def:"Bottom: total parts."},{term:"Proper Fraction",def:"Numerator < denominator."},{term:"Improper Fraction",def:"Numerator ≥ denominator."},{term:"Mixed Number",def:"Whole + fraction."},{term:"Decimal",def:"Base-10 fraction."},{term:"Equivalent",def:"Same value."},{term:"Simplify",def:"Lowest terms."},{term:"Percent",def:"Out of 100."}],
-        [{term:"Add",def:"Combine."},{term:"Subtract",def:"Take away."},{term:"Multiply",def:"Repeated addition."},{term:"Divide",def:"Split equally."},{term:"Sum",def:"Addition result."},{term:"Difference",def:"Subtraction result."},{term:"Product",def:"Multiplication result."},{term:"Quotient",def:"Division result."},{term:"Remainder",def:"Left over."},{term:"Order of Operations",def:"PEMDAS."}],
-        [{term:"Point",def:"Exact location."},{term:"Line",def:"Infinite both ways."},{term:"Ray",def:"One endpoint."},{term:"Line Segment",def:"Two endpoints."},{term:"Angle",def:"Two rays from vertex."},{term:"Vertex",def:"Corner point."},{term:"Acute Angle",def:"<90°."},{term:"Right Angle",def:"90°."},{term:"Obtuse Angle",def:">90°."},{term:"Parallel",def:"Never meet."}],
-        [{term:"Polygon",def:"Closed straight sides."},{term:"Triangle",def:"3 sides."},{term:"Quadrilateral",def:"4 sides."},{term:"Rectangle",def:"Four right angles."},{term:"Square",def:"Equal sides + right angles."},{term:"Circle",def:"All points equidistant from center."},{term:"Radius",def:"Center to edge."},{term:"Diameter",def:"Through center."},{term:"Perimeter",def:"Around."},{term:"Area",def:"Inside space."}],
-        [{term:"Length",def:"How long."},{term:"Width",def:"How wide."},{term:"Height",def:"How tall."},{term:"Unit",def:"Standard measure."},{term:"Volume",def:"3D space."},{term:"Capacity",def:"How much holds."},{term:"Weight",def:"Gravitational force."},{term:"Mass",def:"Amount of matter."},{term:"Time",def:"Duration."},{term:"Temperature",def:"Hot/cold."}],
-        [{term:"Data",def:"Facts collected."},{term:"Mean",def:"Average."},{term:"Median",def:"Middle."},{term:"Mode",def:"Most frequent."},{term:"Range",def:"Max - min."},{term:"Bar Graph",def:"Bars for amounts."},{term:"Line Graph",def:"Change over time."},{term:"Pie Chart",def:"Parts of whole."},{term:"Table",def:"Rows/columns."},{term:"Probability",def:"Likelihood."}],
-        [{term:"Variable",def:"Unknown letter."},{term:"Expression",def:"Math phrase."},{term:"Equation",def:"Equals two expressions."},{term:"Coefficient",def:"Number by variable."},{term:"Constant",def:"Fixed number."},{term:"Term",def:"Part separated by +/−."},{term:"Like Terms",def:"Same variable."},{term:"Solve",def:"Find value."},{term:"Inequality",def:"> or <."},{term:"Exponent",def:"Power."}],
-        [{term:"Coordinate",def:"(x,y)."},{term:"X-axis",def:"Horizontal."},{term:"Y-axis",def:"Vertical."},{term:"Origin",def:"(0,0)."},{term:"Quadrant",def:"Four sections."},{term:"Plot",def:"Mark point."},{term:"Slope",def:"Rise/run."},{term:"Linear",def:"Straight line."},{term:"Function",def:"One output per input."},{term:"Graph",def:"Visual equation."}],
-        [{term:"Congruent",def:"Same size/shape."},{term:"Similar",def:"Same shape."},{term:"Symmetry",def:"Mirror line."},{term:"Transformation",def:"Move shape."},{term:"Translation",def:"Slide."},{term:"Reflection",def:"Flip."},{term:"Rotation",def:"Turn."},{term:"Pythagorean Theorem",def:"a² + b² = c²."},{term:"Circumference",def:"Around circle."},{term:"Pi",def:"≈3.14."}]
-    ];
+const STORAGE_KEY = 'geometry_explorer_score';
+let scores = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { total: 0, correct: 0 };
+localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
 
-    const colors = ['#FF6B6B','#FF8E53','#FFCC00','#9ACD32','#4CAF50','#20B2AA','#4682B4','#9370DB','#DA70D6','#FF69B4'];
+const scoreEl = document.getElementById('score');
+function updateScore() {
+  scoreEl.textContent = `Score: ${scores.correct}/${scores.total}`;
+}
 
-    let currentLevel = 1;
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const info = document.getElementById('info');
+const userInput = document.getElementById('user-answer');
+const unitDisplay = document.getElementById('unit-display');
+const checkBtn = document.getElementById('check-btn');
+const feedback = document.getElementById('feedback');
+const newBtn = document.getElementById('new-btn');
 
-    const grid = document.getElementById('grid');
-    const navBtns = document.querySelectorAll('.nav-btn');
+let currentLevel = 1;
+let currentCorrectAnswer = null;
+let currentUnit = '';
+let currentWorking = '';
 
-    // Flip function from your working code
-    function flip(card) {
-        card.classList.toggle('flipped');
-    }
+function resizeCanvas() {
+  canvas.width = canvasContainer.clientWidth;
+  canvas.height = canvasContainer.clientHeight;
+  drawCurrent();
+}
+window.addEventListener('resize', resizeCanvas);
+const canvasContainer = document.getElementById('canvas-container');
 
-    function loadLevel() {
-        grid.innerHTML = '';
-        const color = colors[currentLevel - 1];
-        document.body.style.backgroundColor = color + '22';
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
 
-        levels[currentLevel].forEach(word => {
-            const card = document.createElement('div');
-            card.className = 'fc';
-            card.style.setProperty('--level-color', color); // for border and back
+function drawCurrent() {
+  clearCanvas();
+  activities[currentLevel-1]();
+  feedback.textContent = '';
+  userInput.value = '';
+}
 
-            card.innerHTML = `
-                <div class="fc-inner">
-                    <div class="fc-front">${word.term}</div>
-                    <div class="fc-back">
-                        <strong>${word.term}</strong>
-                        <span>${word.def}</span>
-                    </div>
-                </div>
-            `;
+const units = ['mm', 'cm', 'm'];
+function randomUnit() {
+  return units[Math.floor(Math.random() * units.length)];
+}
 
-            // Your proven onclick flip
-            card.onclick = function() { flip(this); };
+const activities = [
+  // 1: Rectangle area
+  () => {
+    const unit = randomUnit();
+    const w = Math.floor(Math.random() * 80) + 40;
+    const h = Math.floor(Math.random() * 60) + 30;
+    const area = w * h;
+    drawRectangle(w, h);
+    currentUnit = unit;
+    currentWorking = `Area = width × height = ${w} ${unit} × ${h} ${unit} = ${area} ${unit}²`;
+    currentCorrectAnswer = area;
+    unitDisplay.textContent = `${unit}²`;
+    info.innerHTML = `<strong>Rectangle</strong><br>Width = ${w} ${unit}<br>Height = ${h} ${unit}<br><span class="question">What is the area of the rectangle?</span>`;
+  },
 
-            grid.appendChild(card);
-        });
+  // 2: Square perimeter
+  () => {
+    const unit = randomUnit();
+    const side = Math.floor(Math.random() * 70) + 50;
+    const peri = 4 * side;
+    drawSquare(side);
+    currentUnit = unit;
+    currentWorking = `Perimeter = 4 × side = 4 × ${side} ${unit} = ${peri} ${unit}`;
+    currentCorrectAnswer = peri;
+    unitDisplay.textContent = unit;
+    info.innerHTML = `<strong>Square</strong><br>Side = ${side} ${unit}<br><span class="question">What is the perimeter of the square?</span>`;
+  },
 
-        navBtns.forEach(btn => {
-            btn.classList.toggle('active', parseInt(btn.dataset.level) === currentLevel);
-        });
+  // 3: Triangle area
+  () => {
+    const unit = randomUnit();
+    const base = Math.floor(Math.random() * 100) + 60;
+    const height = Math.floor(Math.random() * 80) + 40;
+    const area = (base * height) / 2;
+    drawTriangle(base, height);
+    currentUnit = unit;
+    currentWorking = `Area = ½ × base × vertical height = ½ × ${base} ${unit} × ${height} ${unit} = ${area} ${unit}²`;
+    currentCorrectAnswer = area;
+    unitDisplay.textContent = `${unit}²`;
+    info.innerHTML = `<strong>Triangle</strong><br>Base = ${base} ${unit}<br>Vertical height = ${height} ${unit}<br><span class="question">What is the area of the triangle?</span>`;
+  },
 
-        document.getElementById('prev-level').disabled = currentLevel === 1;
-        document.getElementById('next-level').disabled = currentLevel === 10;
-    }
+  // 4: Circle circumference
+  () => {
+    const unit = randomUnit();
+    const r = Math.floor(Math.random() * 50) + 30;
+    const circ = 2 * Math.PI * r;
+    drawCircle(r);
+    currentUnit = unit;
+    currentWorking = `Circumference = 2 × π × radius = 2 × π × ${r} ${unit} ≈ ${circ.toFixed(1)} ${unit}`;
+    currentCorrectAnswer = circ;
+    unitDisplay.textContent = unit;
+    info.innerHTML = `<strong>Circle</strong><br>Radius = ${r} ${unit}<br><span class="question">What is the circumference of the circle?</span>`;
+  },
 
-    navBtns.forEach(btn => {
-        btn.onclick = function() {
-            currentLevel = parseInt(this.dataset.level);
-            loadLevel();
-        };
-    });
+  // 5: Equilateral triangle area
+  () => {
+    const unit = randomUnit();
+    const side = Math.floor(Math.random() * 80) + 50;
+    const area = (Math.sqrt(3) / 4) * side * side;
+    drawEquilateral(side);
+    currentUnit = unit;
+    currentWorking = `Area = (√3 / 4) × side² = (√3 / 4) × ${side}² ${unit}² ≈ ${area.toFixed(1)} ${unit}²`;
+    currentCorrectAnswer = area;
+    unitDisplay.textContent = `${unit}²`;
+    info.innerHTML = `<strong>Equilateral Triangle</strong><br>Side = ${side} ${unit}<br><span class="question">What is the area of the equilateral triangle?</span>`;
+  },
 
-    document.getElementById('prev-level').onclick = function() {
-        if (currentLevel > 1) { currentLevel--; loadLevel(); }
-    };
+  // 6: Right triangle hypotenuse
+  () => {
+    const unit = randomUnit();
+    const a = Math.floor(Math.random() * 40) + 30;
+    const b = Math.floor(Math.random() * 40) + 30;
+    const c = Math.sqrt(a*a + b*b);
+    drawRightTriangle(a, b);
+    currentUnit = unit;
+    currentWorking = `Hypotenuse = √(a² + b²) = √(${a}² + ${b}²) ${unit} ≈ ${c.toFixed(1)} ${unit}`;
+    currentCorrectAnswer = c;
+    unitDisplay.textContent = unit;
+    info.innerHTML = `<strong>Right Triangle</strong><br>Legs: ${a} ${unit} and ${b} ${unit}<br><span class="question">What is the length of the hypotenuse?</span>`;
+  },
 
-    document.getElementById('next-level').onclick = function() {
-        if (currentLevel < 10) { currentLevel++; loadLevel(); }
-    };
+  // 7: Parallelogram area
+  () => {
+    const unit = randomUnit();
+    const base = Math.floor(Math.random() * 90) + 60;
+    const height = Math.floor(Math.random() * 70) + 40;
+    const area = base * height;
+    drawParallelogram(base, height);
+    currentUnit = unit;
+    currentWorking = `Area = base × vertical height = ${base} ${unit} × ${height} ${unit} = ${area} ${unit}²`;
+    currentCorrectAnswer = area;
+    unitDisplay.textContent = `${unit}²`;
+    info.innerHTML = `<strong>Parallelogram</strong><br>Base = ${base} ${unit}<br>Vertical height = ${height} ${unit}<br><span class="question">What is the area of the parallelogram?</span>`;
+  },
 
-    loadLevel();
+  // 8: Trapezoid area
+  () => {
+    const unit = randomUnit();
+    const a = Math.floor(Math.random() * 80) + 50;
+    const b = Math.floor(Math.random() * 80) + 50;
+    const h = Math.floor(Math.random() * 60) + 30;
+    const area = ((a + b) / 2) * h;
+    drawTrapezoid(a, b, h);
+    currentUnit = unit;
+    currentWorking = `Area = ½ × (base₁ + base₂) × vertical height = ½ × (${a} + ${b}) ${unit} × ${h} ${unit} = ${area} ${unit}²`;
+    currentCorrectAnswer = area;
+    unitDisplay.textContent = `${unit}²`;
+    info.innerHTML = `<strong>Trapezoid</strong><br>Bases: ${a} ${unit} and ${b} ${unit}<br>Vertical height = ${h} ${unit}<br><span class="question">What is the area of the trapezoid?</span>`;
+  },
+
+  // 9: Rhombus area
+  () => {
+    const unit = randomUnit();
+    const d1 = Math.floor(Math.random() * 100) + 60;
+    const d2 = Math.floor(Math.random() * 100) + 60;
+    const area = (d1 * d2) / 2;
+    drawRhombus(d1, d2);
+    currentUnit = unit;
+    currentWorking = `Area = (diagonal₁ × diagonal₂) / 2 = (${d1} ${unit} × ${d2} ${unit}) / 2 = ${area} ${unit}²`;
+    currentCorrectAnswer = area;
+    unitDisplay.textContent = `${unit}²`;
+    info.innerHTML = `<strong>Rhombus</strong><br>Diagonals: ${d1} ${unit} and ${d2} ${unit}<br><span class="question">What is the area of the rhombus?</span>`;
+  },
+
+  // 10: Regular pentagon area
+  () => {
+    const unit = randomUnit();
+    const side = Math.floor(Math.random() * 50) + 30;
+    const apothem = (side / 2) / Math.tan(Math.PI / 5);
+    const area = (5 * side * apothem) / 2;
+    drawPentagon(side);
+    currentUnit = unit;
+    currentWorking = `Area = (5 × side × apothem) / 2<br>Apothem ≈ ${apothem.toFixed(1)} ${unit}<br>= (5 × ${side} × ${apothem.toFixed(1)}) / 2 ${unit}² ≈ ${area.toFixed(1)} ${unit}²`;
+    currentCorrectAnswer = area;
+    unitDisplay.textContent = `${unit}²`;
+    info.innerHTML = `<strong>Regular Pentagon</strong><br>Side = ${side} ${unit}<br>Apothem (vertical height from centre to side) ≈ ${apothem.toFixed(1)} ${unit}<br><span class="question">What is the area of the regular pentagon?</span>`;
+  }
+];
+
+// Drawing functions (unchanged)
+function drawRectangle(w, h) {
+  const scale = Math.min(canvas.width / (w + 80), canvas.height / (h + 80));
+  const x = (canvas.width - w * scale) / 2;
+  const y = (canvas.height - h * scale) / 2;
+  ctx.fillStyle = '#e3f2fd';
+  ctx.fillRect(x, y, w * scale, h * scale);
+  ctx.strokeStyle = '#1976D2';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(x, y, w * scale, h * scale);
+}
+function drawSquare(side) { drawRectangle(side, side); }
+function drawTriangle(base, height) {
+  const scale = Math.min(canvas.width / (base + 80), canvas.height / (height + 80));
+  const x = (canvas.width - base * scale) / 2;
+  const y = (canvas.height - height * scale) / 2 + height * scale;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + base * scale, y);
+  ctx.lineTo(x + base * scale / 2, y - height * scale);
+  ctx.closePath();
+  ctx.fillStyle = '#e8f5e9';
+  ctx.fill();
+  ctx.strokeStyle = '#388E3C';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+function drawCircle(r) {
+  const scale = Math.min(canvas.width / (r * 2 + 80), canvas.height / (r * 2 + 80));
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * scale, 0, Math.PI * 2);
+  ctx.fillStyle = '#fff3e0';
+  ctx.fill();
+  ctx.strokeStyle = '#F57C00';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+function drawEquilateral(side) {
+  const scale = Math.min(canvas.width / (side + 80), canvas.height / (side * Math.sqrt(3)/2 + 80));
+  const x = canvas.width / 2;
+  const y = canvas.height / 2 + (side * Math.sqrt(3)/4) * scale;
+  ctx.beginPath();
+  ctx.moveTo(x - side * scale / 2, y);
+  ctx.lineTo(x + side * scale / 2, y);
+  ctx.lineTo(x, y - side * Math.sqrt(3)/2 * scale);
+  ctx.closePath();
+  ctx.fillStyle = '#f3e5f5';
+  ctx.fill();
+  ctx.strokeStyle = '#7B1FA2';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+function drawRightTriangle(a, b) {
+  const scale = Math.min(canvas.width / (a + 80), canvas.height / (b + 80));
+  const x = canvas.width / 2 - a * scale / 2;
+  const y = canvas.height / 2 + b * scale / 2;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + a * scale, y);
+  ctx.lineTo(x, y - b * scale);
+  ctx.closePath();
+  ctx.fillStyle = '#e3f2fd';
+  ctx.fill();
+  ctx.strokeStyle = '#1976D2';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+function drawParallelogram(base, height) {
+  const scale = Math.min(canvas.width / (base + 80), canvas.height / (height + 80));
+  const x = canvas.width / 2 - base * scale / 2;
+  const y = canvas.height / 2 + height * scale / 2;
+  const skew = 30 * scale;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + base * scale, y);
+  ctx.lineTo(x + base * scale + skew, y - height * scale);
+  ctx.lineTo(x + skew, y - height * scale);
+  ctx.closePath();
+  ctx.fillStyle = '#e8f5e9';
+  ctx.fill();
+  ctx.strokeStyle = '#388E3C';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+function drawTrapezoid(a, b, h) {
+  const scale = Math.min(canvas.width / (Math.max(a,b) + 80), canvas.height / (h + 80));
+  const x = canvas.width / 2;
+  const y = canvas.height / 2 + h * scale / 2;
+  ctx.beginPath();
+  if (a > b) {
+    ctx.moveTo(x - a * scale / 2, y);
+    ctx.lineTo(x + a * scale / 2, y);
+    ctx.lineTo(x + b * scale / 2, y - h * scale);
+    ctx.lineTo(x - b * scale / 2, y - h * scale);
+  } else {
+    ctx.moveTo(x - b * scale / 2, y);
+    ctx.lineTo(x + b * scale / 2, y);
+    ctx.lineTo(x + a * scale / 2, y - h * scale);
+    ctx.lineTo(x - a * scale / 2, y - h * scale);
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#fff3e0';
+  ctx.fill();
+  ctx.strokeStyle = '#F57C00';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+function drawRhombus(d1, d2) {
+  const scale = Math.min(canvas.width / (d1 + 80), canvas.height / (d2 + 80)) * 0.7;
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  const halfD1 = d1 * scale / 2;
+  const halfD2 = d2 * scale / 2;
+  ctx.beginPath();
+  ctx.moveTo(cx - halfD1, cy);
+  ctx.lineTo(cx, cy - halfD2);
+  ctx.lineTo(cx + halfD1, cy);
+  ctx.lineTo(cx, cy + halfD2);
+  ctx.closePath();
+  ctx.fillStyle = '#f3e5f5';
+  ctx.fill();
+  ctx.strokeStyle = '#7B1FA2';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+function drawPentagon(side) {
+  const scale = Math.min(canvas.width / 200, canvas.height / 200) * 100;
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++) {
+    const angle = (Math.PI * 2 / 5) * i - Math.PI / 2;
+    const x = cx + Math.cos(angle) * side * scale;
+    const y = cy + Math.sin(angle) * side * scale;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#e3f2fd';
+  ctx.fill();
+  ctx.strokeStyle = '#1976D2';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+
+// Check answer
+checkBtn.onclick = () => {
+  if (!currentCorrectAnswer) return;
+  const userValue = parseFloat(userInput.value);
+  if (isNaN(userValue)) {
+    feedback.textContent = "Please enter a number!";
+    feedback.className = "wrong";
+    info.innerHTML = info.innerHTML.split('<div class="working"')[0];
+    return;
+  }
+  scores.total++;
+  const tolerance = 1;
+  const isCorrect = Math.abs(userValue - currentCorrectAnswer) <= tolerance;
+
+  info.innerHTML = info.innerHTML.split('<div class="working"')[0];
+
+  if (isCorrect) {
+    feedback.textContent = "Correct! ✓";
+    feedback.className = "correct";
+    scores.correct++;
+  } else {
+    feedback.textContent = "Wrong";
+    feedback.className = "wrong";
+    info.innerHTML += `<div class="working">${currentWorking}</div>`;
+  }
+  updateScore();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+};
+
+// New question
+newBtn.onclick = drawCurrent;
+
+// Level switch
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.onclick = () => {
+    currentLevel = Number(btn.dataset.level);
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    drawCurrent();
+  };
+});
+
+// Initial
+resizeCanvas();
+updateScore();
+drawCurrent();
 </script>
 </body>
 </html>
