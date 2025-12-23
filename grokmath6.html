@@ -8,7 +8,6 @@
   :root {
     --level-color: #FF6B6B;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: Arial, Helvetica, sans-serif;
@@ -42,7 +41,8 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    align-items: center;
+    gap: 12px;
     padding: 10px 0;
   }
   .nav-btn {
@@ -98,8 +98,8 @@
     font-weight: bold;
     transition: border-color 0.4s, background-color 0.4s;
   }
-  .formula-area.correct  { border-color: #4CAF50; background: #e8f5e9; }
-  .formula-area.wrong    { border-color: #f44336; background: #ffebee; }
+  .formula-area.correct { border-color: #4CAF50; background: #e8f5e9; }
+  .formula-area.wrong { border-color: #f44336; background: #ffebee; }
   .formula-area.highlight { border-color: #4CAF50; }
   .formula-area.empty::before {
     content: "Drag or click symbols here to build the formula...";
@@ -111,12 +111,10 @@
   .symbol-bank {
     width: 100%;
     max-width: 1000px;
-    max-height: 220px; /* ← key fix: limit height so it scrolls */
-    overflow-y: auto;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
     gap: 15px;
-    padding: 10px;
+    padding: 15px;
     background: #fafafa;
     border-radius: 12px;
     border: 1px solid #eee;
@@ -135,7 +133,7 @@
     font-weight: bold;
     cursor: grab;
     user-select: none;
-    transition: transform 0.15s;
+    transition: transform 0.15s, opacity 0.3s;
   }
   .symbol:active { transform: scale(0.95); }
   .symbol.used {
@@ -174,6 +172,7 @@
     font-weight: bold;
     min-height: 50px;
     margin: 10px 0;
+    transition: opacity 1.5s ease;
   }
   .answer-display {
     font-size: 28px;
@@ -222,11 +221,9 @@
     <div class="answer-display" id="answer-display"></div>
   </div>
 </main>
-
 <script>
 const STORAGE_KEY = 'math_formula_builder_score';
 const ACTIVITY_NAME = 'formula_builder';
-
 let scores = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 if (!scores[ACTIVITY_NAME]) scores[ACTIVITY_NAME] = { correct: 0, total: 0 };
 localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
@@ -238,7 +235,6 @@ function updateScoreDisplay() {
 }
 
 const colors = ['#FF6B6B','#FF8E53','#FFCC00','#9ACD32','#4CAF50','#20B2AA','#4682B4','#9370DB','#DA70D6','#FF69B4'];
-
 const formulae = [
   [], // Level 0 unused
   [ // Level 1
@@ -248,6 +244,7 @@ const formulae = [
     {prompt: "Circumference of a circle", symbols: ["C", "=", "2", "π", "r"], correctOptions: [["C", "=", "2", "π", "r"]]},
     {prompt: "Area of a circle", symbols: ["A", "=", "π", "r", "²"], correctOptions: [["A", "=", "π", "r", "²"]]}
   ],
+  // ... (rest of the levels remain unchanged)
   [ // Level 2
     {prompt: "Volume of a cuboid", symbols: ["V", "=", "l", "×", "w", "×", "h"], correctOptions: [["V", "=", "l", "×", "w", "×", "h"], ["V", "=", "l", "×", "h", "×", "w"], ["V", "=", "w", "×", "l", "×", "h"], ["V", "=", "w", "×", "h", "×", "l"], ["V", "=", "h", "×", "l", "×", "w"], ["V", "=", "h", "×", "w", "×", "l"]]},
     {prompt: "Volume of a cylinder", symbols: ["V", "=", "π", "r", "²", "h"], correctOptions: [["V", "=", "π", "r", "²", "h"]]},
@@ -325,13 +322,11 @@ const clearBtn = document.getElementById("clear-btn");
 const answerBtn = document.getElementById("answer-btn");
 const answerDisplay = document.getElementById("answer-display");
 
-// Drag and drop
 let draggedItem = null;
 
 function loadFormula() {
   const f = formulae[currentLevel][currentFormulaIndex];
   promptEl.textContent = "Build the formula for: " + f.prompt;
-
   formulaArea.innerHTML = "";
   formulaArea.classList.remove("correct", "wrong");
   formulaArea.classList.add("empty");
@@ -345,33 +340,31 @@ function loadFormula() {
   document.body.style.background = col + '22';
 
   const symbols = shuffle([...f.symbols]);
-
   symbols.forEach(s => {
     const div = document.createElement("div");
     div.className = "symbol";
     div.draggable = true;
     div.textContent = s;
     div.dataset.symbol = s;
-
     div.addEventListener('dragstart', (e) => {
       if (div.classList.contains("used")) return;
       draggedItem = div;
       e.dataTransfer.setData("text/plain", s);
-      setTimeout(() => div.style.opacity = "0.4", 0);
+      setTimeout(() => {
+        div.classList.add("used");
+        div.style.opacity = "0.4";
+      }, 0);
     });
-
     div.addEventListener('dragend', () => {
-      div.style.opacity = "1";
       draggedItem = null;
     });
-
     div.onclick = () => {
       if (!div.classList.contains("used")) {
         div.classList.add("used");
+        div.style.opacity = "0.4";
         addToFormula(s);
       }
     };
-
     bank.appendChild(div);
   });
 
@@ -386,43 +379,39 @@ function addToFormula(symbol) {
   item.draggable = true;
   item.textContent = symbol;
   item.dataset.symbol = symbol;
-
   item.addEventListener('dragstart', (e) => {
     draggedItem = item;
     e.dataTransfer.setData("text/plain", symbol);
   });
-
   item.addEventListener('dragend', () => draggedItem = null);
-
   item.onclick = () => {
     item.remove();
     const orig = [...bank.children].find(el => el.dataset.symbol === symbol && el.classList.contains("used"));
-    if (orig) orig.classList.remove("used");
+    if (orig) {
+      orig.classList.remove("used");
+      orig.style.opacity = "1";
+    }
     if (!formulaArea.children.length) formulaArea.classList.add("empty");
   };
-
   formulaArea.appendChild(item);
   formulaArea.classList.remove("empty");
 }
 
-// Drag events
+// Drag events on formula area
 formulaArea.addEventListener('dragover', (e) => {
   e.preventDefault();
   formulaArea.classList.add("highlight");
 });
-
 formulaArea.addEventListener('dragleave', () => {
   formulaArea.classList.remove("highlight");
 });
-
 formulaArea.addEventListener('drop', (e) => {
   e.preventDefault();
   formulaArea.classList.remove("highlight");
-
   if (draggedItem) {
     const symbol = e.dataTransfer.getData("text/plain");
     if (draggedItem.parentElement === bank) {
-      draggedItem.classList.add("used");
+      // Already marked used on dragstart
       addToFormula(symbol);
     } else if (draggedItem.parentElement === formulaArea) {
       const rect = formulaArea.getBoundingClientRect();
@@ -436,6 +425,7 @@ formulaArea.addEventListener('drop', (e) => {
         }
       }
       if (insertBefore) formulaArea.insertBefore(draggedItem, insertBefore);
+      else formulaArea.appendChild(draggedItem);
     }
   }
 });
@@ -444,12 +434,10 @@ formulaArea.addEventListener('drop', (e) => {
 checkBtn.onclick = () => {
   const built = [...formulaArea.children].map(el => el.textContent);
   const f = formulae[currentLevel][currentFormulaIndex];
-
   scores[ACTIVITY_NAME].total++;
-  const isCorrect = f.correctOptions.some(opt => 
+  const isCorrect = f.correctOptions.some(opt =>
     opt.length === built.length && opt.every((v,i) => v === built[i])
   );
-
   formulaArea.classList.remove("correct", "wrong");
   if (isCorrect) {
     formulaArea.classList.add("correct");
@@ -457,6 +445,7 @@ checkBtn.onclick = () => {
     feedback.style.color = "#4CAF50";
     scores[ACTIVITY_NAME].correct++;
     checkBtn.disabled = true;
+    answerDisplay.style.display = "none"; // hide answer if shown
     setTimeout(() => {
       currentFormulaIndex++;
       if (currentFormulaIndex >= formulae[currentLevel].length) currentFormulaIndex = 0;
@@ -471,12 +460,13 @@ checkBtn.onclick = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
 };
 
-// Show answer (FIXED)
+// Show answer
 answerBtn.onclick = () => {
   const f = formulae[currentLevel][currentFormulaIndex];
-  const correct = f.correctOptions[0]; // show first correct version
+  const correct = f.correctOptions[0];
   answerDisplay.textContent = "Correct formula: " + correct.join(" ");
   answerDisplay.style.display = "block";
+  answerDisplay.scrollIntoView({ behavior: "smooth", block: "center" });
 };
 
 // Clear
@@ -484,7 +474,10 @@ clearBtn.onclick = () => {
   formulaArea.innerHTML = "";
   formulaArea.classList.add("empty");
   formulaArea.classList.remove("correct", "wrong");
-  [...bank.children].forEach(el => el.classList.remove("used"));
+  [...bank.children].forEach(el => {
+    el.classList.remove("used");
+    el.style.opacity = "1";
+  });
   feedback.textContent = "";
   answerDisplay.style.display = "none";
   checkBtn.disabled = false;
