@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Strength Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: Poppins, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #fafafa;
+  }
+
+  h1, h2 {
+    font-weight: 600;
+  }
+
+  .exercise-list {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+  }
+
+  .exercise {
+    padding: 6px 0;
+    font-size: 16px;
+  }
+
+  button {
+    padding: 12px 16px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 10px;
+  }
+
+  .save-btn {
+    background: #4CAF50;
+    color: white;
+  }
+
+  .reset-btn {
+    background: #f44336;
+    color: white;
+  }
+
+  .history {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  .entry {
+    border-bottom: 1px solid #ddd;
+    padding: 8px 0;
+    font-size: 14px;
+  }
+
+  .entry:last-child {
+    border-bottom: none;
+  }
+</style>
+</head>
+<body>
+
+<h1>Daily Strength Tracker</h1>
+<p>Tick off exercises and save a daily log (stored in browser).</p>
+
+<div class="exercise-list" id="exerciseList">
+  <h2>Exercises</h2>
+  <!-- Editable exercise list -->
+  <label class="exercise"><input type="checkbox" value="Squats"> Squats</label><br>
+  <label class="exercise"><input type="checkbox" value="Reverse Lunges"> Reverse Lunges</label><br>
+  <label class="exercise"><input type="checkbox" value="Side Lunges"> Side Lunges</label><br>
+  <label class="exercise"><input type="checkbox" value="Push-Ups (Wall/Counter)"> Push-Ups (Wall/Counter)</label><br>
+  <label class="exercise"><input type="checkbox" value="Plank"> Plank</label><br>
+  <label class="exercise"><input type="checkbox" value="Glute Bridge"> Glute Bridge</label><br>
+  <label class="exercise"><input type="checkbox" value="Hip Abduction"> Hip Abduction</label><br>
+  <label class="exercise"><input type="checkbox" value="Calf Raises"> Calf Raises</label><br>
+  <label class="exercise"><input type="checkbox" value="Farmer Carry"> Farmer Carry</label><br>
+  <label class="exercise"><input type="checkbox" value="Down-Dog to Plank Flow"> Down-Dog to Plank Flow</label><br>
+</div>
+
+<button class="save-btn" onclick="saveDay()">Save for Today</button>
+<button class="reset-btn" onclick="clearToday()">Clear Today's Ticks</button>
+
+<h2>History</h2>
+<div class="history" id="historyLog"></div>
+
+<script>
+  const STORAGE_KEY = "strengthHistory";
+
+  function loadHistory() {
+    const log = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const container = document.getElementById("historyLog");
+    container.innerHTML = "";
+
+    log.forEach(entry => {
+      const div = document.createElement("div");
+      div.className = "entry";
+      div.textContent = `${entry.date} → ${entry.exercises.length ? entry.exercises.join(", ") : "No exercises"}`;
+      container.appendChild(div);
+    });
+  }
+
+  function saveDay() {
+    const checkboxes = document.querySelectorAll(".exercise-list input[type='checkbox']");
+    const done = [];
+    checkboxes.forEach(cb => { if (cb.checked) done.push(cb.value); });
+
+    const log = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    const today = new Date().toLocaleDateString();
+
+    log.push({
+      date: today,
+      exercises: done
+    });
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(log));
+
+    alert("Saved!");
+    loadHistory();
+    clearToday();
+  }
+
+  function clearToday() {
+    const checkboxes = document.querySelectorAll(".exercise-list input[type='checkbox']");
+    checkboxes.forEach(cb => cb.checked = false);
+  }
+
+  loadHistory();
+</script>
+
+</body>
+</html>
