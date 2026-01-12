@@ -2,209 +2,224 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Strength Timer (25 min)</title>
+<title>Mobile Strength Tracker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+  /* --- BODY & GENERAL --- */
   body {
     font-family: Poppins, Arial, sans-serif;
-    background: #fafafa;
     margin: 0;
-    padding: 20px;
+    padding: 10px;
+    background: #f8f8f8;
+    color: #333;
   }
 
   h1, h2 {
     font-weight: 600;
+    text-align: center;
   }
 
-  .exercise-box {
-    background: white;
-    padding: 16px;
-    border-radius: 14px;
+  /* --- CARD LAYOUT --- */
+  .exercise-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
     margin-bottom: 16px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   }
 
-  .desc {
-    font-size: 14px;
-    color: #555;
-    margin: 6px 0 12px 0;
+  .exercise-name {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
   }
 
-  button {
-    padding: 12px 18px;
-    border: none;
-    border-radius: 10px;
+  .exercise-desc {
     font-size: 16px;
-    margin: 6px 6px 6px 0;
-    cursor: pointer;
+    color: #555;
+    margin-bottom: 12px;
   }
-
-  .start-btn { background: #4CAF50; color: white; }
-  .next-btn { background: #2196F3; color: white; }
-  .complete-btn { background: #8E44AD; color: white; }
-  .reset-btn { background: #f44336; color: white; }
 
   .timer {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 600;
-    margin: 10px 0;
+    text-align: center;
+    margin-bottom: 10px;
   }
 
   .bar-wrap {
     width: 100%;
-    height: 16px;
+    height: 20px;
     background: #eee;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
   .bar {
     width: 0%;
     height: 100%;
-    background: linear-gradient(90deg, #27AE60, #7DCEA0);
+    background: linear-gradient(90deg,#27AE60,#7DCEA0);
     transition: width 0.2s linear;
   }
 
+  button {
+    font-size: 20px;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 12px;
+    margin: 6px 0;
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .start-btn { background: #4CAF50; color: white; }
+  .complete-btn { background: #8E44AD; color: white; }
+  .reset-btn { background: #f44336; color: white; }
+
+  /* --- HISTORY --- */
   .history-box {
-    margin-top: 24px;
-    background: white;
+    background: #fff;
     padding: 16px;
-    border-radius: 14px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    border-radius: 16px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    margin-bottom: 16px;
   }
 
-  .entry {
-    padding: 6px 0;
+  .history-entry {
+    font-size: 16px;
     border-bottom: 1px solid #ddd;
-    font-size: 14px;
+    padding: 8px 0;
   }
 
-  .entry:last-child {
-    border-bottom: none;
+  .history-entry:last-child { border-bottom: none; }
+
+  /* --- WEEKLY TOTAL --- */
+  .weekly-total {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 12px;
   }
 </style>
 </head>
 <body>
 
-<h1>Strength Session — 25 Minutes</h1>
-<p>Guided pacing with audit history. One continuous bar per exercise.</p>
+<h1>Strength Session — 25 min</h1>
 
-<div id="app"></div>
+<div id="exerciseContainer"></div>
 
 <div class="history-box">
-  <h2>History</h2>
-  <div id="history"></div>
+  <h2>History (Days Completed)</h2>
+  <div id="historyList"></div>
+  <div class="weekly-total" id="weeklyTotal"></div>
   <button class="reset-btn" onclick="resetHistory()">Reset History</button>
 </div>
 
 <script>
-// ---- Exercises (in order) ----
+// --- EXERCISES ---
 const exercises = [
-  {name: "Breathe", time: 60, desc: "Slow nose inhale, slow mouth exhale. Prepare body & posture."},
-  {name: "Deep Squat", time: 300, desc: "Hold a gentle deep squat. Adjust depth for comfort. Keeps hips, knees, ankles strong."},
-  {name: "Squats", time: 120, desc: "Controlled squats. Strengthens legs & hips. Stand tall."},
-  {name: "Reverse Lunges", time: 120, desc: "Step back to protect knees. Balance + hip strength."},
-  {name: "Side Lunges", time: 120, desc: "Strengthens inner thighs & hips. Smooth side steps."},
-  {name: "Push-Ups (Wall/Counter)", time: 120, desc: "Arms + chest + shoulder strength. Adjust angle."},
-  {name: "Plank", time: 120, desc: "Core + posture + stability. Keep spine long."},
-  {name: "Glute Bridge", time: 120, desc: "Hips up, squeeze glutes. Great for lower back support."},
-  {name: "Hip Abduction", time: 120, desc: "Leg lifts to the side. Important fall-prevention muscle."},
-  {name: "Calf Raises", time: 120, desc: "Ankles + calves + balance. Slow up and down."},
-  {name: "Down-Dog → Plank Flow", time: 120, desc: "Yoga flow: shoulders + core + mobility."},
-  {name: "Breathe", time: 60, desc: "Cooling breath, heart rate down, gentle nasal breathing."}
+  {name:"Breathe",time:60,desc:"Slow nasal breaths, reset posture."},
+  {name:"Deep Squat",time:300,desc:"Gentle deep squat, adjust depth for comfort."},
+  {name:"Squats",time:120,desc:"Slow controlled reps, hips + legs."},
+  {name:"Reverse Lunges",time:120,desc:"Step back, knees friendly, balance work."},
+  {name:"Side Lunges",time:120,desc:"Inner thighs + hips + control."},
+  {name:"Push-Ups (Wall/Counter)",time:120,desc:"Arms + chest + shoulders."},
+  {name:"Plank",time:120,desc:"Core + posture, spine long."},
+  {name:"Glute Bridge",time:120,desc:"Glutes + lower back support."},
+  {name:"Hip Abduction",time:120,desc:"Fall-prevention muscles."},
+  {name:"Calf Raises",time:120,desc:"Balance + ankle strength."},
+  {name:"Down-Dog → Plank Flow",time:120,desc:"Shoulders + core + mobility."},
+  {name:"Breathe",time:60,desc:"Cool down, nasal breathing."}
 ];
 
-let index = 0;
-let timer = null;
-let remaining = 0;
+let index=0;
+let remaining=0;
+let timer=null;
 
-function render() {
-  const ex = exercises[index];
-  const app = document.getElementById("app");
-  app.innerHTML = `
-    <div class="exercise-box">
-      <h2>${ex.name}</h2>
-      <div class="desc">${ex.desc}</div>
-      <div class="timer" id="timer">Time: ${format(ex.time)}</div>
+function renderExercise() {
+  if(index>=exercises.length){ sessionComplete(); return; }
+  const ex=exercises[index];
+  const container=document.getElementById("exerciseContainer");
+  container.innerHTML=`
+    <div class="exercise-card">
+      <div class="exercise-name">${ex.name}</div>
+      <div class="exercise-desc">${ex.desc}</div>
+      <div class="timer" id="timer">${formatTime(ex.time)}</div>
       <div class="bar-wrap"><div id="bar" class="bar"></div></div>
-      ${index === 0 ? `<button class="start-btn" onclick="start()">Start</button>` : `<button class="next-btn" onclick="start()">Start</button>`}
+      <button class="start-btn" onclick="startTimer()">Start Exercise</button>
     </div>
   `;
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 
-function start() {
-  const ex = exercises[index];
-  remaining = ex.time;
-  tick();
-  timer = setInterval(tick, 1000);
+function startTimer() {
+  const ex=exercises[index];
+  remaining=ex.time;
+  updateUI();
+  timer=setInterval(tick,1000);
 }
 
 function tick() {
-  const ex = exercises[index];
+  const ex=exercises[index];
   remaining--;
-  if (remaining < 0) {
+  if(remaining<0){
     clearInterval(timer);
-    nextExercise();
+    index++;
+    renderExercise(); // auto-scroll
     return;
   }
   updateUI();
 }
 
 function updateUI() {
-  const ex = exercises[index];
-  const pct = ((ex.time - remaining) / ex.time) * 100;
-  document.getElementById("timer").textContent = `Time: ${format(remaining)}`;
-  document.getElementById("bar").style.width = pct + "%";
+  const ex=exercises[index];
+  const pct=((ex.time-remaining)/ex.time)*100;
+  document.getElementById("timer").textContent=formatTime(remaining);
+  document.getElementById("bar").style.width=pct+"%";
 }
 
-function nextExercise() {
-  index++;
-  if (index >= exercises.length) {
-    sessionComplete();
-    return;
-  }
-  render();
-}
+function formatTime(sec){ const m=Math.floor(sec/60); const s=String(sec%60).padStart(2,"0"); return `${m}:${s}`; }
 
-function sessionComplete() {
-  document.getElementById("app").innerHTML = `
-    <div class="exercise-box">
+function sessionComplete(){
+  const container=document.getElementById("exerciseContainer");
+  container.innerHTML=`
+    <div class="exercise-card">
       <h2>Session Complete!</h2>
-      <p>Total: 25 minutes</p>
-      <button class="complete-btn" onclick="logHistory()">Save Day</button>
+      <p>Total: 25 min</p>
+      <button class="complete-btn" onclick="logDay()">Save Day</button>
     </div>
   `;
 }
 
-function logHistory() {
-  const today = new Date().toLocaleDateString();
-  let hist = JSON.parse(localStorage.getItem("strengthHistory")) || [];
-  hist.push({date: today, minutes: 25});
-  localStorage.setItem("strengthHistory", JSON.stringify(hist));
+function logDay(){
+  const today=new Date().toLocaleDateString();
+  const hist=JSON.parse(localStorage.getItem("strengthHistory"))||[];
+  // Prevent duplicate entry for same day
+  if(!hist.some(h=>h.date===today)){ hist.push({date:today,minutes:25}); }
+  localStorage.setItem("strengthHistory",JSON.stringify(hist));
   loadHistory();
-  document.getElementById("app").innerHTML = `<div class="exercise-box"><h2>Saved!</h2></div>`;
+  renderExercise();
 }
 
-function loadHistory() {
-  let hist = JSON.parse(localStorage.getItem("strengthHistory")) || [];
-  const box = document.getElementById("history");
-  box.innerHTML = hist.map(h => `<div class="entry">${h.date} → ${h.minutes} min</div>`).join("");
+function loadHistory(){
+  const hist=JSON.parse(localStorage.getItem("strengthHistory"))||[];
+  const list=document.getElementById("historyList");
+  list.innerHTML=hist.map(h=>`<div class="history-entry">${h.date} — 25 min ✔</div>`).join("");
+  // Weekly total
+  const weekly=document.getElementById("weeklyTotal");
+  let last7=hist.slice(-7);
+  const sum=last7.reduce((a,b)=>a+b.minutes,0);
+  weekly.textContent=`Last 7 days total: ${sum} min`;
 }
 
-function resetHistory() {
-  localStorage.removeItem("strengthHistory");
-  loadHistory();
+function resetHistory(){
+  if(confirm("Reset all history?")){ localStorage.removeItem("strengthHistory"); loadHistory(); }
 }
 
-function format(sec) {
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
-
+// --- INIT ---
 loadHistory();
-render();
+renderExercise();
 </script>
 
 </body>
