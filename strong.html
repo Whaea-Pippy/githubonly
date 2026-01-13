@@ -220,37 +220,28 @@ function showCompleteBox(){
    <div class="complete-box">
     <div style="font-size:22px;font-weight:700;">Session Complete!</div>
     <div style="font-size:18px;margin-top:6px;">Total: 25 min</div>
-    <button class="save-btn" onclick="saveDay()">Save Day</button>
+    <button id="saveBtn" class="save-btn" onclick="saveDay()">Save Day</button>
    </div>
   `;
 }
 
-function saveDay(){
+function saveDay() {
+  if (!allCompleted()) return;
+
   const today = new Date().toLocaleDateString();
-  const hist = JSON.parse(localStorage.getItem("strengthHistory")) || [];
+  const history = JSON.parse(localStorage.getItem("history") || "[]");
 
-  const exists = hist.find(h => h.date === today);
-  const box = document.querySelector(".complete-box");
-
-  if(exists){
-    box.insertAdjacentHTML("beforeend",
-      `<div style="margin-top:8px;font-size:16px;color:#b00;font-weight:600;">
-         Already saved today
-       </div>`
-    );
-    return;
+  // Prevent double-save for the same day
+  if (!history.includes(today)) {
+    history.push(today);
+    localStorage.setItem("history", JSON.stringify(history));
+    updateHistory();
   }
 
-  hist.push({date: today, minutes: 25});
-  localStorage.setItem("strengthHistory", JSON.stringify(hist));
-
-  loadHistory();
-
-  box.insertAdjacentHTML("beforeend",
-    `<div style="margin-top:8px;font-size:16px;color:#2d7d1f;font-weight:600;">
-       Saved!
-     </div>`
-  );
+  // Update button to show "saved"
+  const btn = document.getElementById("saveBtn");
+  btn.textContent = "Day Saved";
+  btn.disabled = true;
 }
 
 function loadHistory(){
