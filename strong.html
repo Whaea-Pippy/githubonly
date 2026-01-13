@@ -124,7 +124,6 @@
     margin-top: 10px;
     font-size: 18px;
   }
-
 </style>
 </head>
 <body>
@@ -142,18 +141,18 @@
 
 <script>
 const exercises = [
-  {name:"Breathe",time:60,desc:"Warm-up"},
-  {name:"Deep Squat",time:300,desc:"Gentle depth, spine tall"},
+  {name:"Breathe",time:60,desc:"Warm-up — nose breathing"},
+  {name:"Deep Squat",time:300,desc:"Sit deep, chest lifted, heels down"},
   {name:"Squats",time:120,desc:"Slow controlled reps"},
-  {name:"Reverse Lunges",time:120,desc:"Balance + glutes"},
+  {name:"Reverse Lunges",time:120,desc:"Step back, balance + glutes"},
   {name:"Side Lunges",time:120,desc:"Inner thigh + hips"},
   {name:"Push-Ups (Wall/Counter)",time:120,desc:"Arms + chest"},
-  {name:"Plank",time:120,desc:"Core brace"},
+  {name:"Plank",time:120,desc:"Brace core + breathe"},
   {name:"Glute Bridge",time:120,desc:"Glutes + low back"},
-  {name:"Hip Abduction",time:120,desc:"Fall-prevention"},
+  {name:"Hip Abduction",time:120,desc:"Fall-prevention & hips"},
   {name:"Calf Raises",time:120,desc:"Ankles + balance"},
   {name:"Down-Dog → Plank",time:120,desc:"Strength + mobility"},
-  {name:"Breathe",time:60,desc:"Cool-down"}
+  {name:"Breathe",time:60,desc:"Cool-down — slow breathing"}
 ];
 
 let completedCount = 0;
@@ -163,6 +162,10 @@ function format(sec){
   const m=Math.floor(sec/60);
   const s=String(sec%60).padStart(2,"0");
   return `${m}:${s}`;
+}
+
+function allCompleted(){
+  return completedCount === totalExercises;
 }
 
 function render(){
@@ -186,7 +189,6 @@ function render(){
 function startTimer(i){
   const ex = exercises[i];
   let remaining = ex.time;
-
   const btn = document.getElementById(`start-${i}`);
   btn.disabled = true;
 
@@ -209,7 +211,7 @@ function startTimer(i){
 function markDone(i){
   document.getElementById(`done-${i}`).style.display = "block";
   completedCount++;
-  if(completedCount === totalExercises){
+  if(allCompleted()){
     showCompleteBox();
   }
 }
@@ -223,38 +225,51 @@ function showCompleteBox(){
     <button id="saveBtn" class="save-btn" onclick="saveDay()">Save Day</button>
    </div>
   `;
+  initSaveBtn();
 }
 
 function saveDay() {
   if (!allCompleted()) return;
 
   const today = new Date().toLocaleDateString();
-  const history = JSON.parse(localStorage.getItem("history") || "[]");
+  const hist = JSON.parse(localStorage.getItem("strengthHistory") || "[]");
 
-  // Prevent double-save for the same day
-  if (!history.includes(today)) {
-    history.push(today);
-    localStorage.setItem("history", JSON.stringify(history));
-    updateHistory();
+  if (!hist.some(h => h.date === today)) {
+    hist.push({date: today, minutes: 25});
+    localStorage.setItem("strengthHistory", JSON.stringify(hist));
   }
 
-  // Update button to show "saved"
   const btn = document.getElementById("saveBtn");
   btn.textContent = "Day Saved";
   btn.disabled = true;
+
+  loadHistory();
 }
 
 function loadHistory(){
-  const hist = JSON.parse(localStorage.getItem("strengthHistory"))||[];
+  const hist = JSON.parse(localStorage.getItem("strengthHistory") || "[]");
   const list=document.getElementById("historyList");
-  list.innerHTML = hist.map(h=>`
-    <div class="history-entry">${h.date} — 25 min ✔</div>
+  list.innerHTML = hist.map(h => `
+    <div class="history-entry">${h.date} — ${h.minutes} min ✔</div>
   `).join("");
 
   const weekly=document.getElementById("weeklyTotal");
   const last7 = hist.slice(-7);
   const sum = last7.reduce((a,b)=>a+b.minutes,0);
   weekly.textContent = `Last 7 days: ${sum} min`;
+}
+
+function initSaveBtn(){
+  const hist = JSON.parse(localStorage.getItem("strengthHistory") || "[]");
+  const today = new Date().toLocaleDateString();
+  const box=document.getElementById("sessionComplete");
+  if(!box) return;
+  const saved = hist.some(h => h.date === today);
+  const btn=document.getElementById("saveBtn");
+  if(saved && btn){
+    btn.textContent = "Day Saved";
+    btn.disabled = true;
+  }
 }
 
 render();
