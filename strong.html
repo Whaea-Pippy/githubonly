@@ -142,7 +142,7 @@
 
 <script>
 const exercises = [
-  {name:"Breathe",time:60,desc:"Warm-up nasal breathing"},
+  {name:"Breathe",time:60,desc:"Warm-up"},
   {name:"Deep Squat",time:300,desc:"Gentle depth, spine tall"},
   {name:"Squats",time:120,desc:"Slow controlled reps"},
   {name:"Reverse Lunges",time:120,desc:"Balance + glutes"},
@@ -153,7 +153,7 @@ const exercises = [
   {name:"Hip Abduction",time:120,desc:"Fall-prevention"},
   {name:"Calf Raises",time:120,desc:"Ankles + balance"},
   {name:"Down-Dog → Plank",time:120,desc:"Strength + mobility"},
-  {name:"Breathe",time:60,desc:"Cool-down nasal breathing"}
+  {name:"Breathe",time:60,desc:"Cool-down"}
 ];
 
 let completedCount = 0;
@@ -226,11 +226,31 @@ function showCompleteBox(){
 }
 
 function saveDay(){
-  const today=new Date().toLocaleDateString();
-  const hist = JSON.parse(localStorage.getItem("strengthHistory"))||[];
-  if(!hist.find(h=>h.date===today)){ hist.push({date:today,minutes:25}); }
-  localStorage.setItem("strengthHistory",JSON.stringify(hist));
+  const today = new Date().toLocaleDateString();
+  const hist = JSON.parse(localStorage.getItem("strengthHistory")) || [];
+
+  const exists = hist.find(h => h.date === today);
+  const box = document.querySelector(".complete-box");
+
+  if(exists){
+    box.insertAdjacentHTML("beforeend",
+      `<div style="margin-top:8px;font-size:16px;color:#b00;font-weight:600;">
+         Already saved today
+       </div>`
+    );
+    return;
+  }
+
+  hist.push({date: today, minutes: 25});
+  localStorage.setItem("strengthHistory", JSON.stringify(hist));
+
   loadHistory();
+
+  box.insertAdjacentHTML("beforeend",
+    `<div style="margin-top:8px;font-size:16px;color:#2d7d1f;font-weight:600;">
+       Saved!
+     </div>`
+  );
 }
 
 function loadHistory(){
