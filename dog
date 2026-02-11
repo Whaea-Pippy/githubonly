@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dog Responsibility Checklist</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f7fb;
+        padding: 20px;
+    }
+    h1 {
+        text-align: center;
+    }
+    .checklist {
+        max-width: 700px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    label {
+        display: block;
+        margin-bottom: 12px;
+        padding: 8px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    input[type="checkbox"] {
+        margin-right: 10px;
+        transform: scale(1.2);
+    }
+    label:hover {
+        background-color: #eef3ff;
+    }
+</style>
+</head>
+<body>
+
+<h1>🐶 Dog Responsibility Checklist</h1>
+
+<div class="checklist">
+    <label><input type="checkbox"> 1. Convince Mum with a calm, well-thought-out plan.</label>
+    <label><input type="checkbox"> 2. List what Mum will be responsible for (vet, transport, emergencies).</label>
+    <label><input type="checkbox"> 3. List what Sister will be responsible for (and get her agreement).</label>
+    <label><input type="checkbox"> 4. Write what YOU will do daily (feeding, water, walking, poo cleanup, training).</label>
+    <label><input type="checkbox"> 5. Draw a map showing where the fence will go.</label>
+    <label><input type="checkbox"> 6. Keep house tidy – kitchen bench clear before school and before bed.</label>
+    <label><input type="checkbox"> 7. Research dog care (feeding, vaccines, desexing, worming, training, costs).</label>
+    <label><input type="checkbox"> 8. Save your own money to contribute to costs.</label>
+    <label><input type="checkbox"> 9. Create a weekly routine chart for feeding, walks, and cleaning.</label>
+    <label><input type="checkbox"> 10. Prove responsibility for 3 months without reminders.</label>
+</div>
+
+</body>
+</html>
