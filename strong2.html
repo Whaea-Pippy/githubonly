@@ -78,12 +78,12 @@ h1{
 }
 
 /* MATCH TIMER BAR COLOURS */
-.bar.warmup{background:#6c5ce7;}
-.bar.lower{background:#27ae60;}
-.bar.balance{background:#f39c12;}
-.bar.upper{background:#2980b9;}
-.bar.core{background:#c0392b;}
-.bar.power{background:#8e44ad;}
+.bar.warmup{background:#a29bfe;}
+.bar.lower{background:#58d68d;}
+.bar.balance{background:#f8c471;}
+.bar.upper{background:#5dade2;}
+.bar.core{background:#ec7063;}
+.bar.power{background:#bb8fce;}
 
 button{
   width:100%;
@@ -92,9 +92,22 @@ button{
   border:none;
   border-radius:10px;
   margin-bottom:6px;
-  background:#4caf50;
   color:#fff;
+  cursor:pointer;
+  transition:opacity 0.2s ease;
 }
+
+button:hover{
+  opacity:0.85;
+}
+
+/* BUTTONS MATCH SECTION */
+button.warmup{background:#6c5ce7;}
+button.lower{background:#27ae60;}
+button.balance{background:#f39c12;}
+button.upper{background:#2980b9;}
+button.core{background:#c0392b;}
+button.power{background:#8e44ad;}
 .save-btn{background:#8e44ad;}
 
 .history-box{
@@ -199,7 +212,7 @@ function render(){
       <div class="bar-wrap">
         <div id="bar-${i}" class="bar ${ex.group}"></div>
       </div>
-      <button onclick="startTimer(${i})">Start</button>
+<button class="${ex.group}" onclick="startTimer(${i})">Start</button>
     `;
     container.appendChild(div);
   });
