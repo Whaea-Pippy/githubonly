@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Strength — Flexible Session</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body{
   font-family:Poppins,Arial,sans-serif;
@@ -17,21 +18,65 @@ h1{
   font-size:26px;
   font-weight:700;
 }
+
+/* GROUP HEADERS */
+.group-title{
+  font-size:18px;
+  font-weight:700;
+  margin:18px 0 8px 0;
+  padding:6px 10px;
+  border-radius:8px;
+  text-align:center;
+  color:#fff;
+}
+
+/* COLOUR THEMES */
+.warmup{background:#6c5ce7;}
+.lower{background:#27ae60;}
+.balance{background:#f39c12;}
+.upper{background:#2980b9;}
+.core{background:#c0392b;}
+.power{background:#8e44ad;}
+
 .exercise{
   background:#fff;
   padding:16px;
   border-radius:14px;
   margin-bottom:14px;
   box-shadow:0 2px 6px rgba(0,0,0,0.08);
+  text-align:center;
+  border-left:6px solid transparent;
 }
-.name{font-size:20px;font-weight:700;}
-.desc{font-size:15px;margin-bottom:6px;color:#555;}
-.timer{font-size:26px;text-align:center;margin:6px 0;}
+
+.exercise.warmup{border-left-color:#6c5ce7;}
+.exercise.lower{border-left-color:#27ae60;}
+.exercise.balance{border-left-color:#f39c12;}
+.exercise.upper{border-left-color:#2980b9;}
+.exercise.core{border-left-color:#c0392b;}
+.exercise.power{border-left-color:#8e44ad;}
+
+.name{
+  font-size:20px;
+  font-weight:700;
+}
+.timer{
+  font-size:26px;
+  margin:8px 0;
+}
 .bar-wrap{
-  width:100%;height:18px;background:#e8e8e8;
-  border-radius:12px;overflow:hidden;margin-bottom:8px;
+  width:100%;
+  height:18px;
+  background:#e8e8e8;
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:8px;
 }
-.bar{width:0%;height:100%;background:#4caf50;transition:width 1s linear;}
+.bar{
+  width:0%;
+  height:100%;
+  background:#4caf50;
+  transition:width 1s linear;
+}
 button{
   width:100%;
   font-size:17px;
@@ -63,38 +108,61 @@ button{
 
 <div id="exerciseContainer"></div>
 
-<div style="margin-top:10px;">
+<div style="margin-top:10px;text-align:center;">
 <button class="save-btn" onclick="saveSession()">Save Session</button>
-<div id="totalDisplay" style="text-align:center;margin-top:6px;font-weight:700;"></div>
+<div id="totalDisplay" style="margin-top:6px;font-weight:700;"></div>
 </div>
 
 <div class="history-box">
-<h2 style="margin:0 0 8px 0;">History</h2>
+<h2 style="margin:0 0 8px 0;text-align:center;">History</h2>
 <div id="historyList"></div>
 </div>
 
 <script>
 
-// All timers now 60 seconds
 const exercises = [
-  {name:"Breathe",desc:"Slow breathing"},
-  {name:"Deep Squat",desc:"Chest lifted"},
-  {name:"Squats",desc:"Controlled reps"},
-  {name:"Reverse Lunges",desc:"Step back"},
-  {name:"Side Lunges",desc:"Inner thigh"},
-  {name:"Push-Ups",desc:"Arms + chest"},
-  {name:"Plank",desc:"Brace core"},
-  {name:"Glute Bridge",desc:"Glutes"},
-  {name:"Hip Abduction",desc:"Hips"},
-  {name:"Calf Raises",desc:"Balance"},
-  {name:"Down-Dog → Plank",desc:"Mobility"},
-  {name:"Jump",desc:"Light bounce"},
-  {name:"Stand on One Leg (Left)",desc:"Balance left"},
-  {name:"Stand on One Leg (Right)",desc:"Balance right"}
+
+  {name:"Breathe", group:"warmup"},
+
+  // LOWER BODY
+  {name:"Deep Squat", group:"lower"},
+  {name:"Squats", group:"lower"},
+  {name:"Reverse Lunge (Left)", group:"lower"},
+  {name:"Reverse Lunge (Right)", group:"lower"},
+  {name:"Side Lunges", group:"lower"},
+  {name:"Calf Raises", group:"lower"},
+  {name:"Tip-Toes Scrunch", group:"lower"},
+
+  // BALANCE
+  {name:"Stand on One Leg (Left)", group:"balance"},
+  {name:"Stand on One Leg (Right)", group:"balance"},
+
+  // UPPER BODY
+  {name:"Push-Ups", group:"upper"},
+  {name:"Handstand", group:"upper"},
+
+  // CORE
+  {name:"Plank", group:"core"},
+  {name:"Glute Bridge", group:"core"},
+  {name:"Hip Abduction", group:"core"},
+
+  // POWER / MOBILITY
+  {name:"Jump", group:"power"},
+  {name:"Down-Dog → Plank", group:"power"}
+
 ];
 
-let sessionLog = [];
-let totalMinutes = 0;
+const groupTitles = {
+  warmup:"Warm Up / Breathing",
+  lower:"Lower Body Strength",
+  balance:"Balance & Stability",
+  upper:"Upper Body",
+  core:"Core",
+  power:"Power & Mobility"
+};
+
+let sessionLog=[];
+let totalMinutes=0;
 
 function format(sec){
   const m=Math.floor(sec/60);
@@ -105,12 +173,23 @@ function format(sec){
 function render(){
   const container=document.getElementById("exerciseContainer");
   container.innerHTML="";
+
+  let currentGroup="";
+
   exercises.forEach((ex,i)=>{
+
+    if(ex.group!==currentGroup){
+      currentGroup=ex.group;
+      const title=document.createElement("div");
+      title.className=`group-title ${ex.group}`;
+      title.textContent=groupTitles[ex.group];
+      container.appendChild(title);
+    }
+
     const div=document.createElement("div");
-    div.className="exercise";
+    div.className=`exercise ${ex.group}`;
     div.innerHTML=`
       <div class="name">${ex.name}</div>
-      <div class="desc">${ex.desc}</div>
       <div class="timer" id="timer-${i}">1:00</div>
       <div class="bar-wrap"><div id="bar-${i}" class="bar"></div></div>
       <button onclick="startTimer(${i})">Start</button>
@@ -120,15 +199,14 @@ function render(){
 }
 
 function startTimer(i){
-  let remaining = 60;
+  let remaining=60;
   const timerEl=document.getElementById(`timer-${i}`);
   const barEl=document.getElementById(`bar-${i}`);
 
   const interval=setInterval(()=>{
     remaining--;
     timerEl.textContent=format(remaining);
-    const pct=((60-remaining)/60)*100;
-    barEl.style.width=pct+"%";
+    barEl.style.width=((60-remaining)/60)*100+"%";
 
     if(remaining<=0){
       clearInterval(interval);
@@ -140,26 +218,23 @@ function startTimer(i){
 }
 
 function logExercise(name){
-  const timeNow = new Date().toLocaleTimeString("en-NZ");
+  const timeNow=new Date().toLocaleTimeString("en-NZ");
   sessionLog.push({exercise:name,time:timeNow});
   totalMinutes++;
-  document.getElementById("totalDisplay").textContent =
+  document.getElementById("totalDisplay").textContent=
     `Total Minutes This Session: ${totalMinutes}`;
 }
 
 function saveSession(){
-
   if(totalMinutes===0){
     alert("No minutes completed yet.");
     return;
   }
 
-  const nzDateTime = new Date().toLocaleString("en-NZ");
-
-  const history = JSON.parse(localStorage.getItem("strengthHistory") || "[]");
+  const history=JSON.parse(localStorage.getItem("strengthHistory")||"[]");
 
   history.push({
-    dateTime:nzDateTime,
+    dateTime:new Date().toLocaleString("en-NZ"),
     minutes:totalMinutes,
     exercises:sessionLog
   });
@@ -174,10 +249,10 @@ function saveSession(){
 }
 
 function loadHistory(){
-  const history = JSON.parse(localStorage.getItem("strengthHistory") || "[]");
+  const history=JSON.parse(localStorage.getItem("strengthHistory")||"[]");
   const list=document.getElementById("historyList");
 
-  list.innerHTML = history.slice().reverse().map(h=>`
+  list.innerHTML=history.slice().reverse().map(h=>`
     <div class="history-entry">
       <strong>${h.dateTime}</strong><br>
       ${h.minutes} min<br>
