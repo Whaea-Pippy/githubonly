@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Strength — Flexible Session</title>
+<title>Strength — Flexible Session (Strong2)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -45,15 +45,15 @@ h1{
   margin-bottom:14px;
   box-shadow:0 2px 6px rgba(0,0,0,0.08);
   text-align:center;
-  border-left:6px solid transparent;
+  border-left:6px solid;
 }
 
-.exercise.warmup{border-left-color:#6c5ce7;}
-.exercise.lower{border-left-color:#27ae60;}
-.exercise.balance{border-left-color:#f39c12;}
-.exercise.upper{border-left-color:#2980b9;}
-.exercise.core{border-left-color:#c0392b;}
-.exercise.power{border-left-color:#8e44ad;}
+.exercise.warmup{border-color:#6c5ce7;}
+.exercise.lower{border-color:#27ae60;}
+.exercise.balance{border-color:#f39c12;}
+.exercise.upper{border-color:#2980b9;}
+.exercise.core{border-color:#c0392b;}
+.exercise.power{border-color:#8e44ad;}
 
 .name{
   font-size:20px;
@@ -74,9 +74,17 @@ h1{
 .bar{
   width:0%;
   height:100%;
-  background:#4caf50;
   transition:width 1s linear;
 }
+
+/* MATCH TIMER BAR COLOURS */
+.bar.warmup{background:#6c5ce7;}
+.bar.lower{background:#27ae60;}
+.bar.balance{background:#f39c12;}
+.bar.upper{background:#2980b9;}
+.bar.core{background:#c0392b;}
+.bar.power{background:#8e44ad;}
+
 button{
   width:100%;
   font-size:17px;
@@ -88,6 +96,7 @@ button{
   color:#fff;
 }
 .save-btn{background:#8e44ad;}
+
 .history-box{
   background:#fff;
   padding:14px;
@@ -120,11 +129,12 @@ button{
 
 <script>
 
+const STORAGE_KEY = "strong2History";
+
 const exercises = [
 
   {name:"Breathe", group:"warmup"},
 
-  // LOWER BODY
   {name:"Deep Squat", group:"lower"},
   {name:"Squats", group:"lower"},
   {name:"Reverse Lunge (Left)", group:"lower"},
@@ -133,20 +143,16 @@ const exercises = [
   {name:"Calf Raises", group:"lower"},
   {name:"Tip-Toes Scrunch", group:"lower"},
 
-  // BALANCE
   {name:"Stand on One Leg (Left)", group:"balance"},
   {name:"Stand on One Leg (Right)", group:"balance"},
 
-  // UPPER BODY
   {name:"Push-Ups", group:"upper"},
   {name:"Handstand", group:"upper"},
 
-  // CORE
   {name:"Plank", group:"core"},
   {name:"Glute Bridge", group:"core"},
   {name:"Hip Abduction", group:"core"},
 
-  // POWER / MOBILITY
   {name:"Jump", group:"power"},
   {name:"Down-Dog → Plank", group:"power"}
 
@@ -173,7 +179,6 @@ function format(sec){
 function render(){
   const container=document.getElementById("exerciseContainer");
   container.innerHTML="";
-
   let currentGroup="";
 
   exercises.forEach((ex,i)=>{
@@ -191,7 +196,9 @@ function render(){
     div.innerHTML=`
       <div class="name">${ex.name}</div>
       <div class="timer" id="timer-${i}">1:00</div>
-      <div class="bar-wrap"><div id="bar-${i}" class="bar"></div></div>
+      <div class="bar-wrap">
+        <div id="bar-${i}" class="bar ${ex.group}"></div>
+      </div>
       <button onclick="startTimer(${i})">Start</button>
     `;
     container.appendChild(div);
@@ -231,7 +238,7 @@ function saveSession(){
     return;
   }
 
-  const history=JSON.parse(localStorage.getItem("strengthHistory")||"[]");
+  const history=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
 
   history.push({
     dateTime:new Date().toLocaleString("en-NZ"),
@@ -239,7 +246,7 @@ function saveSession(){
     exercises:sessionLog
   });
 
-  localStorage.setItem("strengthHistory",JSON.stringify(history));
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(history));
 
   sessionLog=[];
   totalMinutes=0;
@@ -249,7 +256,7 @@ function saveSession(){
 }
 
 function loadHistory(){
-  const history=JSON.parse(localStorage.getItem("strengthHistory")||"[]");
+  const history=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
   const list=document.getElementById("historyList");
 
   list.innerHTML=history.slice().reverse().map(h=>`
