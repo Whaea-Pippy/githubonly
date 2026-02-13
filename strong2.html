@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Strength — Flexible Session</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  font-family:Poppins,Arial,sans-serif;
+  margin:0;
+  padding:10px;
+  background:#f8f8f8;
+  color:#333;
+}
+h1{
+  text-align:center;
+  font-size:26px;
+  font-weight:700;
+}
+.exercise{
+  background:#fff;
+  padding:16px;
+  border-radius:14px;
+  margin-bottom:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+.name{font-size:20px;font-weight:700;}
+.desc{font-size:15px;margin-bottom:6px;color:#555;}
+.timer{font-size:26px;text-align:center;margin:6px 0;}
+.bar-wrap{
+  width:100%;height:18px;background:#e8e8e8;
+  border-radius:12px;overflow:hidden;margin-bottom:8px;
+}
+.bar{width:0%;height:100%;background:#4caf50;transition:width 1s linear;}
+button{
+  width:100%;
+  font-size:17px;
+  padding:8px;
+  border:none;
+  border-radius:10px;
+  margin-bottom:6px;
+  background:#4caf50;
+  color:#fff;
+}
+.save-btn{background:#8e44ad;}
+.history-box{
+  background:#fff;
+  padding:14px;
+  border-radius:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+  margin-top:20px;
+}
+.history-entry{
+  font-size:15px;
+  border-bottom:1px solid #ddd;
+  padding:6px 0;
+}
+</style>
+</head>
+<body>
+
+<h1>Strength — Flexible Session</h1>
+
+<div id="exerciseContainer"></div>
+
+<div style="margin-top:10px;">
+<button class="save-btn" onclick="saveSession()">Save Session</button>
+<div id="totalDisplay" style="text-align:center;margin-top:6px;font-weight:700;"></div>
+</div>
+
+<div class="history-box">
+<h2 style="margin:0 0 8px 0;">History</h2>
+<div id="historyList"></div>
+</div>
+
+<script>
+
+// All timers now 60 seconds
+const exercises = [
+  {name:"Breathe",desc:"Slow breathing"},
+  {name:"Deep Squat",desc:"Chest lifted"},
+  {name:"Squats",desc:"Controlled reps"},
+  {name:"Reverse Lunges",desc:"Step back"},
+  {name:"Side Lunges",desc:"Inner thigh"},
+  {name:"Push-Ups",desc:"Arms + chest"},
+  {name:"Plank",desc:"Brace core"},
+  {name:"Glute Bridge",desc:"Glutes"},
+  {name:"Hip Abduction",desc:"Hips"},
+  {name:"Calf Raises",desc:"Balance"},
+  {name:"Down-Dog → Plank",desc:"Mobility"},
+  {name:"Jump",desc:"Light bounce"},
+  {name:"Stand on One Leg (Left)",desc:"Balance left"},
+  {name:"Stand on One Leg (Right)",desc:"Balance right"}
+];
+
+let sessionLog = [];
+let totalMinutes = 0;
+
+function format(sec){
+  const m=Math.floor(sec/60);
+  const s=String(sec%60).padStart(2,"0");
+  return `${m}:${s}`;
+}
+
+function render(){
+  const container=document.getElementById("exerciseContainer");
+  container.innerHTML="";
+  exercises.forEach((ex,i)=>{
+    const div=document.createElement("div");
+    div.className="exercise";
+    div.innerHTML=`
+      <div class="name">${ex.name}</div>
+      <div class="desc">${ex.desc}</div>
+      <div class="timer" id="timer-${i}">1:00</div>
+      <div class="bar-wrap"><div id="bar-${i}" class="bar"></div></div>
+      <button onclick="startTimer(${i})">Start</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function startTimer(i){
+  let remaining = 60;
+  const timerEl=document.getElementById(`timer-${i}`);
+  const barEl=document.getElementById(`bar-${i}`);
+
+  const interval=setInterval(()=>{
+    remaining--;
+    timerEl.textContent=format(remaining);
+    const pct=((60-remaining)/60)*100;
+    barEl.style.width=pct+"%";
+
+    if(remaining<=0){
+      clearInterval(interval);
+      timerEl.textContent="1:00";
+      barEl.style.width="0%";
+      logExercise(exercises[i].name);
+    }
+  },1000);
+}
+
+function logExercise(name){
+  const timeNow = new Date().toLocaleTimeString("en-NZ");
+  sessionLog.push({exercise:name,time:timeNow});
+  totalMinutes++;
+  document.getElementById("totalDisplay").textContent =
+    `Total Minutes This Session: ${totalMinutes}`;
+}
+
+function saveSession(){
+
+  if(totalMinutes===0){
+    alert("No minutes completed yet.");
+    return;
+  }
+
+  const nzDateTime = new Date().toLocaleString("en-NZ");
+
+  const history = JSON.parse(localStorage.getItem("strengthHistory") || "[]");
+
+  history.push({
+    dateTime:nzDateTime,
+    minutes:totalMinutes,
+    exercises:sessionLog
+  });
+
+  localStorage.setItem("strengthHistory",JSON.stringify(history));
+
+  sessionLog=[];
+  totalMinutes=0;
+  document.getElementById("totalDisplay").textContent="Session Saved ✔";
+
+  loadHistory();
+}
+
+function loadHistory(){
+  const history = JSON.parse(localStorage.getItem("strengthHistory") || "[]");
+  const list=document.getElementById("historyList");
+
+  list.innerHTML = history.slice().reverse().map(h=>`
+    <div class="history-entry">
+      <strong>${h.dateTime}</strong><br>
+      ${h.minutes} min<br>
+      ${h.exercises.map(e=>e.exercise).join(", ")}
+    </div>
+  `).join("");
+}
+
+render();
+loadHistory();
+
+</script>
+
+</body>
+</html>
