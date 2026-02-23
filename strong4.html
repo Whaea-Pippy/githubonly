@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Strength — Flexible Session (Strong2)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  font-family:Poppins,Arial,sans-serif;
+  margin:0;
+  padding:10px;
+  background:#f8f8f8;
+  color:#333;
+}
+h1{
+  text-align:center;
+  font-size:26px;
+  font-weight:700;
+}
+
+/* GROUP HEADERS */
+.group-title{
+  font-size:18px;
+  font-weight:700;
+  margin:18px 0 8px 0;
+  padding:6px 10px;
+  border-radius:8px;
+  text-align:center;
+  color:#fff;
+}
+
+/* COLOUR THEMES */
+.warmup{background:#6c5ce7;}
+.mobility{background:#3498db;}
+.lower{background:#27ae60;}
+.balance{background:#f39c12;}
+.upper{background:#2980b9;}
+.core{background:#c0392b;}
+.abdominals{background:#e84393;}
+.power{background:#8e44ad;}
+.recovery{background:#16a085;}
+
+.exercise{
+  background:#fff;
+  padding:16px;
+  border-radius:14px;
+  margin-bottom:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+  text-align:center;
+  border-left:6px solid;
+}
+
+.exercise.warmup{border-color:#6c5ce7;}
+.exercise.mobility{border-color:#3498db;}
+.exercise.lower{border-color:#27ae60;}
+.exercise.balance{border-color:#f39c12;}
+.exercise.upper{border-color:#2980b9;}
+.exercise.core{border-color:#c0392b;}
+.exercise.abdominals{border-color:#e84393;}
+.exercise.power{border-color:#8e44ad;}
+.exercise.recovery{border-color:#16a085;}
+
+.name{
+  font-size:20px;
+  font-weight:700;
+}
+.timer{
+  font-size:26px;
+  margin:8px 0;
+}
+.bar-wrap{
+  width:100%;
+  height:18px;
+  background:#e8e8e8;
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:8px;
+}
+.bar{
+  width:0%;
+  height:100%;
+  transition:width 1s linear;
+}
+
+.bar.abdominals{background:#ff6fae;}
+
+button{
+  width:100%;
+  font-size:17px;
+  padding:8px;
+  border:none;
+  border-radius:10px;
+  margin-bottom:6px;
+  color:#fff;
+  cursor:pointer;
+}
+
+button.abdominals{background:#e84393;}
+.save-btn{background:#8e44ad;}
+
+select{
+  width:100%;
+  padding:8px;
+  font-size:16px;
+  margin-bottom:10px;
+  border-radius:8px;
+}
+
+.history-box{
+  background:#fff;
+  padding:14px;
+  border-radius:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+  margin-top:20px;
+}
+.history-entry{
+  font-size:15px;
+  border-bottom:1px solid #ddd;
+  padding:6px 0;
+}
+</style>
+</head>
+<body>
+
+<h1>Strength — Flexible Session</h1>
+
+<div id="exerciseContainer"></div>
+
+<!-- CALORIES -->
+<div class="group-title power">Daily Calories</div>
+<select id="calorieSelect">
+  <option value="">Select Calories</option>
+  <option>1400</option>
+  <option>1500</option>
+  <option>1600</option>
+  <option>1700</option>
+  <option>1800</option>
+  <option>1900</option>
+  <option>2000+</option>
+</select>
+
+<!-- WEIGHT -->
+<div class="group-title recovery">Weight (kg)</div>
+<select id="weightSelect">
+  <option value="">Select Weight</option>
+  <option>55</option>
+  <option>56</option>
+  <option>57</option>
+  <option>58</option>
+  <option>59</option>
+  <option>60+</option>
+</select>
+
+<div style="margin-top:10px;text-align:center;">
+<button class="save-btn" onclick="saveSession()">Save Session</button>
+<div id="totalDisplay" style="margin-top:6px;font-weight:700;"></div>
+</div>
+
+<div class="history-box">
+<h2 style="margin:0 0 8px 0;text-align:center;">History</h2>
+<div id="historyList"></div>
+</div>
+
+<script>
+
+const STORAGE_KEY = "strong2History";
+
+const exercises = [
+
+  {name:"Breathe", group:"warmup"},
+
+  {name:"Arm Circles", group:"mobility"},
+  {name:"Thoracic Rotations", group:"mobility"},
+  {name:"Hip Circles", group:"mobility"},
+
+  {name:"Squats", group:"lower"},
+  {name:"Reverse Lunge (Left)", group:"lower"},
+  {name:"Reverse Lunge (Right)", group:"lower"},
+
+  {name:"Push-Ups", group:"upper"},
+  {name:"Plank", group:"core"},
+
+  /* NEW ABDOMINAL ACTIVATE */
+  {name:"Toe Taps", group:"abdominals"},
+  {name:"Dead Bug", group:"abdominals"},
+  {name:"Heel Slides", group:"abdominals"},
+  {name:"Seated Knee Lifts", group:"abdominals"},
+
+  {name:"Jump", group:"power"},
+  {name:"Cat–Cow", group:"recovery"}
+];
+
+const groupTitles = {
+  warmup:"Warm Up",
+  mobility:"Mobility",
+  lower:"Lower Body",
+  upper:"Upper Body",
+  core:"Core",
+  abdominals:"Abdominals — Activate",
+  power:"Power",
+  recovery:"Recovery"
+};
+
+let sessionLog=[];
+let totalMinutes=0;
+
+function format(sec){
+  const m=Math.floor(sec/60);
+  const s=String(sec%60).padStart(2,"0");
+  return `${m}:${s}`;
+}
+
+function render(){
+  const container=document.getElementById("exerciseContainer");
+  container.innerHTML="";
+  let currentGroup="";
+
+  exercises.forEach((ex,i)=>{
+    if(ex.group!==currentGroup){
+      currentGroup=ex.group;
+      const title=document.createElement("div");
+      title.className=`group-title ${ex.group}`;
+      title.textContent=groupTitles[ex.group];
+      container.appendChild(title);
+    }
+
+    const div=document.createElement("div");
+    div.className=`exercise ${ex.group}`;
+    div.innerHTML=`
+      <div class="name">${ex.name}</div>
+      <div class="timer" id="timer-${i}">1:00</div>
+      <div class="bar-wrap">
+        <div id="bar-${i}" class="bar ${ex.group}"></div>
+      </div>
+      <button class="${ex.group}" onclick="startTimer(${i})">Start</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function startTimer(i){
+  let remaining=60;
+  const timerEl=document.getElementById(`timer-${i}`);
+  const barEl=document.getElementById(`bar-${i}`);
+
+  const interval=setInterval(()=>{
+    remaining--;
+    timerEl.textContent=format(remaining);
+    barEl.style.width=((60-remaining)/60)*100+"%";
+
+    if(remaining<=0){
+      clearInterval(interval);
+      timerEl.textContent="1:00";
+      barEl.style.width="0%";
+      logExercise(exercises[i].name);
+    }
+  },1000);
+}
+
+function logExercise(name){
+  sessionLog.push({exercise:name});
+  totalMinutes++;
+  document.getElementById("totalDisplay").textContent=
+    `Total Minutes This Session: ${totalMinutes}`;
+}
+
+function saveSession(){
+
+  if(totalMinutes===0){
+    alert("No minutes completed yet.");
+    return;
+  }
+
+  const calories=document.getElementById("calorieSelect").value;
+  const weight=document.getElementById("weightSelect").value;
+
+  const history=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+
+  const record={
+    dateTime:new Date().toLocaleString("en-NZ"),
+    minutes:totalMinutes,
+    exercises:sessionLog
+  };
+
+  if(calories) record.calories=calories;
+  if(weight) record.weight=weight;
+
+  history.push(record);
+
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(history));
+
+  sessionLog=[];
+  totalMinutes=0;
+  document.getElementById("calorieSelect").value="";
+  document.getElementById("weightSelect").value="";
+  document.getElementById("totalDisplay").textContent="Session Saved ✔";
+
+  loadHistory();
+}
+
+function loadHistory(){
+  const history=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+  const list=document.getElementById("historyList");
+
+  list.innerHTML=history.slice().reverse().map(h=>`
+    <div class="history-entry">
+      <strong>${h.dateTime}</strong><br>
+      ${h.minutes} min<br>
+      ${h.exercises.map(e=>e.exercise).join(", ")}
+      ${h.calories ? `<br>Calories: ${h.calories}` : ""}
+      ${h.weight ? `<br>Weight: ${h.weight} kg` : ""}
+    </div>
+  `).join("");
+}
+
+render();
+loadHistory();
+
+</script>
+
+</body>
+</html>
