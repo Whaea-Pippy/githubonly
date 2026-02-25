@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Circle → Rectangle from Sectors</title>
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .viz-wrapper {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto 40px auto;
+  }
+
+  h2 {
+    color: #c62828;
+    margin: 0 0 24px 0;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 1.1em;
+    overflow-x: auto;
+    padding: 0 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  button {
+    margin: 0;
+    padding: 10px 15px;
+    font-size: 0.98em;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  button.active, button.teach.active, button.formula.active {
+    background: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+  }
+
+  .svg-container {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    aspect-ratio: 1100 / 520;
+    border: 1px solid #dee2e6;
+    background: white;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  svg.main-viz {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  #overlay-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    pointer-events: none;
+    display: none;
+    padding: 16px 20px 0 20px;
+    box-sizing: border-box;
+  }
+
+  #overlay-content.visible {
+    display: block;
+  }
+
+  .explanation {
+    font-size: clamp(1rem, 2.2vw, 1.18rem);
+    line-height: 1.5;
+    color: #333;
+    background: rgba(255,255,255,0.88);
+    padding: 16px 28px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    max-width: 820px;
+    margin: 0 auto;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+  }
+
+  .formula-overlay {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    font-size: clamp(2.4rem, 5.2vw, 4.2rem);
+    color: #c62828;
+    font-weight: bold;
+    pointer-events: none;
+    display: none;
+    background: rgba(255,255,255,0.85);
+    padding: 8px 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    z-index: 10;
+    border: 1px solid #eee;
+  }
+
+  .formula-overlay.visible {
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .controls { gap: 6px; }
+    button { padding: 9px 13px; font-size: 0.92em; }
+    .formula-overlay {
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      padding: 6px 16px;
+      right: 16px;
+      top: 12px;
+    }
+    .explanation {
+      padding: 14px 20px;
+      font-size: clamp(0.95rem, 3vw, 1.1rem);
+    }
+  }
+</style>
+</head>
+<body>
+<div class="viz-wrapper">
+  <h2>Understanding the AREA of a Circle</h2>
+
+  <div class="controls">
+    <button data-n="4">4</button>
+    <button data-n="6">6</button>
+    <button data-n="8">8</button>
+    <button data-n="12">12</button>
+    <button data-n="16" class="active">16</button>
+    <button data-n="32">32</button>
+    <button data-n="64">64</button>
+    <button id="teach-btn" class="teach">Teach Me</button>
+    <button id="formula-btn" class="formula">Formula</button>
+  </div>
+
+  <div class="svg-container">
+    <svg id="viz" class="main-viz" viewBox="-1.8 -0.8 11.5 2.6"></svg>
+    <div id="overlay-content">
+      <div class="explanation">
+        The right shape is built from <strong>exactly the same sectors</strong> as the circle.<br>
+        Rearranged alternately up/down it approximates a rectangle with<br>
+        <strong>base = ½ the circumference = π r</strong> and <strong>height = radius = r</strong>.<br>
+        Area preserved: π r² on both sides.
+      </div>
+    </div>
+    <div id="formula-overlay" class="formula-overlay">A = π r²</div>
+  </div>
+</div>
+
+<script>
+// JavaScript stays identical to previous version
+const svgNS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById('viz');
+const overlay = document.getElementById('overlay-content');
+const formulaOverlay = document.getElementById('formula-overlay');
+const teachBtn = document.getElementById('teach-btn');
+const formulaBtn = document.getElementById('formula-btn');
+
+let currentN = 16;
+
+function createWedge(cx, cy, r, startAngle, endAngle, isOdd) {
+  const large = (endAngle - startAngle > Math.PI) ? 1 : 0;
+  const x1 = cx + r * Math.cos(startAngle);
+  const y1 = cy + r * Math.sin(startAngle);
+  const x2 = cx + r * Math.cos(endAngle);
+  const y2 = cy + r * Math.sin(endAngle);
+  const d = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`;
+  const path = document.createElementNS(svgNS, "path");
+  path.setAttribute("d", d);
+  path.setAttribute("fill", isOdd ? "#4fc3f7aa" : "#ff9800aa");
+  path.setAttribute("stroke", "#333");
+  path.setAttribute("stroke-width", "0.006");
+  return path;
+}
+
+function drawShapes(n) {
+  svg.innerHTML = '';
+
+  const r = 1;
+  const theta = 2 * Math.PI / n;
+
+  for (let i = 0; i < n; i++) {
+    const a = i * theta;
+    const b = (i + 1) * theta;
+    svg.appendChild(createWedge(0, 0, r, a, b, i % 2 === 1));
+  }
+
+  let x = 3.0;
+  const s = r * Math.sin(theta / 2);
+
+  for (let i = 0; i < n; i++) {
+    const isUp = i % 2 === 0;
+    const cy = isUp ? 0 : r * Math.cos(theta / 2);
+    const rot = isUp ? Math.PI / 2 : 3 * Math.PI / 2;
+    const a1 = rot - theta / 2;
+    const a2 = rot + theta / 2;
+    svg.appendChild(createWedge(x, cy, r, a1, a2, i % 2 === 1));
+    x += s;
+  }
+
+  if (teachBtn.classList.contains('active') || formulaBtn.classList.contains('active')) {
+    addDimensionLabels();
+  }
+
+  overlay.classList.toggle('visible', teachBtn.classList.contains('active'));
+  formulaOverlay.classList.toggle('visible', formulaBtn.classList.contains('active'));
+}
+
+function addDimensionLabels() {
+  svg.innerHTML += `
+    <line x1="0" y1="0" x2="1.05" y2="0" stroke="#c62828" stroke-width="0.07"/>
+    <text x="0.525" y="-0.18" font-size="0.34" fill="#c62828" font-weight="bold">r</text>
+  `;
+
+  svg.innerHTML += `
+    <path id="circPath" d="M1.1,0 A1.1,1.1 0 1,1 -1.1,0 A1.1,1.1 0 1,1 1.1,0" fill="none"/>
+    <text font-size="0.22" fill="#c62828" font-weight="bold">
+      <textPath href="#circPath" startOffset="50%" text-anchor="middle">circumference = 2πr</textPath>
+    </text>
+  `;
+
+  svg.innerHTML += `
+    <line x1="2.9" y1="1.2" x2="6.4" y2="1.2" stroke="#c62828" stroke-width="0.10"/>
+    <text x="4.65" y="1.58" font-size="0.27" fill="#c62828" font-weight="bold" text-anchor="middle">
+      base = ½ circumference = π r
+    </text>
+  `;
+
+  svg.innerHTML += `
+    <line x1="2.7" y1="-0.1" x2="2.7" y2="1.2" stroke="#c62828" stroke-width="0.10"/>
+    <g transform="translate(2.25, 0.55) rotate(-90)">
+      <text x="0" y="0" text-anchor="middle" dominant-baseline="middle"
+            font-size="0.27" fill="#c62828" font-weight="bold">
+        height = radius = r
+      </text>
+    </g>
+  `;
+}
+
+drawShapes(currentN);
+
+document.querySelectorAll('button[data-n]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('button[data-n]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentN = parseInt(btn.dataset.n);
+    teachBtn.classList.remove('active');
+    formulaBtn.classList.remove('active');
+    drawShapes(currentN);
+  });
+});
+
+teachBtn.addEventListener('click', () => {
+  teachBtn.classList.toggle('active');
+  formulaBtn.classList.remove('active');
+  drawShapes(currentN);
+});
+
+formulaBtn.addEventListener('click', () => {
+  formulaBtn.classList.toggle('active');
+  teachBtn.classList.remove('active');
+  drawShapes(currentN);
+});
+</script>
+</body>
+</html>
