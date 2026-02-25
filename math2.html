@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Year 7 Maths Cloze Activity</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f8f8f8; }
+  h1 { color: #2E4372; text-align: center; }
+  .sentence { margin: 12px 0; }
+  select { padding: 4px; margin-left: 5px; }
+  button { margin-top: 15px; background: #2196F3; color: white; padding: 8px 12px; border: none; cursor: pointer; border-radius: 4px; }
+  #result { margin-top: 20px; font-weight: bold; font-size: 1.1em; }
+  .correct { color: green; }
+  .incorrect { color: red; }
+</style>
+</head>
+<body>
+
+<h1>Year 7 Maths Cloze Activity</h1>
+
+<form id="clozeForm">
+
+  <div class="sentence">
+    1. The property that allows you to change the grouping of numbers when adding is called <select name="q1">
+      <option value="">--Select--</option>
+      <option value="associative">associative</option>
+      <option value="commutative">commutative</option>
+      <option value="distributive">distributive</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    2. The smallest number that is a multiple of two numbers is the <select name="q2">
+      <option value="">--Select--</option>
+      <option value="highest common factor (HCF)">highest common factor (HCF)</option>
+      <option value="lowest (least) common multiple (LCM)">lowest (least) common multiple (LCM)</option>
+      <option value="integer">integer</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    3. A <select name="q3">
+      <option value="">--Select--</option>
+      <option value="prime numbers, composite numbers">prime number</option>
+      <option value="composite numbers">composite number</option>
+      <option value="integer">integer</option>
+    </select> is a number greater than 1 that has no factors other than 1 and itself.
+  </div>
+
+  <div class="sentence">
+    4. When calculating a price with a sale, you apply a <select name="q4">
+      <option value="">--Select--</option>
+      <option value="discount">discount</option>
+      <option value="order of operations">order of operations</option>
+      <option value="evaluating expressions">evaluating expressions</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    5. The rule for dividing one number evenly by another is called the <select name="q5">
+      <option value="">--Select--</option>
+      <option value="divisibility rule">divisibility rule</option>
+      <option value="exponent, power">exponent, power</option>
+      <option value="brackets">brackets</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    6. Writing a number as a sum of its parts is called <select name="q6">
+      <option value="">--Select--</option>
+      <option value="expanded form">expanded form</option>
+      <option value="radicals">radicals</option>
+      <option value="terminating decimals">terminating decimals</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    7. A number raised to a power is called a(n) <select name="q7">
+      <option value="">--Select--</option>
+      <option value="exponent, power">exponent</option>
+      <option value="integer">integer</option>
+      <option value="negative">negative</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    8. Solving 3 + (4 × 5) requires you to follow the <select name="q8">
+      <option value="">--Select--</option>
+      <option value="order of operations">order of operations</option>
+      <option value="associative">associative</option>
+      <option value="commutative">commutative</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    9. A number less than zero is called a <select name="q9">
+      <option value="">--Select--</option>
+      <option value="negative">negative</option>
+      <option value="integer">integer</option>
+      <option value="prime numbers, composite numbers">prime number</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    10. The symbol √ represents the <select name="q10">
+      <option value="">--Select--</option>
+      <option value="square root">square root</option>
+      <option value="radicals">radicals</option>
+      <option value="exponent, power">exponent</option>
+    </select> of a number.
+  </div>
+
+  <div class="sentence">
+    11. Decimals that end are called <select name="q11">
+      <option value="">--Select--</option>
+      <option value="terminating decimals">terminating decimals</option>
+      <option value="repeating and non-repeating decimals">repeating decimals</option>
+      <option value="expanded form">expanded form</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    12. Decimals that repeat forever without ending are called <select name="q12">
+      <option value="">--Select--</option>
+      <option value="repeating and non-repeating decimals">repeating decimals</option>
+      <option value="terminating decimals">terminating decimals</option>
+      <option value="integer">integer</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    13. To simplify 3 × (4 + 5), you need to apply the <select name="q13">
+      <option value="">--Select--</option>
+      <option value="distributive">distributive</option>
+      <option value="commutative">commutative</option>
+      <option value="associative">associative</option>
+    </select> property.
+  </div>
+
+  <div class="sentence">
+    14. A number that can be divided by another number with no remainder is an <select name="q14">
+      <option value="">--Select--</option>
+      <option value="integer">integer</option>
+      <option value="negative">negative</option>
+      <option value="prime numbers, composite numbers">prime number</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    15. The <select name="q15">
+      <option value="">--Select--</option>
+      <option value="highest common factor (HCF)">highest common factor (HCF)</option>
+      <option value="lowest (least) common multiple (LCM)">lowest common multiple (LCM)</option>
+      <option value="order of operations">order of operations</option>
+    </select> is the largest number that divides two numbers exactly.
+  </div>
+
+  <div class="sentence">
+    16. The <select name="q16">
+      <option value="">--Select--</option>
+      <option value="lowest (least) common multiple (LCM)">least common multiple (LCM)</option>
+      <option value="highest common factor (HCF)">HCF</option>
+      <option value="integer">integer</option>
+    </select> is the smallest number that is a multiple of two numbers.
+  </div>
+
+  <div class="sentence">
+    17. A <select name="q17">
+      <option value="">--Select--</option>
+      <option value="brackets">brackets</option>
+      <option value="distributive">distributive</option>
+      <option value="commutative">commutative</option>
+    </select> is used to group terms in an expression.
+  </div>
+
+  <div class="sentence">
+    18. The <select name="q18">
+      <option value="">--Select--</option>
+      <option value="radicals">radicals</option>
+      <option value="square root">square root</option>
+      <option value="expanded form">expanded form</option>
+    </select> symbol √ is called a radical.
+  </div>
+
+  <div class="sentence">
+    19. To round a number to the nearest whole number you either <select name="q19">
+      <option value="">--Select--</option>
+      <option value="round up or round down">round up or round down</option>
+      <option value="terminating decimals">terminating decimals</option>
+      <option value="integer">integer</option>
+    </select>.
+  </div>
+
+  <div class="sentence">
+    20. Solving a maths expression to find its value is called <select name="q20">
+      <option value="">--Select--</option>
+      <option value="evaluating expressions">evaluating expressions</option>
+      <option value="associative">associative</option>
+      <option value="commutative">commutative</option>
+    </select>.
+  </div>
+
+  <button type="button" onclick="checkAnswers()">Check Answers</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+  const answers = {
+    q1: "associative",
+    q2: "lowest (least) common multiple (LCM)",
+    q3: "prime numbers, composite numbers",
+    q4: "discount",
+    q5: "divisibility rule",
+    q6: "expanded form",
+    q7: "exponent, power",
+    q8: "order of operations",
+    q9: "negative",
+    q10: "square root",
+    q11: "terminating decimals",
+    q12: "repeating and non-repeating decimals",
+    q13: "distributive",
+    q14: "integer",
+    q15: "highest common factor (HCF)",
+    q16: "lowest (least) common multiple (LCM)",
+    q17: "brackets",
+    q18: "radicals",
+    q19: "round up or round down",
+    q20: "evaluating expressions"
+  };
+
+  function checkAnswers() {
+    let form = document.getElementById("clozeForm");
+    let score = 0;
+    let total = Object.keys(answers).length;
+    let resultText = "";
+
+    for (let key in answers) {
+      let value = form.elements[key].value;
+      if (value === answers[key]) {
+        score++;
+      }
+    }
+
+    resultText = `You got ${score} out of ${total} correct.`;
+    document.getElementById("result").textContent = resultText;
+  }
+</script>
+
+</body>
+</html>
