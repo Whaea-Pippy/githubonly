@@ -2,155 +2,208 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Year 9 NZ Algebra Challenge</title>
+<title>NZ Year 9 Algebra Challenge</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
-  font-family:Poppins,Arial,sans-serif;
-  background:#f4f8ff;
+  font-family:'Poppins',system-ui,Arial,sans-serif;
   margin:0;
+  background:linear-gradient(135deg,#dfe9ff,#f5f7ff);
   padding:20px;
+  color:#333;
 }
 
 h1{
   text-align:center;
-  font-size:28px;
+  margin-bottom:10px;
+  font-size:30px;
 }
 
-.game-box{
+.score-board{
+  text-align:center;
+  font-size:18px;
+  margin-bottom:20px;
+}
+
+.card{
   background:white;
   padding:20px;
-  border-radius:16px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.1);
-  margin-bottom:20px;
+  margin:15px auto;
+  border-radius:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  max-width:700px;
+  transition:0.3s;
 }
 
 .question{
   font-size:18px;
-  margin-bottom:10px;
+  margin-bottom:12px;
 }
 
 input{
-  padding:8px;
+  padding:10px;
   font-size:16px;
-  width:120px;
-  border-radius:8px;
+  width:140px;
+  border-radius:10px;
   border:2px solid #ccc;
+  transition:0.3s;
 }
 
-.correct{
-  background:#c8f7c5;
-  border-color:green;
+input.correct{
+  background:#e0ffe4;
+  border-color:#2ecc71;
 }
 
-.incorrect{
-  background:#ffd6d6;
-  border-color:red;
+input.incorrect{
+  background:#ffe3e3;
+  border-color:#e74c3c;
 }
 
 button{
-  padding:8px 12px;
+  padding:10px 14px;
   border:none;
-  border-radius:8px;
+  border-radius:10px;
   cursor:pointer;
-  margin-left:5px;
+  font-size:14px;
+  margin-left:6px;
+  transition:0.2s;
 }
 
 .check-btn{
-  background:#4da6ff;
+  background:#4a90e2;
   color:white;
 }
 
 .solution-btn{
-  background:#aaa;
+  background:#999;
   color:white;
 }
 
 .solution{
-  margin-top:10px;
+  margin-top:15px;
   display:none;
-  background:#f0f0f0;
-  padding:10px;
-  border-radius:8px;
+  background:#f7f9ff;
+  padding:15px;
+  border-radius:12px;
   font-size:14px;
-}
-
-.score{
-  text-align:center;
-  font-size:20px;
-  margin-bottom:20px;
+  line-height:1.5;
 }
 
 .reset{
   display:block;
-  margin:20px auto;
+  margin:30px auto;
   background:#ff6b6b;
   color:white;
+  font-size:16px;
+}
+
+.celebrate{
+  text-align:center;
+  font-size:22px;
+  margin-top:20px;
+  display:none;
 }
 </style>
 </head>
-
 <body>
 
 <h1>🇳🇿 Year 9 Algebra Challenge</h1>
-<div class="score">Score: <span id="score">0</span>/10</div>
+<div class="score-board">
+Score: <span id="score">0</span>/10  
+(<span id="percent">0</span>%)
+</div>
 
 <div id="game"></div>
+
+<div class="celebrate" id="celebrate">
+🎉 Tino pai! You completed the challenge!
+</div>
 
 <button class="reset" onclick="resetGame()">Reset Game</button>
 
 <script>
 const questions = [
 {
-q:"1) Hoodie cost $35 each + $120 design. Total $1170. How many hoodies?",
+q:"1) Hoodie cost $35 each + $120 design fee. Total $1170. How many hoodies were ordered?",
 a:30,
-s:"35x + 120 = 1170 → 35x = 1050 → x = 30"
+s:`Let x represent the number of hoodies.<br>
+35x + 120 = 1170<br>
+35x = 1050<br>
+x = 30<br>
+So, 30 hoodies were ordered.`
 },
 {
-q:"2) 3 fish packs at $8 + chips at $4 each = $44. How many chips?",
+q:"2) 3 fish packs at $8 each + chips at $4 each = $44 total. How many chips?",
 a:5,
-s:"3(8)=24 → 44-24=20 → 20÷4=5 chips"
+s:`Let x represent the number of chips.<br>
+3(8) + 4x = 44<br>
+24 + 4x = 44<br>
+4x = 20<br>
+x = 5 chips.`
 },
 {
-q:"3) Bus $450 shared by 30 students + $12 ticket each. Cost per student?",
+q:"3) Bus $450 shared by 30 students + $12 ticket each. How much did each student pay?",
 a:27,
-s:"450÷30=15 → 15+12=27 per student"
+s:`Bus share per student = 450 ÷ 30 = 15<br>
+Total cost per student = 15 + 12 = 27<br>
+Each student paid $27.`
 },
 {
-q:"4) Width = x. Length = x+7. Perimeter 94. Find x.",
+q:"4) Width = x. Length = x + 7. Perimeter 94. Find x.",
 a:20,
-s:"2x + 2(x+7)=94 → 4x+14=94 → 4x=80 → x=20"
+s:`Let x represent the width.<br>
+Perimeter = 2x + 2(x + 7)<br>
+2x + 2x + 14 = 94<br>
+4x + 14 = 94<br>
+4x = 80<br>
+x = 20 metres.`
 },
 {
-q:"5) Drinks $3 each + $2 fee. Total $26. How many drinks?",
+q:"5) Drinks cost $3 each + $2 fee. Total $26. How many drinks?",
 a:8,
-s:"3n+2=26 → 3n=24 → n=8"
+s:`Let x represent number of drinks.<br>
+3x + 2 = 26<br>
+3x = 24<br>
+x = 8 drinks.`
 },
 {
-q:"6) 5 points per student + 40 bonus = 215. Students?",
+q:"6) 5 points per student + 40 bonus = 215 points. How many students?",
 a:35,
-s:"5x+40=215 → 5x=175 → x=35"
+s:`Let x represent students.<br>
+5x + 40 = 215<br>
+5x = 175<br>
+x = 35 students.`
 },
 {
-q:"7) Bike stages 2.5km each, total 18km. How many stages?",
+q:"7) Bike stages 2.5 km each, total 18 km. How many stages?",
 a:7.2,
-s:"2.5x=18 → x=18÷2.5=7.2 stages"
+s:`Let x represent number of stages.<br>
+2.5x = 18<br>
+x = 7.2 stages.`
 },
 {
-q:"8) $50 per week + $600 saved. When reach $2000? Weeks?",
+q:"8) $50 per week + $600 saved. When reach $2000?",
 a:28,
-s:"50w+600=2000 → 50w=1400 → w=28"
+s:`Let w represent weeks.<br>
+50w + 600 = 2000<br>
+50w = 1400<br>
+w = 28 weeks.`
 },
 {
-q:"9) Profit: sell $4, cost $2, stall fee $150. Break-even sausages?",
+q:"9) Profit per sausage = $2. Stall fee $150. Break-even?",
 a:75,
-s:"Profit per sausage = $2 → 2s=150 → s=75"
+s:`Let s represent sausages sold.<br>
+Profit per sausage = 4 − 2 = 2<br>
+2s = 150<br>
+s = 75 sausages.`
 },
 {
-q:"10) 3 kumara per pack, 84 kumara. Packs?",
+q:"10) 3 kumara per pack, 84 kumara total. How many packs?",
 a:28,
-s:"84÷3=28 packs"
+s:`Let x represent packs.<br>
+3x = 84<br>
+x = 28 packs.`
 }
 ];
 
@@ -161,11 +214,11 @@ const game = document.getElementById("game");
 game.innerHTML="";
 questions.forEach((item,index)=>{
 game.innerHTML+=`
-<div class="game-box">
+<div class="card">
 <div class="question">${item.q}</div>
 <input type="number" id="q${index}">
 <button class="check-btn" onclick="checkAnswer(${index})">Check</button>
-<button class="solution-btn" onclick="toggleSolution(${index})">Show Worked Solution</button>
+<button class="solution-btn" onclick="toggleSolution(${index})">Worked Solution</button>
 <div class="solution" id="s${index}">${item.s}</div>
 </div>
 `;
@@ -178,13 +231,18 @@ const userAnswer = parseFloat(input.value);
 if(userAnswer===questions[i].a){
 if(!input.classList.contains("correct")){
 score++;
-document.getElementById("score").innerText=score;
 }
 input.classList.remove("incorrect");
 input.classList.add("correct");
 }else{
 input.classList.remove("correct");
 input.classList.add("incorrect");
+}
+document.getElementById("score").innerText=score;
+document.getElementById("percent").innerText=Math.round((score/10)*100);
+
+if(score===10){
+document.getElementById("celebrate").style.display="block";
 }
 }
 
@@ -195,7 +253,9 @@ sol.style.display = sol.style.display==="block" ? "none" : "block";
 
 function resetGame(){
 score=0;
-document.getElementById("score").innerText=score;
+document.getElementById("score").innerText=0;
+document.getElementById("percent").innerText=0;
+document.getElementById("celebrate").style.display="none";
 loadGame();
 }
 
