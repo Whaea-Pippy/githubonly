@@ -171,13 +171,20 @@
       </text>
     `;
 
-    // Height (vertical) - moved further RIGHT, centered on the line
-    svg.innerHTML += `
-      <line x1="2.18" y1="-0.05" x2="2.18" y2="1.08" stroke="#c62828" stroke-width="0.10"/>
-      <text x="2.38" y="0.515" font-size="0.26" fill="#c62828" font-weight="bold" text-anchor="middle" transform="rotate(-90 2.18 0.515)">
-        height = radius = r
-      </text>
-    `;
+// Height (vertical) – moved LEFT
+svg.innerHTML += `
+  <line x1="2.00" y1="-0.05" x2="2.00" y2="1.08"
+        stroke="#c62828" stroke-width="0.10"/>
+
+  <text x="2.00" y="0.515"
+        font-size="0.26"
+        fill="#c62828"
+        font-weight="bold"
+        text-anchor="end"
+        transform="rotate(-90 2.00 0.515)">
+    height = radius = r
+  </text>
+`;
   }
 
   // Initial draw
