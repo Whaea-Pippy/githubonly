@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Circle → Rectangle from Sectors Draft #3</title>
+  <title>Circle → Rectangle from Sectors</title>
   <style>
     body {
       font-family: system-ui, sans-serif;
@@ -122,14 +122,12 @@
     const r = 1;
     const theta = 2 * Math.PI / n;
 
-    // Circle
     for (let i = 0; i < n; i++) {
       const a = i * theta;
       const b = (i + 1) * theta;
       svg.appendChild(createWedge(0, 0, r, a, b, i % 2 === 1));
     }
 
-    // Rectangle
     let x = 2.5;
     const s = r * Math.sin(theta / 2);
     for (let i = 0; i < n; i++) {
@@ -142,7 +140,6 @@
       x += s;
     }
 
-    // Add labels only when Teach Me is active
     if (teachBtn.classList.contains('active')) {
       addDimensionLabels();
     }
@@ -171,19 +168,21 @@
       </text>
     `;
 
-// Height (vertical) - horizontal text, placed LEFT of the line
-svg.innerHTML += `
-  <line x1="2.18" y1="-0.05" x2="2.18" y2="1.08"
-        stroke="#c62828" stroke-width="0.10"/>
-  <text x="1.80" y="0.515"
-        font-size="0.26"
-        fill="#c62828"
-        font-weight="bold"
-        text-anchor="end"
-        dominant-baseline="middle">
-    height = radius = r
-  </text>
-`;
+    // Height (vertical) - text rotated correctly, positioned LEFT of the line
+    svg.innerHTML += `
+      <line x1="2.18" y1="-0.05" x2="2.18" y2="1.08"
+            stroke="#c62828" stroke-width="0.10"/>
+      <g transform="translate(1.80, 0.515) rotate(-90)">
+        <text x="0" y="0"
+              text-anchor="middle"
+              dominant-baseline="middle"
+              font-size="0.26"
+              fill="#c62828"
+              font-weight="bold">
+          height = radius = r
+        </text>
+      </g>
+    `;
   }
 
   // Initial draw
@@ -205,7 +204,7 @@ svg.innerHTML += `
   teachBtn.addEventListener('click', () => {
     const isActive = teachBtn.classList.toggle('active');
     document.getElementById('overlay-content').classList.toggle('visible', isActive);
-    drawShapes(currentN);  // redraw to add/remove labels
+    drawShapes(currentN);
   });
 </script>
 </body>
