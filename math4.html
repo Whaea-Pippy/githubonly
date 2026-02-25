@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>NZ Year 9 Number Skills Test</title>
+<title>Progressive Number Skills Test (NZC Level 3–5)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -35,10 +35,11 @@ h1{
   max-width:750px;
 }
 
-.level{
+.stage{
   font-weight:bold;
   color:#4a6cf7;
   margin-bottom:8px;
+  font-size:16px;
 }
 
 .question{
@@ -66,6 +67,34 @@ input.incorrect{
   border-color:#e74c3c;
 }
 
+button{
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:14px;
+  margin-left:8px;
+  background:#888;
+  color:white;
+}
+
+.solution{
+  margin-top:15px;
+  display:none;
+  background:#f7f9ff;
+  padding:15px;
+  border-radius:12px;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.celebrate{
+  text-align:center;
+  font-size:22px;
+  margin-top:20px;
+  display:none;
+}
+
 .reset{
   display:block;
   margin:30px auto;
@@ -77,75 +106,91 @@ input.incorrect{
   border-radius:10px;
   cursor:pointer;
 }
-
-.celebrate{
-  text-align:center;
-  font-size:22px;
-  margin-top:20px;
-  display:none;
-}
 </style>
 </head>
 
 <body>
 
-<h1>🇳🇿 Year 9 Number Skills Test</h1>
+<h1>Progressive Number Skills Test (NZC Level 3–5)</h1>
 <div class="score-board">
-Score: <span id="score">0</span>/8  
+Score: <span id="score">0</span>/10  
 (<span id="percent">0</span>%)
 </div>
 
 <div id="game"></div>
 
 <div class="celebrate" id="celebrate">
-🔥 Strong finish. Test complete.
+🔥 Great work! Test complete.
 </div>
 
 <button class="reset" onclick="resetGame()">Reset Test</button>
 
 <script>
-
 const questions = [
-{
-level:"Level 1 – Warm Up",
-q:"1) A rugby team scores 5 points per try. They score 4 tries. How many points?",
-a:20
-},
-{
-level:"Level 1 – Warm Up",
-q:"2) You buy 6 pies at $4 each. How much do you pay?",
-a:24
-},
-{
-level:"Level 2 – Core Skills",
-q:"3) A bus costs $360 to hire. 18 students share the cost equally. How much does each pay?",
-a:20
-},
-{
-level:"Level 2 – Core Skills",
-q:"4) You save $25 per week for 6 weeks. How much have you saved?",
-a:150
-},
-{
-level:"Level 3 – Stronger Thinking",
-q:"5) A gaming console costs $750. You have $420. How much more do you need?",
-a:330
-},
-{
-level:"Level 3 – Stronger Thinking",
-q:"6) A gym charges $15 per visit. You go 9 times. How much do you pay?",
-a:135
-},
-{
-level:"Level 4 – Challenge",
-q:"7) A fundraiser makes $3 profit per sausage. They sell 85 sausages. How much profit?",
-a:255
-},
-{
-level:"Level 4 – Challenge",
-q:"8) You earn $18 per hour mowing lawns. You work 14 hours. How much do you earn?",
-a:252
-}
+  // Year 7 – NZC Level 3
+  {
+    stage:"Warm-Up (NZC Year 7, Level 3)",
+    q:"1) You buy 3 chocolate bars at $2 each. How much do you pay?",
+    a:6,
+    s:"3 × 2 = 6 dollars."
+  },
+  {
+    stage:"Warm-Up (NZC Year 7, Level 3)",
+    q:"2) A train has 50 seats. 28 are occupied. How many seats are free?",
+    a:22,
+    s:"50 − 28 = 22 seats free."
+  },
+  // Year 8 – NZC Level 4
+  {
+    stage:"Getting Going (NZC Year 8, Level 4)",
+    q:"3) A movie ticket costs $12. You buy 5 tickets. How much do you spend?",
+    a:60,
+    s:"12 × 5 = 60 dollars."
+  },
+  {
+    stage:"Getting Going (NZC Year 8, Level 4)",
+    q:"4) You save $15 per week for 8 weeks. How much do you save?",
+    a:120,
+    s:"15 × 8 = 120 dollars."
+  },
+  // Year 9 – NZC Level 4–5
+  {
+    stage:"Building Confidence (NZC Year 9, Level 4–5)",
+    q:"5) You buy 3 burgers at $8 each and 2 drinks at $2.50 each. How much do you pay in total?",
+    a:31,
+    s:"Burgers: 3×8=24, Drinks: 2×2.5=5, Total = 24+5 = 31 dollars."
+  },
+  {
+    stage:"Building Confidence (NZC Year 9, Level 4–5)",
+    q:"6) A rugby player scores 12 points over 3 games, scoring the same each game. He also kicks a conversion worth 2 points in one game. How many points in the remaining games?",
+    a:10,
+    s:"One game: conversion 2 points, remaining 12−2=10 points over 2 games."
+  },
+  // Year 10 – NZC Level 5
+  {
+    stage:"Challenge Zone (NZC Year 10, Level 5)",
+    q:"7) A $450 jacket is on sale for 25% off. You also have a $20 gift card. How much do you pay?",
+    a:317.5,
+    s:"25% of 450 = 112.5, 450−112.5=337.5, minus $20 gift card = 317.5 dollars."
+  },
+  {
+    stage:"Challenge Zone (NZC Year 10, Level 5)",
+    q:"8) A fundraiser sells sausages for $3.50 and drinks for $1.80. They need at least $500. If they sell 80 sausages, how many drinks must they sell to reach the target?",
+    a:122,
+    s:"80×3.5=280, remaining 500−280=220, drinks: 220÷1.8≈122 drinks."
+  },
+  {
+    stage:"Final Stretch (NZC Year 10, Level 5)",
+    q:"9) A school trip costs $450 for transport plus $12 per student for entry. 25 students go. You also spend $50 on food. What’s the total cost?",
+    a:800,
+    s:"Transport 450 + Entry 25×12=300 → total 450+300=750, plus $50 food = 800 dollars."
+  },
+  {
+    stage:"Final Stretch (NZC Year 10, Level 5)",
+    q:"10) You earn $22.50/hour mowing lawns. You work 7 hours Saturday and 5.5 hours Sunday. You spend $15 on petrol. How much do you save from the weekend?",
+    a:266.25,
+    s:"Saturday: 22.5×7=157.5, Sunday: 22.5×5.5=123.75, total=281.25, minus 15 = 266.25 dollars."
+  }
 ];
 
 let score = 0;
@@ -157,9 +202,11 @@ game.innerHTML="";
 questions.forEach((item,index)=>{
 game.innerHTML+=`
 <div class="card">
-<div class="level">${item.level}</div>
+<div class="stage">${item.stage}</div>
 <div class="question">${item.q}</div>
-<input type="number" id="q${index}" onkeydown="handleKey(event,${index})">
+<input type="number" step="any" id="q${index}" onkeydown="handleKey(event,${index})">
+<button onclick="toggleSolution(${index})">Worked Solution</button>
+<div class="solution" id="s${index}">${item.s}</div>
 </div>
 `;
 });
@@ -179,8 +226,9 @@ const input = document.getElementById("q"+i);
 const userAnswer = parseFloat(input.value);
 
 if(userAnswer===questions[i].a){
-if(!input.classList.contains("correct")){
+if(!input.dataset.scored){
 score++;
+input.dataset.scored = "true";
 }
 input.classList.remove("incorrect");
 input.classList.add("correct");
@@ -190,9 +238,9 @@ input.classList.add("incorrect");
 }
 
 document.getElementById("score").innerText=score;
-document.getElementById("percent").innerText=Math.round((score/8)*100);
+document.getElementById("percent").innerText=Math.round((score/10)*100);
 
-if(score===8){
+if(score===10){
 document.getElementById("celebrate").style.display="block";
 }
 }
@@ -204,6 +252,11 @@ next.focus();
 }
 }
 
+function toggleSolution(i){
+const sol = document.getElementById("s"+i);
+sol.style.display = sol.style.display==="block" ? "none" : "block";
+}
+
 function resetGame(){
 score=0;
 document.getElementById("score").innerText=0;
@@ -213,7 +266,6 @@ loadGame();
 }
 
 loadGame();
-
 </script>
 
 </body>
