@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Circle → Wavy Rectangle (Sector Rearrangement)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #f0f2f5; text-align: center; padding: 20px; }
+    svg#main-viz { background: white; border: 1px solid #ccc; margin: 20px auto; display: block; }
+    .controls { margin: 20px 0; font-size: 1.1em; }
+    button { margin: 0 8px; padding: 10px 18px; font-size: 1em; cursor: pointer; }
+    .active { background: #0066cc; color: white; border: none; }
+    .wedge-a { fill: #ff9800aa; stroke: #333; stroke-width: 0.006; }
+    .wedge-b { fill: #4fc3f7aa; stroke: #333; stroke-width: 0.006; }
+    #formulas { display: none; margin: 30px auto; max-width: 1000px; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.12); }
+    .formula-row { display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; }
+    .formula-block { text-align: center; max-width: 420px; }
+    .formula { font-size: 2.2em; font-weight: bold; margin: 12px 0; }
+    .labels { font-size: 1.15em; color: #444; }
+    .highlight { color: #c62828; font-weight: bold; }
+    .mini-viz { width: 420px; height: 240px; }
+  </style>
+</head>
+<body>
+
+<h2>Circle vs Wavy Rectangle — same sectors rearranged</h2>
+
+<div class="controls">
+  Sectors: 
+  <button data-n="4">4</button>
+  <button data-n="8">8</button>
+  <button data-n="16" class="active">16</button>
+  <button data-n="32">32</button>
+  &nbsp;&nbsp;&nbsp;
+  <button id="toggle-formula">Show Formulas</button>
+</div>
+
+<svg id="viz" class="main-viz" width="1000" height="480" viewBox="-1.5 -0.4 8 1.8"></svg>
+
+<div id="formulas">
+  <div class="formula-row">
+    <!-- Circle part -->
+    <div class="formula-block">
+      <div class="labels">Circle with radius <span class="highlight">r</span></div>
+      <div class="formula">Area = π <span class="highlight">r</span>²</div>
+      <svg class="mini-viz" viewBox="-1.5 -1.0 3 3">
+        <g id="static-circle">
+          <script type="module">
+            const r = 1, n = 32, theta = 2 * Math.PI / n;
+            const ns = "http://www.w3.org/2000/svg";
+            const g = document.getElementById("static-circle");
+            for (let i = 0; i < n; i++) {
+              const a = i * theta, b = (i+1) * theta;
+              const x1 = r * Math.cos(a), y1 = r * Math.sin(a);
+              const x2 = r * Math.cos(b), y2 = r * Math.sin(b);
+              const large = theta > Math.PI ? 1 : 0;
+              const d = `M0 0 L${x1} ${y1} A${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`;
+              const p = document.createElementNS(ns, "path");
+              p.setAttribute("d", d);
+              p.setAttribute("class", i%2 ? "wedge-b" : "wedge-a");
+              g.appendChild(p);
+            }
+          </script>
+        </g>
+
+        <line x1="0" y1="0" x2="1.02" y2="0" stroke="#c62828" stroke-width="0.10"/>
+        <text x="0.58" y="-0.24" font-size="0.42" fill="#c62828" font-weight="bold">r</text>
+        <path id="circPath" d="M 1.1,0 A 1.1,1.1 0 1,1 -1.1,0 A 1.1,1.1 0 1,1 1.1,0" fill="none"/>
+        <text font-size="0.28" fill="#c62828" font-weight="bold">
+          <textPath href="#circPath" startOffset="50%" text-anchor="middle">circumference</textPath>
+        </text>
+      </svg>
+    </div>
+
+    <!-- Rectangle approximation part -->
+    <div class="formula-block">
+      <div class="labels">Rectangle approximation</div>
+      <div class="formula">Area = base × height</div>
+      <div class="formula" style="font-size:1.7em; margin:10px 0">(also: length × width)</div>
+      <svg class="mini-viz" viewBox="1.2 -0.5 5.8 2.1">
+        <g id="static-rect">
+          <script type="module">
+            const r = 1, n = 32, theta = 2 * Math.PI / n;
+            const ns = "http://www.w3.org/2000/svg";
+            const g = document.getElementById("static-rect");
+            let x = 2.5; const s = r * Math.sin(theta/2);
+            for (let i = 0; i < n; i++) {
+              const isUp = i % 2 === 0;
+              const rot = isUp ? Math.PI/2 : 3*Math.PI/2;
+              const cy = isUp ? 0 : r * Math.cos(theta/2);
+              const cx = x;
+              const a1 = rot - theta/2, a2 = rot + theta/2;
+              const large = theta > Math.PI ? 1 : 0;
+              const x1 = cx + r*Math.cos(a1), y1 = cy + r*Math.sin(a1);
+              const x2 = cx + r*Math.cos(a2), y2 = cy + r*Math.sin(a2);
+              const d = `M${cx} ${cy} L${x1} ${y1} A${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`;
+              const p = document.createElementNS(ns, "path");
+              p.setAttribute("d", d);
+              p.setAttribute("class", i%2 ? "wedge-b" : "wedge-a");
+              g.appendChild(p);
+              x += s;
+            }
+          </script>
+        </g>
+
+        <!-- Dimension lines - matched to actual shape extent -->
+        <!-- Horizontal: full width ≈ circumference -->
+        <line x1="2.48" y1="1.62" x2="6.52" y2="1.62" stroke="#c62828" stroke-width="0.14"/>
+        <text x="4.5" y="1.92" font-size="0.30" fill="#c62828" text-anchor="middle" font-weight="bold">
+          CIRCUMFERENCE
+        </text>
+
+        <!-- Vertical: full height ≈ radius × 2 (but labeled RADIUS as requested) -->
+        <line x1="2.05" y1="-0.38" x2="2.05" y2="1.62" stroke="#c62828" stroke-width="0.14"/>
+        <text x="1.55" y="0.62" font-size="0.30" fill="#c62828" text-anchor="middle" font-weight="bold"
+              transform="rotate(-90 1.55 0.62)">
+          RADIUS
+        </text>
+      </svg>
+    </div>
+  </div>
+  <p style="margin-top:20px; color:#555;">Both shapes have exactly the same area = π r²</p>
+</div>
+
+<script>
+  const svg = document.getElementById('viz');
+  const svgNS = "http://www.w3.org/2000/svg";
+  const formulaDiv = document.getElementById('formulas');
+  const toggleBtn = document.getElementById('toggle-formula');
+
+  let currentN = 16;
+  let formulasVisible = false;
+
+  function drawShapes(n) {
+    svg.innerHTML = '';
+    const r = 1;
+    const theta = 2 * Math.PI / n;
+
+    for (let i = 0; i < n; i++) {
+      const a = i * theta;
+      const b = (i + 1) * theta;
+      const x1 = r * Math.cos(a), y1 = r * Math.sin(a);
+      const x2 = r * Math.cos(b), y2 = r * Math.sin(b);
+      const large = (theta > Math.PI) ? 1 : 0;
+      const d = `M 0 0 L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`;
+      const path = document.createElementNS(svgNS, "path");
+      path.setAttribute("d", d);
+      path.setAttribute("class", i % 2 ? "wedge-b" : "wedge-a");
+      svg.appendChild(path);
+    }
+
+    let current_x = 2.5;
+    const s = r * Math.sin(theta / 2);
+    for (let i = 0; i < n; i++) {
+      const isUp = (i % 2 === 0);
+      const rotation = isUp ? Math.PI / 2 : 3 * Math.PI / 2;
+      const center_y = isUp ? 0 : r * Math.cos(theta / 2);
+      const center_x = current_x;
+      const alpha1 = rotation - theta / 2;
+      const alpha2 = rotation + theta / 2;
+      const large = (theta > Math.PI) ? 1 : 0;
+      const x1 = center_x + r * Math.cos(alpha1);
+      const y1 = center_y + r * Math.sin(alpha1);
+      const x2 = center_x + r * Math.cos(alpha2);
+      const y2 = center_y + r * Math.sin(alpha2);
+      const d = `M ${center_x.toFixed(4)} ${center_y.toFixed(4)} L ${x1.toFixed(4)} ${y1.toFixed(4)} A ${r} ${r} 0 ${large} 1 ${x2.toFixed(4)} ${y2.toFixed(4)} Z`;
+      const path = document.createElementNS(svgNS, "path");
+      path.setAttribute("d", d);
+      path.setAttribute("class", i % 2 ? "wedge-b" : "wedge-a");
+      svg.appendChild(path);
+      current_x += s;
+    }
+  }
+
+  document.querySelectorAll('button[data-n]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('button[data-n]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentN = parseInt(btn.dataset.n);
+      drawShapes(currentN);
+    });
+  });
+
+  toggleBtn.addEventListener('click', () => {
+    formulasVisible = !formulasVisible;
+    formulaDiv.style.display = formulasVisible ? 'block' : 'none';
+    toggleBtn.textContent = formulasVisible ? 'Hide Formulas' : 'Show Formulas';
+    toggleBtn.classList.toggle('active', formulasVisible);
+  });
+
+  drawShapes(currentN);
+</script>
+</body>
+</html>
