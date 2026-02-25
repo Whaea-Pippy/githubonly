@@ -2,215 +2,218 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>⚡ Number Blitz – 60 Second Challenge</title>
+<title>NZ Year 9 Number Skills Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
+  font-family:'Poppins',system-ui,Arial,sans-serif;
   margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:radial-gradient(circle at top,#111,#000);
-  color:white;
-  text-align:center;
+  background:linear-gradient(135deg,#dfe9ff,#f5f7ff);
+  padding:20px;
+  color:#333;
 }
 
 h1{
-  font-size:34px;
-  margin:20px 0 5px 0;
-  letter-spacing:2px;
+  text-align:center;
+  margin-bottom:10px;
+  font-size:30px;
 }
 
-.stats{
-  font-size:20px;
-  margin-bottom:15px;
+.score-board{
+  text-align:center;
+  font-size:18px;
+  margin-bottom:20px;
 }
 
-.game-box{
-  background:#111;
-  border:3px solid #444;
-  border-radius:20px;
-  padding:30px;
-  max-width:600px;
-  margin:20px auto;
-  box-shadow:0 0 30px rgba(0,255,255,0.4);
+.card{
+  background:white;
+  padding:20px;
+  margin:15px auto;
+  border-radius:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  max-width:750px;
+}
+
+.level{
+  font-weight:bold;
+  color:#4a6cf7;
+  margin-bottom:8px;
 }
 
 .question{
-  font-size:42px;
-  margin-bottom:20px;
-  font-weight:bold;
+  font-size:18px;
+  margin-bottom:12px;
+  line-height:1.5;
 }
 
 input{
-  font-size:32px;
-  width:180px;
-  text-align:center;
-  padding:8px;
-  border-radius:12px;
-  border:none;
-}
-
-button{
+  padding:10px;
   font-size:18px;
-  padding:10px 20px;
-  border:none;
-  border-radius:12px;
-  margin:10px;
-  cursor:pointer;
+  width:160px;
+  border-radius:10px;
+  border:2px solid #ccc;
+  transition:0.3s;
 }
 
-.start{
-  background:#00c853;
-  color:white;
+input.correct{
+  background:#e0ffe4;
+  border-color:#2ecc71;
+}
+
+input.incorrect{
+  background:#ffe3e3;
+  border-color:#e74c3c;
 }
 
 .reset{
-  background:#d50000;
+  display:block;
+  margin:30px auto;
+  background:#ff6b6b;
   color:white;
+  font-size:16px;
+  padding:10px 18px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
 }
 
-.flash-green{
-  animation:greenFlash 0.3s;
-}
-
-.flash-red{
-  animation:redFlash 0.3s;
-}
-
-@keyframes greenFlash{
-  0%{background:#00c853;}
-  100%{background:#000;}
-}
-
-@keyframes redFlash{
-  0%{background:#d50000;}
-  100%{background:#000;}
-}
-
-.levelup{
-  font-size:26px;
-  margin-top:15px;
+.celebrate{
+  text-align:center;
+  font-size:22px;
+  margin-top:20px;
   display:none;
-  color:#00e5ff;
 }
-
 </style>
 </head>
+
 <body>
 
-<h1>⚡ NUMBER BLITZ ⚡</h1>
-<div class="stats">
-Time: <span id="time">60</span>s |
-Score: <span id="score">0</span> |
-🔥 Streak: <span id="streak">0</span>
+<h1>🇳🇿 Year 9 Number Skills Test</h1>
+<div class="score-board">
+Score: <span id="score">0</span>/8  
+(<span id="percent">0</span>%)
 </div>
 
-<div class="game-box">
-<div class="question" id="question">Press Start!</div>
-<input type="number" id="answer" disabled>
-<br>
-<button class="start" onclick="startGame()">START</button>
-<button class="reset" onclick="resetGame()">RESET</button>
-<div class="levelup" id="levelup">🚀 LEVEL UP! Keep Going!</div>
+<div id="game"></div>
+
+<div class="celebrate" id="celebrate">
+🔥 Strong finish. Test complete.
 </div>
+
+<button class="reset" onclick="resetGame()">Reset Test</button>
 
 <script>
-let time = 60;
+
+const questions = [
+{
+level:"Level 1 – Warm Up",
+q:"1) A rugby team scores 5 points per try. They score 4 tries. How many points?",
+a:20
+},
+{
+level:"Level 1 – Warm Up",
+q:"2) You buy 6 pies at $4 each. How much do you pay?",
+a:24
+},
+{
+level:"Level 2 – Core Skills",
+q:"3) A bus costs $360 to hire. 18 students share the cost equally. How much does each pay?",
+a:20
+},
+{
+level:"Level 2 – Core Skills",
+q:"4) You save $25 per week for 6 weeks. How much have you saved?",
+a:150
+},
+{
+level:"Level 3 – Stronger Thinking",
+q:"5) A gaming console costs $750. You have $420. How much more do you need?",
+a:330
+},
+{
+level:"Level 3 – Stronger Thinking",
+q:"6) A gym charges $15 per visit. You go 9 times. How much do you pay?",
+a:135
+},
+{
+level:"Level 4 – Challenge",
+q:"7) A fundraiser makes $3 profit per sausage. They sell 85 sausages. How much profit?",
+a:255
+},
+{
+level:"Level 4 – Challenge",
+q:"8) You earn $18 per hour mowing lawns. You work 14 hours. How much do you earn?",
+a:252
+}
+];
+
 let score = 0;
-let streak = 0;
-let currentAnswer;
-let timer;
 
-function randomQuestion(){
-let types = Math.floor(Math.random()*5);
+function loadGame(){
+const game = document.getElementById("game");
+game.innerHTML="";
 
-let a = Math.floor(Math.random()*20)+5;
-let b = Math.floor(Math.random()*10)+2;
+questions.forEach((item,index)=>{
+game.innerHTML+=`
+<div class="card">
+<div class="level">${item.level}</div>
+<div class="question">${item.q}</div>
+<input type="number" id="q${index}" onkeydown="handleKey(event,${index})">
+</div>
+`;
+});
 
-if(types===0){
-currentAnswer = a*b;
-return `${a} × ${b}`;
+document.getElementById("q0").focus();
 }
-if(types===1){
-currentAnswer = a+b;
-return `${a} + ${b}`;
-}
-if(types===2){
-currentAnswer = a-b;
-return `${a} − ${b}`;
-}
-if(types===3){
-currentAnswer = Math.pow(b,2);
-return `${b}²`;
-}
-if(types===4){
-currentAnswer = a*3;
-return `Triple ${a}`;
+
+function handleKey(event,i){
+if(event.key==="Enter"){
+checkAnswer(i);
+moveNext(i);
 }
 }
 
-function nextQuestion(){
-document.getElementById("question").innerText = randomQuestion();
-document.getElementById("answer").value="";
-}
+function checkAnswer(i){
+const input = document.getElementById("q"+i);
+const userAnswer = parseFloat(input.value);
 
-function checkAnswer(){
-let user = Number(document.getElementById("answer").value);
-if(user===currentAnswer){
+if(userAnswer===questions[i].a){
+if(!input.classList.contains("correct")){
 score++;
-streak++;
-document.body.classList.add("flash-green");
-if(streak%5===0){
-document.getElementById("levelup").style.display="block";
-setTimeout(()=>{document.getElementById("levelup").style.display="none";},1000);
 }
+input.classList.remove("incorrect");
+input.classList.add("correct");
 }else{
-streak=0;
-document.body.classList.add("flash-red");
-}
-document.getElementById("score").innerText=score;
-document.getElementById("streak").innerText=streak;
-setTimeout(()=>{
-document.body.classList.remove("flash-green");
-document.body.classList.remove("flash-red");
-},200);
-nextQuestion();
+input.classList.remove("correct");
+input.classList.add("incorrect");
 }
 
-function startGame(){
-time=60;
-score=0;
-streak=0;
-document.getElementById("answer").disabled=false;
-nextQuestion();
-timer=setInterval(()=>{
-time--;
-document.getElementById("time").innerText=time;
-if(time<=0){
-clearInterval(timer);
-document.getElementById("question").innerText="⏱ TIME UP!";
-document.getElementById("answer").disabled=true;
+document.getElementById("score").innerText=score;
+document.getElementById("percent").innerText=Math.round((score/8)*100);
+
+if(score===8){
+document.getElementById("celebrate").style.display="block";
 }
-},1000);
+}
+
+function moveNext(i){
+let next = document.getElementById("q"+(i+1));
+if(next){
+next.focus();
+}
 }
 
 function resetGame(){
-clearInterval(timer);
-time=60;
 score=0;
-streak=0;
-document.getElementById("time").innerText=60;
 document.getElementById("score").innerText=0;
-document.getElementById("streak").innerText=0;
-document.getElementById("question").innerText="Press Start!";
-document.getElementById("answer").disabled=true;
+document.getElementById("percent").innerText=0;
+document.getElementById("celebrate").style.display="none";
+loadGame();
 }
 
-document.getElementById("answer").addEventListener("keyup",function(event){
-if(event.key==="Enter"){
-checkAnswer();
-}
-});
+loadGame();
+
 </script>
 
 </body>
