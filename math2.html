@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <title>Year 7 Maths Cloze Activity</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f8f8f8; }
-  h1 { color: #2E4372; text-align: center; }
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f8f8f8; font-size: 18px; }
+  h1 { color: #2E4372; text-align: center; margin-bottom: 20px; }
   .sentence { margin: 12px 0; }
-  select { padding: 4px; margin-left: 5px; }
-  button { margin-top: 15px; background: #2196F3; color: white; padding: 8px 12px; border: none; cursor: pointer; border-radius: 4px; }
-  #result { margin-top: 20px; font-weight: bold; font-size: 1.1em; }
-  .correct { color: green; }
-  .incorrect { color: red; }
+  select { padding: 6px; margin-left: 5px; font-size: 1em; }
+  button { margin-top: 20px; background: #2196F3; color: white; padding: 10px 14px; border: none; cursor: pointer; border-radius: 4px; font-size: 1em; }
+  #result { margin-top: 20px; font-weight: bold; font-size: 1.2em; }
+  .correct { background-color: #b6e7a6; } /* green for correct */
+  .incorrect { background-color: #f5a6a6; } /* red for incorrect */
 </style>
 </head>
 <body>
@@ -105,8 +105,8 @@
     10. The symbol √ represents the <select name="q10">
       <option value="">--Select--</option>
       <option value="square root">square root</option>
-      <option value="radicals">radicals</option>
       <option value="exponent, power">exponent</option>
+      <option value="integer">integer</option>
     </select> of a number.
   </div>
 
@@ -179,7 +179,7 @@
       <option value="radicals">radicals</option>
       <option value="square root">square root</option>
       <option value="expanded form">expanded form</option>
-    </select> symbol √ is called a radical.
+    </select> is used to represent roots of numbers.
   </div>
 
   <div class="sentence">
@@ -233,17 +233,20 @@
     let form = document.getElementById("clozeForm");
     let score = 0;
     let total = Object.keys(answers).length;
-    let resultText = "";
 
     for (let key in answers) {
-      let value = form.elements[key].value;
-      if (value === answers[key]) {
+      let selectBox = form.elements[key];
+      if (selectBox.value === answers[key]) {
+        selectBox.classList.add("correct");
+        selectBox.classList.remove("incorrect");
         score++;
+      } else {
+        selectBox.classList.add("incorrect");
+        selectBox.classList.remove("correct");
       }
     }
 
-    resultText = `You got ${score} out of ${total} correct.`;
-    document.getElementById("result").textContent = resultText;
+    document.getElementById("result").textContent = `You got ${score} out of ${total} correct.`;
   }
 </script>
 
