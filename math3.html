@@ -1,228 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Circle → Wavy Rectangle (Sector Rearrangement) Draft #1</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #f0f2f5;
-      text-align: center;
-      padding: 20px;
-    }
-    svg {
-      background: white;
-      border: 1px solid #ccc;
-      margin: 20px auto;
-      display: block;
-    }
-    .controls {
-      margin: 20px 0;
-      font-size: 1.1em;
-    }
-    button {
-      margin: 0 8px;
-      padding: 10px 18px;
-      font-size: 1em;
-      cursor: pointer;
-    }
-    .active {
-      background: #0066cc;
-      color: white;
-      border: none;
-    }
-    .wedge-a { fill: #ff9800aa; stroke: #333; stroke-width: 0.006; }
-    .wedge-b { fill: #4fc3f7aa; stroke: #333; stroke-width: 0.006; }
-    #formulas {
-      display: none;
-      margin: 30px auto;
-      max-width: 900px;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .formula-row {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      gap: 40px;
-      flex-wrap: wrap;
-    }
-    .formula-block {
-      text-align: center;
-    }
-    .formula {
-      font-size: 2.1em;
-      font-weight: bold;
-      margin: 12px 0;
-    }
-    .labels {
-      font-size: 1.1em;
-      color: #555;
-    }
-    .highlight {
-      color: #d32f2f;
-      font-weight: bold;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Year 9 NZ Algebra Challenge</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  font-family:Poppins,Arial,sans-serif;
+  background:#f4f8ff;
+  margin:0;
+  padding:20px;
+}
+
+h1{
+  text-align:center;
+  font-size:28px;
+}
+
+.game-box{
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom:20px;
+}
+
+.question{
+  font-size:18px;
+  margin-bottom:10px;
+}
+
+input{
+  padding:8px;
+  font-size:16px;
+  width:120px;
+  border-radius:8px;
+  border:2px solid #ccc;
+}
+
+.correct{
+  background:#c8f7c5;
+  border-color:green;
+}
+
+.incorrect{
+  background:#ffd6d6;
+  border-color:red;
+}
+
+button{
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  margin-left:5px;
+}
+
+.check-btn{
+  background:#4da6ff;
+  color:white;
+}
+
+.solution-btn{
+  background:#aaa;
+  color:white;
+}
+
+.solution{
+  margin-top:10px;
+  display:none;
+  background:#f0f0f0;
+  padding:10px;
+  border-radius:8px;
+  font-size:14px;
+}
+
+.score{
+  text-align:center;
+  font-size:20px;
+  margin-bottom:20px;
+}
+
+.reset{
+  display:block;
+  margin:20px auto;
+  background:#ff6b6b;
+  color:white;
+}
+</style>
 </head>
+
 <body>
 
-<h2>Circle vs Wavy Rectangle — same sectors rearranged</h2>
+<h1>🇳🇿 Year 9 Algebra Challenge</h1>
+<div class="score">Score: <span id="score">0</span>/10</div>
 
-<div class="controls">
-  Sectors: 
-  <button data-n="4">4</button>
-  <button data-n="8">8</button>
-  <button data-n="16" class="active">16</button>
-  <button data-n="32">32</button>
-  &nbsp;&nbsp;&nbsp;
-  <button id="toggle-formula">Show Formulas</button>
-</div>
+<div id="game"></div>
 
-<svg id="viz" width="1000" height="480" viewBox="-1.5 -0.4 8 1.8"></svg>
-
-<div id="formulas">
-  <div class="formula-row">
-    <div class="formula-block">
-      <div class="labels">
-        Circle with radius <span class="highlight">r</span>
-      </div>
-      <div class="formula">
-        Area = π <span class="highlight">r</span>²
-      </div>
-      <svg width="220" height="160" viewBox="-1.3 -1.3 2.6 2.6">
-        <circle cx="0" cy="0" r="1" fill="none" stroke="#0066cc" stroke-width="0.08"/>
-
-        <!-- Straight radius arrow (bigger r label) -->
-        <line x1="0" y1="0" x2="1" y2="0" stroke="#d32f2f" stroke-width="0.09" marker-end="url(#arrow)"/>
-        <text x="0.52" y="-0.18" font-size="0.32" fill="#d32f2f" font-weight="bold">r</text>
-
-        <!-- Curved "circumference" text along the circle -->
-        <path id="circPath" d="M 1,0 A 1,1 0 1,1 -1,0 A 1,1 0 1,1 1,0" fill="none"/>
-        <text font-size="0.24" fill="#d32f2f" font-weight="bold">
-          <textPath href="#circPath" startOffset="50%" text-anchor="middle">
-            circumference
-          </textPath>
-        </text>
-      </svg>
-    </div>
-
-    <div class="formula-block">
-      <div class="labels">
-        Rectangle (or parallelogram approximation)
-      </div>
-      <div class="formula">
-        Area = base × height
-      </div>
-      <div class="formula" style="font-size:1.6em; margin-top:8px;">
-        (also: length × width)
-      </div>
-      <svg width="220" height="160" viewBox="-0.1 -0.1 4.2 1.8">
-        <rect x="0" y="0" width="4" height="1.4" fill="none" stroke="#0066cc" stroke-width="0.06"/>
-        <line x1="0" y1="1.4" x2="4" y2="1.4" stroke="#d32f2f" stroke-width="0.06" marker-end="url(#arrow)"/>
-        <line x1="0" y1="0" x2="0" y2="1.4" stroke="#d32f2f" stroke-width="0.06" marker-end="url(#arrow)"/>
-        <text x="2" y="1.55" font-size="0.18" fill="#d32f2f" text-anchor="middle">base (length)</text>
-        <text x="-0.25" y="0.7" font-size="0.18" fill="#d32f2f" text-anchor="middle" transform="rotate(-90 -0.25 0.7)">height (width)</text>
-      </svg>
-    </div>
-  </div>
-  <p style="margin-top:20px; color:#555;">
-    Both shapes are made from the same circular sectors (total area = π r²).<br>
-    The wavy rectangle approximates width ≈ π r and height ≈ r.
-  </p>
-</div>
-
-<svg style="position:absolute; height:0;">
-  <defs>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="0" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L9,3 z" fill="#d32f2f"/>
-    </marker>
-  </defs>
-</svg>
+<button class="reset" onclick="resetGame()">Reset Game</button>
 
 <script>
-  const svg = document.getElementById('viz');
-  const svgNS = "http://www.w3.org/2000/svg";
-  const formulaDiv = document.getElementById('formulas');
-  const toggleBtn = document.getElementById('toggle-formula');
+const questions = [
+{
+q:"1) Hoodie cost $35 each + $120 design. Total $1170. How many hoodies?",
+a:30,
+s:"35x + 120 = 1170 → 35x = 1050 → x = 30"
+},
+{
+q:"2) 3 fish packs at $8 + chips at $4 each = $44. How many chips?",
+a:5,
+s:"3(8)=24 → 44-24=20 → 20÷4=5 chips"
+},
+{
+q:"3) Bus $450 shared by 30 students + $12 ticket each. Cost per student?",
+a:27,
+s:"450÷30=15 → 15+12=27 per student"
+},
+{
+q:"4) Width = x. Length = x+7. Perimeter 94. Find x.",
+a:20,
+s:"2x + 2(x+7)=94 → 4x+14=94 → 4x=80 → x=20"
+},
+{
+q:"5) Drinks $3 each + $2 fee. Total $26. How many drinks?",
+a:8,
+s:"3n+2=26 → 3n=24 → n=8"
+},
+{
+q:"6) 5 points per student + 40 bonus = 215. Students?",
+a:35,
+s:"5x+40=215 → 5x=175 → x=35"
+},
+{
+q:"7) Bike stages 2.5km each, total 18km. How many stages?",
+a:7.2,
+s:"2.5x=18 → x=18÷2.5=7.2 stages"
+},
+{
+q:"8) $50 per week + $600 saved. When reach $2000? Weeks?",
+a:28,
+s:"50w+600=2000 → 50w=1400 → w=28"
+},
+{
+q:"9) Profit: sell $4, cost $2, stall fee $150. Break-even sausages?",
+a:75,
+s:"Profit per sausage = $2 → 2s=150 → s=75"
+},
+{
+q:"10) 3 kumara per pack, 84 kumara. Packs?",
+a:28,
+s:"84÷3=28 packs"
+}
+];
 
-  let currentN = 16;
-  let formulasVisible = false;
+let score = 0;
 
-  function drawShapes(n) {
-    svg.innerHTML = '';
-    const r = 1;
-    const theta = 2 * Math.PI / n;
+function loadGame(){
+const game = document.getElementById("game");
+game.innerHTML="";
+questions.forEach((item,index)=>{
+game.innerHTML+=`
+<div class="game-box">
+<div class="question">${item.q}</div>
+<input type="number" id="q${index}">
+<button class="check-btn" onclick="checkAnswer(${index})">Check</button>
+<button class="solution-btn" onclick="toggleSolution(${index})">Show Worked Solution</button>
+<div class="solution" id="s${index}">${item.s}</div>
+</div>
+`;
+});
+}
 
-    // LEFT: circle
-    for (let i = 0; i < n; i++) {
-      const a = i * theta;
-      const b = (i + 1) * theta;
-      const x1 = r * Math.cos(a);
-      const y1 = r * Math.sin(a);
-      const x2 = r * Math.cos(b);
-      const y2 = r * Math.sin(b);
-      const large = (theta > Math.PI) ? 1 : 0;
-      const d = `M 0 0 L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`;
-      const path = document.createElementNS(svgNS, "path");
-      path.setAttribute("d", d);
-      path.setAttribute("class", i % 2 ? "wedge-b" : "wedge-a");
-      svg.appendChild(path);
-    }
+function checkAnswer(i){
+const input = document.getElementById("q"+i);
+const userAnswer = parseFloat(input.value);
+if(userAnswer===questions[i].a){
+if(!input.classList.contains("correct")){
+score++;
+document.getElementById("score").innerText=score;
+}
+input.classList.remove("incorrect");
+input.classList.add("correct");
+}else{
+input.classList.remove("correct");
+input.classList.add("incorrect");
+}
+}
 
-    // RIGHT: wavy rectangle (alternating flipped sectors)
-    let current_x = 2.5;
-    const s = r * Math.sin(theta / 2);
+function toggleSolution(i){
+const sol = document.getElementById("s"+i);
+sol.style.display = sol.style.display==="block" ? "none" : "block";
+}
 
-    for (let i = 0; i < n; i++) {
-      const isUp = (i % 2 === 0);
-      const rotation = isUp ? Math.PI / 2 : 3 * Math.PI / 2;
-      const center_y = isUp ? 0 : r * Math.cos(theta / 2);
-      const center_x = current_x;
+function resetGame(){
+score=0;
+document.getElementById("score").innerText=score;
+loadGame();
+}
 
-      const alpha1 = rotation - theta / 2;
-      const alpha2 = rotation + theta / 2;
-      const large = (theta > Math.PI) ? 1 : 0;
-      const sweep = 1;
-
-      const x1 = center_x + r * Math.cos(alpha1);
-      const y1 = center_y + r * Math.sin(alpha1);
-      const x2 = center_x + r * Math.cos(alpha2);
-      const y2 = center_y + r * Math.sin(alpha2);
-
-      const d = `M ${center_x.toFixed(4)} ${center_y.toFixed(4)} L ${x1.toFixed(4)} ${y1.toFixed(4)} A ${r} ${r} 0 ${large} ${sweep} ${x2.toFixed(4)} ${y2.toFixed(4)} Z`;
-
-      const path = document.createElementNS(svgNS, "path");
-      path.setAttribute("d", d);
-      path.setAttribute("class", i % 2 ? "wedge-b" : "wedge-a");
-      svg.appendChild(path);
-
-      current_x += s;
-    }
-  }
-
-  // Sector buttons
-  document.querySelectorAll('button[data-n]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('button[data-n]').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentN = parseInt(btn.dataset.n);
-      drawShapes(currentN);
-    });
-  });
-
-  // Formula toggle
-  toggleBtn.addEventListener('click', () => {
-    formulasVisible = !formulasVisible;
-    formulaDiv.style.display = formulasVisible ? 'block' : 'none';
-    toggleBtn.textContent = formulasVisible ? 'Hide Formulas' : 'Show Formulas';
-    toggleBtn.classList.toggle('active', formulasVisible);
-  });
-
-  // Initial draw
-  drawShapes(currentN);
+loadGame();
 </script>
 
 </body>
